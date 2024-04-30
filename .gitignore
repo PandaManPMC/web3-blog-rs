@@ -1,1 +1,8 @@
 /target
+.idea/
+bin/
+*/target/*
+*.exe
+*.pdb
+target/*
+target
