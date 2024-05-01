@@ -2,10 +2,10 @@ use serde::{Serialize, Deserialize};
 
 ///	BlogViewJSONOut 评论
 ///	author: AT
-///	since: 2024-04-30 17:53:58
+///	since: 2024-05-01 16:29:19
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
-struct BlogViewJSONOut {
+pub struct BlogViewJSONOut {
 	/// search评论编号 【max:20】 
 	#[serde(rename = "id")]
 	pub id: u64,
