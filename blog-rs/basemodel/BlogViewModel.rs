@@ -11,7 +11,7 @@ pub const ALIAS:&str = "blogView";
 ///	BlogViewModel 评论
 ///	table - blog_view
 ///	author: AT
-///	since: 2024-05-01 16:42:01
+///	since: 2024-05-01 17:01:59
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 #[derive(BaseModel)]
@@ -49,12 +49,13 @@ pub struct BlogViewModel {
 }
 
 impl BlogViewModel {
-    pub fn new(user_name: String, state: u8) -> BlogViewModel {
-        TestUser{id:0, created_at: 0, updated_at: 0, user_name, state}
+
+    pub fn new(id_blog_article: u64, view_content: String, coin_symbol: String, tip_amount: String, visible: u8, address: String, tip_amount_usd: String) -> BlogViewModel {
+        BlogViewModel{id:0, created_at: 0, updated_at: 0, id_blog_article, view_content, coin_symbol, tip_amount, visible, address, tip_amount_usd}
     }
 
-    pub fn new_full(id: u64, created_at: u64,updated_at: u64,  user_name: String, state: u8) -> BlogViewModel {
-        TestUser{id, created_at, updated_at, user_name, state}
+    pub fn new_full(id: u64, created_at: u64, updated_at: u64, id_blog_article: u64, view_content: String, coin_symbol: String, tip_amount: String, visible: u8, address: String, tip_amount_usd: String) -> BlogViewModel {
+        BlogViewModel{id, created_at, updated_at, id_blog_article, view_content, coin_symbol, tip_amount, visible, address, tip_amount_usd}
     }
 
     fn set_pk(&mut self, pk: u64) {

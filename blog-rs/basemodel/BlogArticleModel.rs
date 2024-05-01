@@ -11,7 +11,7 @@ pub const ALIAS:&str = "blogArticle";
 ///	BlogArticleModel 文章
 ///	table - blog_article
 ///	author: AT
-///	since: 2024-05-01 16:42:00
+///	since: 2024-05-01 17:01:59
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 #[derive(BaseModel)]
@@ -67,12 +67,13 @@ pub struct BlogArticleModel {
 }
 
 impl BlogArticleModel {
-    pub fn new(user_name: String, state: u8) -> BlogArticleModel {
-        TestUser{id:0, created_at: 0, updated_at: 0, user_name, state}
+
+    pub fn new(id_blog_author: u64, id_blog_classes: u64, title_article: String, state_article: u8, state_publish: u8, state_private: u8, content: String, like_count: u32, watch_count: u32, view_count: u32, time_publish: u64, sequence: u32, label_list: String) -> BlogArticleModel {
+        BlogArticleModel{id:0, created_at: 0, updated_at: 0, id_blog_author, id_blog_classes, title_article, state_article, state_publish, state_private, content, like_count, watch_count, view_count, time_publish, sequence, label_list}
     }
 
-    pub fn new_full(id: u64, created_at: u64,updated_at: u64,  user_name: String, state: u8) -> BlogArticleModel {
-        TestUser{id, created_at, updated_at, user_name, state}
+    pub fn new_full(id: u64, created_at: u64, updated_at: u64, id_blog_author: u64, id_blog_classes: u64, title_article: String, state_article: u8, state_publish: u8, state_private: u8, content: String, like_count: u32, watch_count: u32, view_count: u32, time_publish: u64, sequence: u32, label_list: String) -> BlogArticleModel {
+        BlogArticleModel{id, created_at, updated_at, id_blog_author, id_blog_classes, title_article, state_article, state_publish, state_private, content, like_count, watch_count, view_count, time_publish, sequence, label_list}
     }
 
     fn set_pk(&mut self, pk: u64) {
@@ -109,8 +110,7 @@ pub fn pot(row: Row, offset: usize) -> BlogArticleModel {
 	return BlogArticleModel::new_full(row.get(offset+0).unwrap(),row.get(offset+1).unwrap(),row.get(offset+2).unwrap(),row.get(offset+3).unwrap(),row.get(offset+4).unwrap(),row.get(offset+5).unwrap(),row.get(offset+6).unwrap(),row.get(offset+7).unwrap(),row.get(offset+8).unwrap(),row.get(offset+9).unwrap(),row.get(offset+10).unwrap(),row.get(offset+11).unwrap(),row.get(offset+12).unwrap(),row.get(offset+13).unwrap(),row.get(offset+14).unwrap(),row.get(offset+15).unwrap());
 }
 
-/**
-// 过程宏 #[derive(BaseModel)]
+/** 过程宏 #[derive(BaseModel)] -> 
 impl BaseModel for BlogArticleModel {
 
     fn get_table_name(&self) -> &str {

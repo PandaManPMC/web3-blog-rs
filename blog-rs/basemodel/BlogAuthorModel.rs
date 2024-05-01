@@ -11,7 +11,7 @@ pub const ALIAS:&str = "blogAuthor";
 ///	BlogAuthorModel 作者
 ///	table - blog_author
 ///	author: AT
-///	since: 2024-05-01 16:42:00
+///	since: 2024-05-01 17:01:59
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 #[derive(BaseModel)]
@@ -40,12 +40,13 @@ pub struct BlogAuthorModel {
 }
 
 impl BlogAuthorModel {
-    pub fn new(user_name: String, state: u8) -> BlogAuthorModel {
-        TestUser{id:0, created_at: 0, updated_at: 0, user_name, state}
+
+    pub fn new(pen_name: String, user_name: String, user_pwd: String, google_auth_secret: String) -> BlogAuthorModel {
+        BlogAuthorModel{id:0, created_at: 0, updated_at: 0, pen_name, user_name, user_pwd, google_auth_secret}
     }
 
-    pub fn new_full(id: u64, created_at: u64,updated_at: u64,  user_name: String, state: u8) -> BlogAuthorModel {
-        TestUser{id, created_at, updated_at, user_name, state}
+    pub fn new_full(id: u64, created_at: u64, updated_at: u64, pen_name: String, user_name: String, user_pwd: String, google_auth_secret: String) -> BlogAuthorModel {
+        BlogAuthorModel{id, created_at, updated_at, pen_name, user_name, user_pwd, google_auth_secret}
     }
 
     fn set_pk(&mut self, pk: u64) {

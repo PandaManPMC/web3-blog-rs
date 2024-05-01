@@ -11,7 +11,7 @@ pub const ALIAS:&str = "blogClasses";
 ///	BlogClassesModel 文章类型
 ///	table - blog_classes
 ///	author: AT
-///	since: 2024-05-01 16:42:01
+///	since: 2024-05-01 17:01:59
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 #[derive(BaseModel)]
@@ -34,12 +34,13 @@ pub struct BlogClassesModel {
 }
 
 impl BlogClassesModel {
-    pub fn new(user_name: String, state: u8) -> BlogClassesModel {
-        TestUser{id:0, created_at: 0, updated_at: 0, user_name, state}
+
+    pub fn new(classes_name: String, state: u8) -> BlogClassesModel {
+        BlogClassesModel{id:0, created_at: 0, updated_at: 0, classes_name, state}
     }
 
-    pub fn new_full(id: u64, created_at: u64,updated_at: u64,  user_name: String, state: u8) -> BlogClassesModel {
-        TestUser{id, created_at, updated_at, user_name, state}
+    pub fn new_full(id: u64, created_at: u64, updated_at: u64, classes_name: String, state: u8) -> BlogClassesModel {
+        BlogClassesModel{id, created_at, updated_at, classes_name, state}
     }
 
     fn set_pk(&mut self, pk: u64) {

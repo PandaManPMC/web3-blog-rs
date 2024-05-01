@@ -11,7 +11,7 @@ pub const ALIAS:&str = "blogLabel";
 ///	BlogLabelModel 文章标签
 ///	table - blog_label
 ///	author: AT
-///	since: 2024-05-01 16:42:01
+///	since: 2024-05-01 17:01:59
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 #[derive(BaseModel)]
@@ -34,12 +34,13 @@ pub struct BlogLabelModel {
 }
 
 impl BlogLabelModel {
-    pub fn new(user_name: String, state: u8) -> BlogLabelModel {
-        TestUser{id:0, created_at: 0, updated_at: 0, user_name, state}
+
+    pub fn new(label_name: String, state: u8) -> BlogLabelModel {
+        BlogLabelModel{id:0, created_at: 0, updated_at: 0, label_name, state}
     }
 
-    pub fn new_full(id: u64, created_at: u64,updated_at: u64,  user_name: String, state: u8) -> BlogLabelModel {
-        TestUser{id, created_at, updated_at, user_name, state}
+    pub fn new_full(id: u64, created_at: u64, updated_at: u64, label_name: String, state: u8) -> BlogLabelModel {
+        BlogLabelModel{id, created_at, updated_at, label_name, state}
     }
 
     fn set_pk(&mut self, pk: u64) {
