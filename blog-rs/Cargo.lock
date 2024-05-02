@@ -197,6 +197,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "base"
+version = "0.1.0"
+dependencies = [
+ "axum",
+ "i_dao",
+ "i_dao_proc_macro",
+ "lazy_static",
+ "log",
+ "mysql 25.0.0",
+ "r2d2_mysql",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "base64"
 version = "0.21.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2033,6 +2051,14 @@ name = "server-api"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "base",
+ "env_logger",
+ "i_dao",
+ "i_dao_proc_macro",
+ "lazy_static",
+ "log",
+ "mysql 25.0.0",
+ "r2d2_mysql",
  "serde",
  "serde_json",
  "tokio",

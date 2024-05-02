@@ -4,19 +4,18 @@ use r2d2_mysql::mysql::params::Params;
 use i_dao::model::BaseModel;
 use i_dao_proc_macro::BaseModel;
 
-pub const TABLE_NAME:&str = "blog_label";
-pub const FIELDS:[&str;5] = ["id","created_at","updated_at","label_name","state"];
-pub const ALIAS:&str = "blogLabel";
+pub const TABLE_NAME:&str = "blog_classes";
+pub const FIELDS:[&str;5] = ["id","created_at","updated_at","classes_name","state"];
+pub const ALIAS:&str = "blogClasses";
 
-///	BlogLabelModel 文章标签
-///	table - blog_label
+///	BlogClassesModel 文章类型
+///	table - blog_classes
 ///	author: AT
-///	since: 2024-05-01 17:01:59
+///	since: 2024-05-02 11:48:20
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
-#[derive(BaseModel)]
-pub struct BlogLabelModel {
-	/// search文章标签编号 【max:20】 
+pub struct BlogClassesModel {
+	/// search文章类型编号 【max:20】 
 	#[serde(rename = "id")]
 	pub id: u64,
 	/// 创建时间 【max:20】 
@@ -25,22 +24,22 @@ pub struct BlogLabelModel {
 	/// 最后更新 【max:20】 
 	#[serde(rename = "updatedAt")]
 	pub updated_at: u64,
-	/// search标签名称 【max:20】 
-	#[serde(rename = "labelName")]
-	pub label_name: String,
+	/// search类型名称 【max:20】 
+	#[serde(rename = "classesName")]
+	pub classes_name: String,
 	/// thing状态:1@可见;2@不可见 【max:3】 
 	#[serde(rename = "state")]
 	pub state: u8,
 }
 
-impl BlogLabelModel {
+impl BlogClassesModel {
 
-    pub fn new(label_name: String, state: u8) -> BlogLabelModel {
-        BlogLabelModel{id:0, created_at: 0, updated_at: 0, label_name, state}
+    pub fn new(classes_name: String, state: u8) -> BlogClassesModel {
+        BlogClassesModel{id:0, created_at: 0, updated_at: 0, classes_name, state}
     }
 
-    pub fn new_full(id: u64, created_at: u64, updated_at: u64, label_name: String, state: u8) -> BlogLabelModel {
-        BlogLabelModel{id, created_at, updated_at, label_name, state}
+    pub fn new_full(id: u64, created_at: u64, updated_at: u64, classes_name: String, state: u8) -> BlogClassesModel {
+        BlogClassesModel{id, created_at, updated_at, classes_name, state}
     }
 
     fn set_pk(&mut self, pk: u64) {
@@ -73,12 +72,51 @@ pub fn get_field_sql(alias: &str) -> String {
 }
 
 /// pot 罐子 -> 把 mysql-row 按指定偏移 offset 装入结构体
-pub fn pot(row: Row, offset: usize) -> BlogLabelModel {
-	return BlogLabelModel::new_full(row.get(offset+0).unwrap(),row.get(offset+1).unwrap(),row.get(offset+2).unwrap(),row.get(offset+3).unwrap(),row.get(offset+4).unwrap());
+pub fn pot(row: Row, offset: usize) -> BlogClassesModel {
+	return BlogClassesModel::new_full(row.get(offset+0).unwrap(),row.get(offset+1).unwrap(),row.get(offset+2).unwrap(),row.get(offset+3).unwrap(),row.get(offset+4).unwrap());
 }
 
-/** 过程宏 #[derive(BaseModel)] -> 
-impl BaseModel for BlogLabelModel {
+///	BlogClassesJSONOut 文章类型
+///	author: AT
+///	since: 2024-05-02 11:48:20
+///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
+pub struct BlogClassesJSONOut {
+	/// search文章类型编号 【max:20】 
+	#[serde(rename = "id")]
+	pub id: u64,
+	/// 创建时间 【max:20】 
+	#[serde(rename = "createdAt")]
+	pub created_at: u64,
+	/// 最后更新 【max:20】 
+	#[serde(rename = "updatedAt")]
+	pub updated_at: u64,
+	/// search类型名称 【max:20】 
+	#[serde(rename = "classesName")]
+	pub classes_name: String,
+	/// thing状态:1@可见;2@不可见 【max:3】 
+	#[serde(rename = "state")]
+	pub state: u8,
+}
+
+///	BlogClassesJSONIn 文章类型
+///	author: AT
+///	since: 2024-05-02 11:48:20
+///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
+pub struct BlogClassesJSONIn {
+	/// search文章类型编号 【max:20】
+	#[serde(rename = "id")]
+	pub id: u64,
+	/// search类型名称 【max:20】
+	#[serde(rename = "classesName")]
+	pub classes_name: String,
+	/// thing状态:1@可见;2@不可见 【max:3】
+	#[serde(rename = "state")]
+	pub state: u8,
+}
+
+impl BaseModel for BlogClassesModel {
 
     fn get_table_name(&self) -> &str {
         return TABLE_NAME;
@@ -125,10 +163,10 @@ impl BaseModel for BlogLabelModel {
         }
 
         return (params! {
-            "created_at" => self.created_at,
-            "updated_at" => self.updated_at,
-            "user_name" => self.user_name.to_string(),
-            "state" => self.state,
+			"created_at" => self.created_at,
+			"updated_at" => self.updated_at,
+			"classes_name" => self.classes_name.to_string(),
+			"state" => self.state,
         }, columns, keys);
     }
 
@@ -143,9 +181,10 @@ impl BaseModel for BlogLabelModel {
         }
 
         return (params! {
-            "updated_at" => self.updated_at,
-            "user_name" => self.user_name.to_string(),
-            "state" => self.state,
+			"created_at" => self.created_at,
+			"updated_at" => self.updated_at,
+			"classes_name" => self.classes_name.to_string(),
+			"state" => self.state,
             "id" => self.id,
         }, columns, String::from(format!("{}=:{}",  FIELDS[0], FIELDS[0])))
     }
@@ -163,4 +202,3 @@ impl BaseModel for BlogLabelModel {
     }
 
 }
-**/
