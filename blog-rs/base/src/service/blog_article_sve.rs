@@ -1,7 +1,7 @@
 ///	blogArticleService
 ///	标准 service - 文章 - blog_article
 ///	author: AT
-///	since: 2024-05-02 15:27:33
+///	since: 2024-05-03 11:58:15
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 
 use mysql::{Result};
@@ -57,3 +57,22 @@ pub fn query_count(params: &HashMap<String, Box<dyn Any>>, condition: &[sql::Con
     };
     return Ok(i_mysql::direct(&service::get_data_source_key(), &mut call)?);
 }
+
+
+pub fn find_by_id_blog_author(id_blog_author: u64) -> Result<Option<BlogArticleModel>, Box<dyn std::error::Error>> {
+    let mut call = | tx:&mut Transaction |  -> Result<Option<BlogArticleModel>, Box<dyn std::error::Error>>  {
+        let result = blog_article_dao::find_by_id_blog_author(tx, id_blog_author);
+        return Ok(result?);
+    };
+    return Ok(i_mysql::start_tx(&service::get_data_source_key(), &mut call)?);
+}
+
+
+pub fn find_by_id_blog_classes(id_blog_classes: u64) -> Result<Option<BlogArticleModel>, Box<dyn std::error::Error>> {
+    let mut call = | tx:&mut Transaction |  -> Result<Option<BlogArticleModel>, Box<dyn std::error::Error>>  {
+        let result = blog_article_dao::find_by_id_blog_classes(tx, id_blog_classes);
+        return Ok(result?);
+    };
+    return Ok(i_mysql::start_tx(&service::get_data_source_key(), &mut call)?);
+}
+

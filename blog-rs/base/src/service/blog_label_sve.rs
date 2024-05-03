@@ -1,7 +1,7 @@
 ///	blogLabelService
 ///	标准 service - 文章标签 - blog_label
 ///	author: AT
-///	since: 2024-05-02 15:27:34
+///	since: 2024-05-03 11:58:15
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 
 use mysql::{Result};
@@ -57,3 +57,13 @@ pub fn query_count(params: &HashMap<String, Box<dyn Any>>, condition: &[sql::Con
     };
     return Ok(i_mysql::direct(&service::get_data_source_key(), &mut call)?);
 }
+
+
+pub fn find_by_label_name(label_name: String) -> Result<Option<BlogLabelModel>, Box<dyn std::error::Error>> {
+    let mut call = | tx:&mut Transaction |  -> Result<Option<BlogLabelModel>, Box<dyn std::error::Error>>  {
+        let result = blog_label_dao::find_by_label_name(tx, label_name.clone());
+        return Ok(result?);
+    };
+    return Ok(i_mysql::start_tx(&service::get_data_source_key(), &mut call)?);
+}
+

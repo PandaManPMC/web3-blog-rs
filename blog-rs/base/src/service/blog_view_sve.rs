@@ -1,7 +1,7 @@
 ///	blogViewService
 ///	标准 service - 评论 - blog_view
 ///	author: AT
-///	since: 2024-05-02 15:27:34
+///	since: 2024-05-03 11:58:15
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 
 use mysql::{Result};
@@ -57,3 +57,22 @@ pub fn query_count(params: &HashMap<String, Box<dyn Any>>, condition: &[sql::Con
     };
     return Ok(i_mysql::direct(&service::get_data_source_key(), &mut call)?);
 }
+
+
+pub fn find_by_id_blog_article(id_blog_article: u64) -> Result<Option<BlogViewModel>, Box<dyn std::error::Error>> {
+    let mut call = | tx:&mut Transaction |  -> Result<Option<BlogViewModel>, Box<dyn std::error::Error>>  {
+        let result = blog_view_dao::find_by_id_blog_article(tx, id_blog_article);
+        return Ok(result?);
+    };
+    return Ok(i_mysql::start_tx(&service::get_data_source_key(), &mut call)?);
+}
+
+
+pub fn find_by_address(address: String) -> Result<Option<BlogViewModel>, Box<dyn std::error::Error>> {
+    let mut call = | tx:&mut Transaction |  -> Result<Option<BlogViewModel>, Box<dyn std::error::Error>>  {
+        let result = blog_view_dao::find_by_address(tx, address.clone());
+        return Ok(result?);
+    };
+    return Ok(i_mysql::start_tx(&service::get_data_source_key(), &mut call)?);
+}
+

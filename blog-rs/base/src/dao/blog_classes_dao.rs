@@ -1,17 +1,17 @@
 ///	blogClassesDao
 ///	标准 DAO - 文章类型 - blog_classes
 ///	author: AT
-///	since: 2024-05-02 15:26:08
+///	since: 2024-05-03 11:47:00
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 
 use log::{debug, warn};
 use std::collections::HashMap;
 use std::any::Any;
-use r2d2_mysql::mysql::{Transaction, Value, Row};
-use r2d2_mysql::mysql::prelude::Queryable;
-use i_dao::{sql};
+use r2d2_mysql::mysql::{Transaction, Value, Row, params::Params, prelude::Queryable};
+use i_dao::{sql, dao};
 use r2d2_mysql::{MySqlConnectionManager, r2d2};
- use crate::{model::blog_classes,model::blog_classes::BlogClassesModel};
+use mysql::params;
+use crate::{model::blog_classes,model::blog_classes::BlogClassesModel};
 
 pub fn query_list(tx: &mut Transaction, condition_params: &HashMap<String, Box<dyn Any>>, condition: &[sql:: Condition]) -> Result<Vec<BlogClassesModel>, Box<dyn std::error::Error>> {
     let mut query_sql = format!("SELECT {} FROM {}", blog_classes::get_field_sql(""), blog_classes::TABLE_NAME);
@@ -123,3 +123,31 @@ pub fn find_by_id(tx: &mut Transaction, id: u64) -> Result<Option<BlogClassesMod
     let one:Option<BlogClassesModel> = lst.pop();
     return Ok(one);
 }
+
+
+pub fn  find_by_classes_name(tx: &mut Transaction, classes_name: String) -> Result<Option<BlogClassesModel>, Box<dyn std::error::Error>> {
+    let query_sql = format!("SELECT {} FROM {} WHERE classes_name = ? ORDER BY id DESC LIMIT 0,1", blog_classes::get_field_sql(""), blog_classes::TABLE_NAME);
+    let result = tx.exec_map(
+        query_sql, (classes_name,),|row: Row| blog_classes::pot(row, 0)
+    );
+    if result.is_err() {
+        warn!("b_d::blog_classes_dao::classes_name 失败！ res={:?}", result);
+        return match result {
+            Err(e) => {
+                Err(Box::new(e))
+            },
+            Ok(_) => {
+                unimplemented!()
+            },
+        };
+    }
+
+    let mut lst = result.unwrap();
+    if 0 == lst.len() {
+        return Ok(None);
+    }
+
+    let one:Option<BlogClassesModel> = lst.pop();
+    return Ok(one);
+}
+

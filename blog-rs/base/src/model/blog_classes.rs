@@ -11,7 +11,7 @@ pub const ALIAS:&str = "blogClasses";
 ///	BlogClassesModel 文章类型
 ///	table - blog_classes
 ///	author: AT
-///	since: 2024-05-02 11:48:20
+///	since: 2024-05-03 11:47:00
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogClassesModel {
@@ -78,7 +78,7 @@ pub fn pot(row: Row, offset: usize) -> BlogClassesModel {
 
 ///	BlogClassesJSONOut 文章类型
 ///	author: AT
-///	since: 2024-05-02 11:48:20
+///	since: 2024-05-03 11:47:00
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogClassesJSONOut {
@@ -101,7 +101,7 @@ pub struct BlogClassesJSONOut {
 
 ///	BlogClassesJSONIn 文章类型
 ///	author: AT
-///	since: 2024-05-02 11:48:20
+///	since: 2024-05-03 11:47:00
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogClassesJSONIn {
