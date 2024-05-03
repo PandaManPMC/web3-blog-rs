@@ -1,0 +1,4 @@
+[basics]
+env = "dev"
+port = 51080
+

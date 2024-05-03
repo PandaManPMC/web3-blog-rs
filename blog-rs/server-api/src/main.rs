@@ -5,6 +5,7 @@ use std::time::Duration;
 
 mod service;
 mod test_example;
+mod ctrl;
 
 fn main() {
 
