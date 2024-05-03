@@ -2052,7 +2052,6 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "base",
- "env_logger",
  "i_dao",
  "i_dao_proc_macro",
  "lazy_static",

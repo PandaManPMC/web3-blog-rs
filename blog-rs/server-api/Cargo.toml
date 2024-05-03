@@ -19,5 +19,4 @@ i_dao_proc_macro = "0.1.0"
 mysql = "25.0.0"
 r2d2_mysql = "24.0.0"
 lazy_static = "1.4.0"
-env_logger = "0.11.3"
 

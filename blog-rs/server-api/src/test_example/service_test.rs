@@ -1,14 +1,11 @@
 use i_dao::{i_mysql, sql};
 use log::{debug, trace};
 use r2d2_mysql::mysql::OptsBuilder;
-use env_logger::{Env, init};
 use std::time::Duration;
 use std::collections::HashMap;
 use std::any::Any;
 
 fn init_mysql() {
-    env_logger::Builder::from_env(Env::default().default_filter_or("trace")).init();
-
     base::service::set_date_source_key(String::from("mysql_db1"));
     debug!("{:?}", base::service::get_data_source_key());
 
