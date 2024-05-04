@@ -33,20 +33,30 @@ async fn main() {
         info!("env = {}", configs::get_str("basics", "env"));
         info!("port = {}", configs::get_int("basics", "port"));
 
-        let app = Router::new()
-            .route("/", get(root));
+        let mut app = Router::new();
+        app = init_router(app);
 
         info!("server = {:?}", format!("0.0.0.0:{}", configs::get_int("basics", "port")));
 
         let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{:?}", configs::get_int("basics", "port"))).await.unwrap();
         axum::serve(listener, app).await.unwrap();
     }
+
+}
+
+/// init_router 初始化路由
+fn init_router(mut router: Router) -> Router {
+    router = router.route("/", get(root));
+    router = ctrl::admin_ctrl::init_router(router);
+
+    return router;
 }
 
 async fn root() -> &'static str {
     "Hello, World!"
 }
 
+/// init_mysql 初始化 mysql
 unsafe fn init_mysql() {
     base::service::set_date_source_key(String::from("mysql_db1"));
     service::set_date_source_key(String::from("mysql_db1"));

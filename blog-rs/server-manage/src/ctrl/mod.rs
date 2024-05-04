@@ -1,1 +1,1 @@
-mod admin_ctrl;
+pub mod admin_ctrl;
