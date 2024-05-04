@@ -9,6 +9,7 @@ pub struct LoginIn {
     #[serde(rename = "userPwd")]
     pub user_pwd: String,
     /// 谷歌验证器 【max:64】
+    #[serde(default)]
     #[serde(rename = "googleAuthCode")]
     pub google_auth_code: String,
 }
