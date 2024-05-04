@@ -6,3 +6,4 @@ bin/
 *.pdb
 target/*
 target
+*.log

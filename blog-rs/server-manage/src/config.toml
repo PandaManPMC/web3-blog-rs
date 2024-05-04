@@ -2,3 +2,12 @@
 env = "dev"
 port = 51080
 
+[mysql_db1]
+host = "34.150.97.232"
+port = 23306
+dbname = "rs_blog"
+username = "rs_blog"
+password = "abcd#1890dda1"
+max_size = 20
+max_idle = 3
+connect_timeout = 50
