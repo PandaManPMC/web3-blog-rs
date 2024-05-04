@@ -6,11 +6,18 @@ use plier;
 use r2d2_mysql::mysql::OptsBuilder;
 use std::time::Duration;
 use log::info;
+use axum::{
+    routing::{get, post},
+    http::StatusCode,
+    Json, Router,
+};
+use serde::{Deserialize, Serialize};
 
 mod ctrl;
 mod service;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let p = plier::files::get_current_dir_str();
     println!("{:?}", p);
 
@@ -23,12 +30,21 @@ fn main() {
 
         init_mysql();
 
-        println!("env = {}", configs::get_str("basics", "env"));
-        println!("port = {}", configs::get_int("basics", "port"));
+        info!("env = {}", configs::get_str("basics", "env"));
+        info!("port = {}", configs::get_int("basics", "port"));
 
+        let app = Router::new()
+            .route("/", get(root));
+
+        info!("server = {:?}", format!("0.0.0.0:{}", configs::get_int("basics", "port")));
+
+        let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{:?}", configs::get_int("basics", "port"))).await.unwrap();
+        axum::serve(listener, app).await.unwrap();
     }
+}
 
-
+async fn root() -> &'static str {
+    "Hello, World!"
 }
 
 unsafe fn init_mysql() {
