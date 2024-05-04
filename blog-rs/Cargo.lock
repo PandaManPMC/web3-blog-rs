@@ -2339,6 +2339,7 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "base",
+ "http-body-util",
  "i_dao",
  "i_dao_proc_macro",
  "iconf",

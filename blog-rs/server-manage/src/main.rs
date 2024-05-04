@@ -9,6 +9,7 @@ use axum::{
     routing::{get, post},
     http::StatusCode,
     Json, Router,
+    middleware
 };
 use serde::{Deserialize, Serialize};
 
@@ -47,8 +48,9 @@ async fn main() {
 /// init_router 初始化路由
 fn init_router(mut router: Router) -> Router {
     router = router.route("/", get(root));
-    router = ctrl::admin_ctrl::init_router(router);
-
+    router = ctrl::admin::init_router(router);
+    router = ctrl::article::init_router(router);
+    router  = router.layer(middleware::from_fn(ctrl::interceptor::print_request_body));
     return router;
 }
 

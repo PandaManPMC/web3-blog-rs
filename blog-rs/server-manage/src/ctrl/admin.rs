@@ -9,7 +9,7 @@ use crate::bean;
 
 
 pub fn init_router(mut router: Router) -> Router {
-    router = router.route("/login", post(login));
+    router = router.route("/admin/login", post(login));
     return router;
 }
 
