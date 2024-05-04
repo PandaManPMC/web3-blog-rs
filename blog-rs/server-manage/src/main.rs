@@ -1,11 +1,10 @@
 use i_dao::i_mysql;
 use iconf::configs;
-use log::warn;
+use log::{warn,info};
 use std::env;
 use plier;
 use r2d2_mysql::mysql::OptsBuilder;
 use std::time::Duration;
-use log::info;
 use axum::{
     routing::{get, post},
     http::StatusCode,
@@ -15,6 +14,7 @@ use serde::{Deserialize, Serialize};
 
 mod ctrl;
 mod service;
+mod bean;
 
 #[tokio::main]
 async fn main() {
