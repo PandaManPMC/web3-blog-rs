@@ -1,0 +1,11 @@
+[package]
+name = "common"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+plier = {path = "../../../plier-rs"}
+axum = "0.7.5"
+hyper = "1.3.1"
+tokio = { version = "1.37.0", features = ["full"] }
+log = "0.4.21"

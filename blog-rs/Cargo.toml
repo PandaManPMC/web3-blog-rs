@@ -1,4 +1,4 @@
-workspace = { members = [ "base","server-api", "server-manage"] }
+workspace = { members = [ "base", "common","server-api", "server-manage"] }
 [package]
 name = "blog-rs"
 version = "0.1.0"

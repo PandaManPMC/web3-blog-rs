@@ -498,6 +498,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "acbf1af155f9b9ef647e42cdc158db4b64a1b61f743629225fde6f3e0be2a7c7"
 
 [[package]]
+name = "common"
+version = "0.1.0"
+dependencies = [
+ "axum",
+ "hyper",
+ "log",
+ "plier",
+ "tokio",
+]
+
+[[package]]
 name = "core-foundation"
 version = "0.9.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2339,7 +2350,9 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "base",
+ "common",
  "http-body-util",
+ "hyper",
  "i_dao",
  "i_dao_proc_macro",
  "iconf",

@@ -2,22 +2,39 @@ use axum::{
     async_trait,
     body::{Body, Bytes},
     extract::{FromRequest, Request},
-    http::StatusCode,
+    http::{StatusCode, header::HeaderMap, header::HeaderValue},
     middleware::{self, Next},
     response::{IntoResponse, Response},
     routing::post,
     Router,
+    extract::ConnectInfo,
 };
+use axum::http::header;
+use std::net::SocketAddr;
 use http_body_util::BodyExt;
+use log::info;
+
 
 pub async fn print_request_body(request: Request, next: Next) -> Result<impl IntoResponse, Response> {
+
+    let xip = common::net::get_request_ip(&request);
+    info!("请求者 ip={:?}", xip);
+
     let request = buffer_request_body(request).await?;
 
     Ok(next.run(request).await)
 }
 
+
+
+
 async fn buffer_request_body(request: Request) -> Result<Request, Response> {
+
+
     let (parts, body) = request.into_parts();
+
+
+    info!("有新的请求");
 
     let bytes = body
         .collect()

@@ -12,6 +12,7 @@ use axum::{
     middleware
 };
 use serde::{Deserialize, Serialize};
+use std::net::SocketAddr;
 
 mod ctrl;
 mod service;
@@ -25,9 +26,9 @@ async fn main() {
     let file_path = String::from("server-manage/src/config.toml");
 
     unsafe {
-        let res = configs::init(file_path);
+        let res = configs::init(file_path.clone());
         log4rs::init_file("server-manage/src/log4rs.yaml", Default::default()).unwrap();
-        info!("log4rs::init_file");
+        info!("log4rs::init_file {:?}", file_path.clone());
 
         init_mysql();
 
@@ -40,7 +41,7 @@ async fn main() {
         info!("server = {:?}", format!("0.0.0.0:{}", configs::get_int("basics", "port")));
 
         let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{:?}", configs::get_int("basics", "port"))).await.unwrap();
-        axum::serve(listener, app).await.unwrap();
+        axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>()).await.unwrap();
     }
 
 }
@@ -51,6 +52,7 @@ fn init_router(mut router: Router) -> Router {
     router = ctrl::admin::init_router(router);
     router = ctrl::article::init_router(router);
     router  = router.layer(middleware::from_fn(ctrl::interceptor::print_request_body));
+
     return router;
 }
 
