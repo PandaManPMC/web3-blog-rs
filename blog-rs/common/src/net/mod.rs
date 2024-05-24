@@ -1,8 +1,10 @@
 use std::net::SocketAddr;
 use axum::extract::{ConnectInfo, Request};
+use axum::http::HeaderMap;
 use log::trace;
 
-pub fn get_request_ip(request: &Request) -> String {
+pub fn get_request_ip(request: &mut Request) -> String {
+    request.headers_mut().insert("x_client_real_ip", "".to_string().parse().unwrap());
 
     fn get_ip  (request: &Request) -> String {
         let head = request.headers().clone();
@@ -43,8 +45,19 @@ pub fn get_request_ip(request: &Request) -> String {
 
     let xip = get_ip(request);
     if let Some(index) = xip.find(":") {
-        return xip[0..index].to_string();
+        let ip = xip[0..index].to_string();
+        request.headers_mut().insert("x_client_real_ip", ip.parse().unwrap());
+        return ip;
     }
 
+    request.headers_mut().insert("x_client_real_ip", xip.parse().unwrap());
     return xip;
+}
+
+pub fn get_client_real_ip(headers: &HeaderMap) -> String {
+    let real_ip = headers.get("x_client_real_ip");
+    if let Some(x) = real_ip {
+        return x.to_str().unwrap().to_string();
+    }
+    return "".to_string();
 }

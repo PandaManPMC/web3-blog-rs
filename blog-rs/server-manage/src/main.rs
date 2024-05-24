@@ -57,7 +57,7 @@ fn init_router(mut router: Router) -> Router {
 }
 
 async fn root() -> &'static str {
-    "Hello, World!"
+    "web3 blog by rust"
 }
 
 /// init_mysql 初始化 mysql
