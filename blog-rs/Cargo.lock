@@ -505,6 +505,8 @@ dependencies = [
  "hyper",
  "log",
  "plier",
+ "serde",
+ "serde_json",
  "tokio",
 ]
 
