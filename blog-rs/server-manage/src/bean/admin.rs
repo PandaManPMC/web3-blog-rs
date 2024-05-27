@@ -22,4 +22,7 @@ pub struct LoginOut {
     /// search笔名 【max:20】
     #[serde(rename = "penName")]
     pub pen_name: String,
+    /// 同行凭证
+    #[serde(rename = "userToken")]
+    pub user_token: String,
 }

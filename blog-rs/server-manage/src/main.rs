@@ -1,6 +1,6 @@
 use i_dao::i_mysql;
 use iconf::configs;
-use log::{warn,info};
+use log::{warn, info, error};
 use std::env;
 use plier;
 use r2d2_mysql::mysql::OptsBuilder;
@@ -40,10 +40,45 @@ async fn main() {
 
         info!("server = {:?}", format!("0.0.0.0:{}", configs::get_int("basics", "port")));
 
+        init_author();
+
         let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{:?}", configs::get_int("basics", "port"))).await.unwrap();
         axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>()).await.unwrap();
     }
 
+}
+
+unsafe fn init_author() {
+    let username = configs::get_str("author", "username");
+    let user_pwd = configs::get_str("author", "userpwd");
+    let pen_name = configs::get_str("author", "penname");
+
+
+    let d_au = base::service::blog_author_sve::find_by_user_name(username.clone());
+    if d_au.is_err() {
+        error!("find author error by username = {:?}", username);
+        return;
+    }
+
+    let u = d_au.unwrap();
+
+    if let Some(a) = u {
+        info!("author = {:?} 已存在", a.pen_name);
+        return;
+    }
+
+    // 不存在作者，创建
+    let mut author = base::model::blog_author::BlogAuthorModel::new(
+        pen_name, username,
+        plier::md::sha256(user_pwd), "".to_string());
+
+    let res = base::service::blog_author_sve::add(&mut author);
+    if res.is_err() {
+        warn!("创建默认作者失败！");
+        return;
+    }
+
+    info!("作者={:?}-{:?}，创建完成。", author.pen_name, author.id);
 }
 
 /// init_router 初始化路由
