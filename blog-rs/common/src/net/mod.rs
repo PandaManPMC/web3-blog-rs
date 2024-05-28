@@ -6,10 +6,9 @@ use serde::{Deserialize, Serialize};
 
 pub mod rsp;
 pub mod interceptor;
-pub mod app_err;
 
 pub fn get_request_ip(request: &mut Request) -> String {
-    request.headers_mut().insert("x_client_real_ip", "".to_string().parse().unwrap());
+    request.headers_mut().insert("x-client-real_ip", "".to_string().parse().unwrap());
 
     fn get_ip  (request: &Request) -> String {
         let head = request.headers().clone();
@@ -51,11 +50,11 @@ pub fn get_request_ip(request: &mut Request) -> String {
     let xip = get_ip(request);
     if let Some(index) = xip.find(":") {
         let ip = xip[0..index].to_string();
-        request.headers_mut().insert("x_client_real_ip", ip.parse().unwrap());
+        request.headers_mut().insert("x-client-real-ip", ip.parse().unwrap());
         return ip;
     }
 
-    request.headers_mut().insert("x_client_real_ip", xip.parse().unwrap());
+    request.headers_mut().insert("x-client-real-ip", xip.parse().unwrap());
     return xip;
 }
 
@@ -67,3 +66,10 @@ pub fn get_client_real_ip(headers: &HeaderMap) -> String {
     return "".to_string();
 }
 
+pub fn get_head_str(headers: &HeaderMap, key: &str) -> String {
+    let h = headers.get(key);
+    if let Some(x) = h {
+        return x.to_str().unwrap().to_string();
+    }
+    return "".to_string();
+}

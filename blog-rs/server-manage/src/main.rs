@@ -53,8 +53,8 @@ fn init_router(mut router: Router) -> Router {
     router = router.route("/", get(root));
     router = ctrl::admin::init_router(router);
     router = ctrl::article::init_router(router);
-    router  = router.layer(middleware::from_fn(ctrl::interceptor::print_request_body));
     router = router.layer(middleware::from_fn(common::net::interceptor::error_handling));
+    router  = router.layer(middleware::from_fn(ctrl::interceptor::app));
     // router.recover(ctrl::handle_error::custom_error_handler);
     return router;
 }
