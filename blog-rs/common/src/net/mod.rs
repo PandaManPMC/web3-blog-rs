@@ -2,8 +2,11 @@ use std::net::SocketAddr;
 use axum::extract::{ConnectInfo, Request};
 use axum::http::HeaderMap;
 use log::trace;
+use serde::{Deserialize, Serialize};
 
 pub mod rsp;
+pub mod interceptor;
+pub mod app_err;
 
 pub fn get_request_ip(request: &mut Request) -> String {
     request.headers_mut().insert("x_client_real_ip", "".to_string().parse().unwrap());
@@ -63,3 +66,4 @@ pub fn get_client_real_ip(headers: &HeaderMap) -> String {
     }
     return "".to_string();
 }
+

@@ -99,3 +99,7 @@ impl<T> Rsp<T> {
         }
     }
 }
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
+pub struct Default {
+}

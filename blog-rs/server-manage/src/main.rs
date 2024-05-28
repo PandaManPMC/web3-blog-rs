@@ -54,7 +54,7 @@ fn init_router(mut router: Router) -> Router {
     router = ctrl::admin::init_router(router);
     router = ctrl::article::init_router(router);
     router  = router.layer(middleware::from_fn(ctrl::interceptor::print_request_body));
-    router = router.layer(middleware::from_fn(ctrl::handle_error::handle_errors));
+    router = router.layer(middleware::from_fn(common::net::interceptor::error_handling));
     // router.recover(ctrl::handle_error::custom_error_handler);
     return router;
 }
