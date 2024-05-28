@@ -48,6 +48,43 @@ async fn main() {
 
 }
 
+/// init_router 初始化路由
+fn init_router(mut router: Router) -> Router {
+    router = router.route("/", get(root));
+    router = ctrl::admin::init_router(router);
+    router = ctrl::article::init_router(router);
+    router  = router.layer(middleware::from_fn(ctrl::interceptor::print_request_body));
+    router = router.layer(middleware::from_fn(ctrl::handle_error::handle_errors));
+    // router.recover(ctrl::handle_error::custom_error_handler);
+    return router;
+}
+
+async fn root() -> &'static str {
+    "web3 blog by rust"
+}
+
+/// init_mysql 初始化 mysql
+unsafe fn init_mysql() {
+    base::service::set_date_source_key(String::from("mysql_db1"));
+    service::set_date_source_key(String::from("mysql_db1"));
+
+    let opts = OptsBuilder::new()
+        .ip_or_hostname(Some(configs::get_str("mysql_db1", "host")))
+        .user(Some(configs::get_str("mysql_db1", "dbname")))
+        .pass(Some(configs::get_str("mysql_db1", "password")))
+        .db_name(Some(configs::get_str("mysql_db1", "dbname")))
+        .tcp_port(configs::get_int("mysql_db1", "port") as u16)
+        .tcp_connect_timeout(Some(Duration::from_secs(configs::get_int("mysql_db1", "connect_timeout").try_into().unwrap())));
+
+    i_mysql::init(base::service::get_data_source_key(), opts, configs::get_int("mysql_db1", "max_size") as u32, configs::get_int("mysql_db1", "max_idle") as u32);
+
+    let conn = i_mysql::get_conn(&base::service::get_data_source_key());
+    if conn.is_err() {
+        warn!("init_mysql {:?}", conn);
+        panic!("init_mysql");
+    }
+}
+
 unsafe fn init_author() {
     let username = configs::get_str("author", "username");
     let user_pwd = configs::get_str("author", "userpwd");
@@ -79,40 +116,4 @@ unsafe fn init_author() {
     }
 
     info!("作者={:?}-{:?}，创建完成。", author.pen_name, author.id);
-}
-
-/// init_router 初始化路由
-fn init_router(mut router: Router) -> Router {
-    router = router.route("/", get(root));
-    router = ctrl::admin::init_router(router);
-    router = ctrl::article::init_router(router);
-    router  = router.layer(middleware::from_fn(ctrl::interceptor::print_request_body));
-
-    return router;
-}
-
-async fn root() -> &'static str {
-    "web3 blog by rust"
-}
-
-/// init_mysql 初始化 mysql
-unsafe fn init_mysql() {
-    base::service::set_date_source_key(String::from("mysql_db1"));
-    service::set_date_source_key(String::from("mysql_db1"));
-
-    let opts = OptsBuilder::new()
-        .ip_or_hostname(Some(configs::get_str("mysql_db1", "host")))
-        .user(Some(configs::get_str("mysql_db1", "dbname")))
-        .pass(Some(configs::get_str("mysql_db1", "password")))
-        .db_name(Some(configs::get_str("mysql_db1", "dbname")))
-        .tcp_port(configs::get_int("mysql_db1", "port") as u16)
-        .tcp_connect_timeout(Some(Duration::from_secs(configs::get_int("mysql_db1", "connect_timeout").try_into().unwrap())));
-
-    i_mysql::init(base::service::get_data_source_key(), opts, configs::get_int("mysql_db1", "max_size") as u32, configs::get_int("mysql_db1", "max_idle") as u32);
-
-    let conn = i_mysql::get_conn(&base::service::get_data_source_key());
-    if conn.is_err() {
-        warn!("init_mysql {:?}", conn);
-        panic!("init_mysql");
-    }
 }
