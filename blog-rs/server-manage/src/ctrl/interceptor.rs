@@ -7,6 +7,8 @@ use log::{info, trace};
 use plier;
 use crate::bean;
 
+pub const WHITE_LIST_URL:[&str;2] = ["/admin/login", "/admin/login"];
+
 pub async fn app(mut request: Request, next: Next) -> Result<impl IntoResponse, Response> {
     let uri = request.uri().clone();
 
@@ -21,6 +23,22 @@ pub async fn app(mut request: Request, next: Next) -> Result<impl IntoResponse, 
     tracing::info!("访问者 uid {:?} ip {:?} path {:?} user_token {:?}",uuid, xip, uri.path(), user_token);
 
     let request = buffer_request_body(request).await?;
+
+    // 不需要鉴权的 URL
+    for v in WHITE_LIST_URL {
+        if v == uri.path() {
+            let res = next.run(request).await;
+            tracing::info!("访问者 uid {} 耗时 {} ", uuid, plier::time::unix_second() - now);
+            return Ok(res)
+        }
+    }
+
+    // 进行鉴权
+    if let Some(x) = user_token {
+        let ut = x.to_str().unwrap().to_string();
+
+
+    }
 
     let res = next.run(request).await;
     tracing::info!("访问者 uid {} 耗时 {} ", uuid, plier::time::unix_second() - now);
