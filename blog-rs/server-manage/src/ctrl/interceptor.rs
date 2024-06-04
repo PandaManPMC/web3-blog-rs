@@ -1,15 +1,21 @@
-use axum::{async_trait, body::{Body, Bytes}, extract::{FromRequest, Request}, http::{StatusCode, header::HeaderMap, header::HeaderValue}, middleware::{self, Next}, response::{IntoResponse, Response}, routing::post, Router, extract::ConnectInfo, Json};
+use axum::{body::{Body, Bytes}, extract::{FromRequest, Request},
+           http::{StatusCode, header::HeaderMap, header::HeaderValue},
+           middleware::{self, Next}, response::{IntoResponse, Response},
+           routing::post, Router, extract::ConnectInfo, Json,BoxError};
 use axum::http::header;
 use std::net::SocketAddr;
 use http_body_util::BodyExt;
 use hyper::body::Buf;
 use log::{info, trace};
 use plier;
+use common::net::rsp;
+use common::net::rsp::Rsp;
 use crate::bean;
 
 pub const WHITE_LIST_URL:[&str;2] = ["/admin/login", "/admin/login"];
 
-pub async fn app(mut request: Request, next: Next) -> Result<impl IntoResponse, Response> {
+
+pub async fn app(mut request: Request, next: Next) -> Result<Response, Json<Rsp<rsp::Default>>> {
     let uri = request.uri().clone();
 
     let now = plier::time::unix_second();
@@ -20,30 +26,94 @@ pub async fn app(mut request: Request, next: Next) -> Result<impl IntoResponse, 
     let xip = common::net::get_request_ip(&mut request);
     let user_token = request.headers().get("userToken").cloned();
 
-    tracing::info!("访问者 uid {:?} ip {:?} path {:?} user_token {:?}",uuid, xip, uri.path(), user_token);
+    tracing::info!("request uid {:?} ip {:?} path {:?} user_token {:?}",uuid, xip, uri.path(), user_token);
 
-    let req = buffer_request_body(request).await?;
+    let req = buffer_request_body(request).await.unwrap();
 
-    // 不需要鉴权的 URL
+
     for v in WHITE_LIST_URL {
         if v == uri.path() {
             let res = next.run(req).await;
-            tracing::info!("访问者 uid {} 耗时 {} ", uuid, plier::time::unix_second() - now);
+            tracing::info!("request uid {} time {} ", uuid, plier::time::unix_second() - now);
             return Ok(res)
         }
     }
 
-    // 进行鉴权
     if let Some(x) = user_token {
         let ut = x.to_str().unwrap().to_string();
+        let res = common::cache::member_rds::get_user_by_token(ut).await;
+        if res.is_err() {
+            tracing::error!("get_user_by_token：{:?}", res);
+            return Err(Json(Rsp::<rsp::Default>::not_login()))
+        }
 
+        let member = res.unwrap();
+        if let Some(u) = member {
 
+        } else{
+            return Err(Json(Rsp::<rsp::Default>::not_login()))
+        }
+    }else{
+        return Err(Json(Rsp::<rsp::Default>::not_login()))
     }
 
     let res = next.run(req).await;
-    tracing::info!("访问者 uid {} 耗时 {} ", uuid, plier::time::unix_second() - now);
+    tracing::info!("request uid {} time {} ", uuid, plier::time::unix_second() - now);
     Ok(res)
 }
+
+// pub async fn app(mut request: Request, next: Next) -> Result<Response, Json<Rsp<rsp::Default>>> {
+//     let uri = request.uri().clone();
+//
+//     let now = plier::time::unix_second();
+//     let uuid = plier::uid::uid_v4();
+//     request.headers_mut().insert("x-uuid", uuid.parse().unwrap());
+//     request.headers_mut().insert("x-begin-time", now.into());
+//
+//     let xip = common::net::get_request_ip(&mut request);
+//     let user_token = request.headers().get("userToken").cloned();
+//
+//     tracing::info!("访问者 uid {:?} ip {:?} path {:?} user_token {:?}",uuid, xip, uri.path(), user_token);
+//
+//     let req = buffer_request_body(request).await.unwrap();
+//
+//
+//     // 不需要鉴权的 URL
+//     for v in WHITE_LIST_URL {
+//         if v == uri.path() {
+//             let res = next.run(req).await;
+//             tracing::info!("访问者 uid {} 耗时 {} ", uuid, plier::time::unix_second() - now);
+//             return Ok(res)
+//         }
+//     }
+//
+//     // 进行鉴权
+//     if let Some(x) = user_token {
+//         let ut = x.to_str().unwrap().to_string();
+//         let res = common::cache::member_rds::get_user_by_token(ut).await;
+//         if res.is_err() {
+//             // 无访问权限
+//             tracing::error!("get_user_by_token：{:?}", res);
+//             return Err(Json(Rsp::<rsp::Default>::not_login()))
+//         }
+//
+//         let member = res.unwrap();
+//         if let Some(u) = member{
+//             // 有登录，将相关参数写入头
+//
+//         } else{
+//             // 无访问权限
+//             return Err(Json(Rsp::<rsp::Default>::not_login()))
+//         }
+//     }else{
+//         // 无访问权限
+//         return Err(Json(Rsp::<rsp::Default>::not_login()))
+//     }
+//
+//     let res = next.run(req).await;
+//     tracing::info!("访问者 uid {} 耗时 {} ", uuid, plier::time::unix_second() - now);
+//     Ok(res)
+// }
 
 async fn buffer_request_body(request: Request) -> Result<Request, Response> {
     let (parts, body) = request.into_parts();
@@ -58,4 +128,3 @@ async fn buffer_request_body(request: Request) -> Result<Request, Response> {
 
     Ok(Request::from_parts(parts, Body::from(bytes)))
 }
-

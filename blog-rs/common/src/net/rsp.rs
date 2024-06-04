@@ -83,6 +83,14 @@ impl<T> Rsp<T> {
         }
     }
 
+    pub fn not_login() -> Self {
+        Rsp {
+            code: CODE_NOT_LOGIN,
+            tip: "defend".to_string(),
+            data: None,
+        }
+    }
+
     pub fn err(tip: String) -> Self {
         Rsp {
             code: CODE_ERROR,
