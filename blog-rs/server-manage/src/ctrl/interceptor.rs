@@ -18,16 +18,16 @@ pub async fn app(mut request: Request, next: Next) -> Result<impl IntoResponse, 
     request.headers_mut().insert("x-begin-time", now.into());
 
     let xip = common::net::get_request_ip(&mut request);
-    let user_token = request.headers().get("userToken");
+    let user_token = request.headers().get("userToken").cloned();
 
     tracing::info!("访问者 uid {:?} ip {:?} path {:?} user_token {:?}",uuid, xip, uri.path(), user_token);
 
-    let request = buffer_request_body(request).await?;
+    let req = buffer_request_body(request).await?;
 
     // 不需要鉴权的 URL
     for v in WHITE_LIST_URL {
         if v == uri.path() {
-            let res = next.run(request).await;
+            let res = next.run(req).await;
             tracing::info!("访问者 uid {} 耗时 {} ", uuid, plier::time::unix_second() - now);
             return Ok(res)
         }
@@ -40,7 +40,7 @@ pub async fn app(mut request: Request, next: Next) -> Result<impl IntoResponse, 
 
     }
 
-    let res = next.run(request).await;
+    let res = next.run(req).await;
     tracing::info!("访问者 uid {} 耗时 {} ", uuid, plier::time::unix_second() - now);
     Ok(res)
 }

@@ -13,6 +13,7 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
+use plier::rds;
 
 mod ctrl;
 mod service;
@@ -30,10 +31,11 @@ async fn main() {
         log4rs::init_file("server-manage/src/log4rs.yaml", Default::default()).unwrap();
         info!("log4rs::init_file {:?}", file_path.clone());
 
-        init_mysql();
-
         info!("env = {}", configs::get_str("basics", "env"));
         info!("port = {}", configs::get_int("basics", "port"));
+
+        init_mysql();
+        init_rds().await;
 
         let mut app = Router::new();
         app = init_router(app);
@@ -46,6 +48,21 @@ async fn main() {
         axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>()).await.unwrap();
     }
 
+}
+
+async fn init_rds(){
+    let url = "redis://rust1:rust1_abc1234@34.118.182.28:26379/0";
+    let size: usize = 2;
+
+    let res_rds = rds::init_rds(url, size).await;
+    info!("res_rds={:?}", res_rds);
+
+    let rds = res_rds.unwrap();
+
+    common::cache::member_rds::initialize_global_object(rds).await;
+
+    let res = common::cache::member_rds::get_user_by_token("abc".to_string()).await;
+    info!("init_rds get_user_by_token={:?}", res);
 }
 
 /// init_router 初始化路由
