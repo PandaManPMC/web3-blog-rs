@@ -5,11 +5,42 @@ use once_cell::sync::OnceCell;
 use plier::rds;
 use serde::{Deserialize, Serialize};
 use fred::prelude::*;
+use log::error;
+use::std::collections::HashMap;
+use std::sync::Arc;
 
 static RDS: OnceCell<RwLock<rds::RDS>> = OnceCell::new();
 
 pub async fn initialize_global_object(r: rds::RDS) {
     let _ = RDS.set(RwLock::new(r));
+}
+
+lazy_static::lazy_static! {
+    static ref USERCACHE: RwLock<HashMap<String, BlogAuthor>> = RwLock::new({
+        let map = HashMap::new();
+        map
+    });
+}
+
+fn set_user_cache(user_token :String, user : BlogAuthor) {
+    let mut mw = USERCACHE.write().unwrap();
+    mw.insert(user_token, user);
+}
+
+fn get_user_cache(user_token :String) -> Option<BlogAuthor> {
+    let mut mr = USERCACHE.read().unwrap();
+    let ds = mr.get(&user_token);
+
+    if ds.is_none(){
+        return None;
+    }
+
+    let d = ds.unwrap();
+    return Some(d.clone());
+}
+
+pub fn get_user_by_ut(user_token: String) -> Option<BlogAuthor> {
+    return get_user_cache(user_token);
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
@@ -27,18 +58,6 @@ pub struct BlogAuthor {
     #[serde(rename = "userName")]
     pub user_name: String,
 }
-
-// pub async fn get_user_by_token(user_token: String) -> Result<Option<BlogAuthor>, BoxError> {
-//     let rd = RDS.get().expect("RDS is not initialized").read().unwrap();
-//     let res = rd.get_string(&format!("UT:{}", user_token)).await?;
-//
-//     if "" == res {
-//         return Ok(None);
-//     }
-//
-//     let deserialized: BlogAuthor = serde_json::from_str(&res).unwrap();
-//     return Ok(Some(deserialized));
-// }
 
 pub async fn get_user_by_token(user_token: String) -> Result<Option<BlogAuthor>, RedisError> {
     let rd = RDS.get().expect("RDS is not initialized").read().unwrap();

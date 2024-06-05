@@ -41,18 +41,26 @@ pub async fn app(mut request: Request, next: Next) -> Result<Response, Json<Rsp<
 
     if let Some(x) = user_token {
         let ut = x.to_str().unwrap().to_string();
-        let res = common::cache::member_rds::get_user_by_token(ut).await;
-        if res.is_err() {
-            tracing::error!("get_user_by_token：{:?}", res);
+        let user_res = common::cache::member_rds::get_user_by_ut(ut);
+        if let Some(u) = user_res {
+
+        } else {
             return Err(Json(Rsp::<rsp::Default>::not_login()))
         }
 
-        let member = res.unwrap();
-        if let Some(u) = member {
+        // let user_res = common::cache::member_rds::get_user_by_token(ut).await;
 
-        } else{
-            return Err(Json(Rsp::<rsp::Default>::not_login()))
-        }
+        // if user_res.is_err() {
+        //     tracing::error!("get_user_by_token：{:?}", user_res);
+        //     return Err(Json(Rsp::<rsp::Default>::not_login()))
+        // }
+        //
+        // let user = user_res.unwrap();
+        // if let Some(u) = user {
+        //
+        // } else{
+        //     return Err(Json(Rsp::<rsp::Default>::not_login()))
+        // }
     }else{
         return Err(Json(Rsp::<rsp::Default>::not_login()))
     }
@@ -128,3 +136,4 @@ async fn buffer_request_body(request: Request) -> Result<Request, Response> {
 
     Ok(Request::from_parts(parts, Body::from(bytes)))
 }
+
