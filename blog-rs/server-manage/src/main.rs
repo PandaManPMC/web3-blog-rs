@@ -18,6 +18,7 @@ use plier::rds;
 mod ctrl;
 mod service;
 mod bean;
+mod tool;
 
 #[tokio::main]
 async fn main() {

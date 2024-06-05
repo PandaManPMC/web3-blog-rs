@@ -39,6 +39,8 @@ async fn login(
     let author = author_res.unwrap();
 
     if let Some(au) = author {
+        let ac = au.clone();
+
         let pwd = plier::md::sha256(payload.user_pwd);
         if pwd != au.user_pwd {
             return Json(common::net::rsp::Rsp::<bean::admin::LoginOut>::fail("username or password incorrect".to_string()))
@@ -53,11 +55,15 @@ async fn login(
 
         }
 
+        let ut = common::token::generate_user_token(au.user_name.clone());
+        common::cache::member_rds::set_user_by_ut(ut.clone(), ac);
+
         let out = bean::admin::LoginOut {
             id: au.id,
             pen_name: au.pen_name,
-            user_token: common::token::generate_user_token(au.user_name),
+            user_token: ut,
         };
+
 
         let rsp = common::net::rsp::Rsp::ok(out);
         Json(rsp)

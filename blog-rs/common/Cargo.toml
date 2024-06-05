@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+base = { path = "../base" }
 plier = {path = "../../../plier-rs"}
 axum = "0.7.5"
 hyper = "1.3.1"
@@ -18,3 +19,4 @@ tracing-subscriber = "0.3.18"
 lazy_static = "1.4.0"
 once_cell = "1.5"
 fred = "9.0.1"
+

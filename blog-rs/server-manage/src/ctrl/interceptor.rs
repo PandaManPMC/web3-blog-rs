@@ -8,12 +8,12 @@ use http_body_util::BodyExt;
 use hyper::body::Buf;
 use log::{info, trace};
 use plier;
+use base::model::blog_author::BlogAuthorModel;
 use common::net::rsp;
 use common::net::rsp::Rsp;
-use crate::bean;
+use crate::{bean, tool};
 
 pub const WHITE_LIST_URL:[&str;2] = ["/admin/login", "/admin/login"];
-
 
 pub async fn app(mut request: Request, next: Next) -> Result<Response, Json<Rsp<rsp::Default>>> {
     let uri = request.uri().clone();
@@ -24,11 +24,11 @@ pub async fn app(mut request: Request, next: Next) -> Result<Response, Json<Rsp<
     request.headers_mut().insert("x-begin-time", now.into());
 
     let xip = common::net::get_request_ip(&mut request);
-    let user_token = request.headers().get("userToken").cloned();
+    let user_token = request.headers().get("x-user-token").cloned();
 
     tracing::info!("request uid {:?} ip {:?} path {:?} user_token {:?}",uuid, xip, uri.path(), user_token);
 
-    let req = buffer_request_body(request).await.unwrap();
+    let mut req = buffer_request_body(request).await.unwrap();
 
 
     for v in WHITE_LIST_URL {
@@ -43,7 +43,7 @@ pub async fn app(mut request: Request, next: Next) -> Result<Response, Json<Rsp<
         let ut = x.to_str().unwrap().to_string();
         let user_res = common::cache::member_rds::get_user_by_ut(ut);
         if let Some(u) = user_res {
-
+            tool::req::set_user_to_req(&mut req, u);
         } else {
             return Err(Json(Rsp::<rsp::Default>::not_login()))
         }
@@ -57,7 +57,7 @@ pub async fn app(mut request: Request, next: Next) -> Result<Response, Json<Rsp<
         //
         // let user = user_res.unwrap();
         // if let Some(u) = user {
-        //
+        //      set_user_to_req(&mut req, u);
         // } else{
         //     return Err(Json(Rsp::<rsp::Default>::not_login()))
         // }
@@ -108,7 +108,7 @@ pub async fn app(mut request: Request, next: Next) -> Result<Response, Json<Rsp<
 //         let member = res.unwrap();
 //         if let Some(u) = member{
 //             // 有登录，将相关参数写入头
-//
+//             set_user_to_req(&mut req, u);
 //         } else{
 //             // 无访问权限
 //             return Err(Json(Rsp::<rsp::Default>::not_login()))
