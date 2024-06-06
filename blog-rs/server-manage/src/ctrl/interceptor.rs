@@ -25,7 +25,7 @@ pub async fn app(mut request: Request, next: Next) -> Result<Response, Json<Rsp<
     request.headers_mut().insert("x-begin-time", now.into());
 
     let xip = common::net::get_request_ip(&mut request);
-    let user_token = request.headers().get("x-user-token").cloned();
+    let user_token = request.headers().get(tool::X_USER_TOKEN).cloned();
 
     tracing::info!("request uid {:?} ip {:?} path {:?} user_token {:?}",uuid, xip, uri.path(), user_token);
 

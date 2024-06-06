@@ -2,19 +2,19 @@ use std::any::Any;
 use std::collections::HashMap;
 use axum::{
     routing::{get, post},
-    http::StatusCode,
     Json, Router,
     extract::Query,
+    http::{StatusCode, header::HeaderMap, header::HeaderValue},
 };
-use log::debug;
-use crate::bean;
+use log::{debug, info};
+use crate::{bean, tool};
 use i_dao::sql;
 use base::model::blog_article::BlogArticleModel;
 use base::model::blog_classes::BlogClassesModel;
 use base::model::blog_label::BlogLabelModel;
 
 pub fn init_router(mut router: Router) -> Router {
-    // router = router.route("/article/publish", post(publish));
+    router = router.route("/article/publish", post(publish));
     router = router.route("/article/getArticleLst", get(get_article_lst));
     router = router.route("/article/getClassesLst", get(get_classes_lst));
     router = router.route("/article/getLabelLst", get(get_label_lst));
@@ -22,16 +22,27 @@ pub fn init_router(mut router: Router) -> Router {
     return router;
 }
 
-// async fn publish(
-//     Json(payload): Json<bean::admin::LoginIn>,
-// ) -> (StatusCode, Json<bean::admin::LoginOut>) {
-//
-//     debug!("{:?}", payload);
-//
-//
-//
-//     (StatusCode::CREATED, Json(out))
-// }
+async fn publish(
+    headers: HeaderMap,
+    Json(payload): Json<bean::article::PublishIn>,
+) -> Json<common::net::rsp::Rsp<u64>> {
+    debug!("{:?}", payload);
+
+    let now = plier::time::unix_second();
+    let mut article = BlogArticleModel::new(tool::req::get_user_id(&headers),
+                          payload.id_blog_classes,
+                          payload.title_article, 1,
+                          payload.state_publish, payload.state_private,
+                          payload.content, 0,0,0, now, payload.sequence);
+
+    let res = base::service::blog_article_sve::add(&mut article);
+    if res.is_err() {
+        tracing::warn!("{:?}", res);
+        return Json(common::net::rsp::Rsp::<u64>::err_de())
+    }
+
+    return Json(common::net::rsp::Rsp::<u64>::ok(article.id));
+}
 
 async fn get_article_lst(
     query: Query<bean::article::GetArticleLstIn>,
