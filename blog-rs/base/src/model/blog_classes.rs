@@ -14,7 +14,7 @@ pub const ALIAS:&str = "blogClasses";
 ///	BlogClassesModel 文章类型
 ///	table - blog_classes
 ///	author: AT
-///	since: 2024-06-06 08:46:41
+///	since: 2024-06-06 09:16:32
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogClassesModel {
@@ -81,7 +81,7 @@ pub fn pot(row: Row, offset: usize) -> BlogClassesModel {
 
 ///	BlogClassesJSONOut 文章类型
 ///	author: AT
-///	since: 2024-06-06 08:46:41
+///	since: 2024-06-06 09:16:32
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogClassesJSONOut {
@@ -104,7 +104,7 @@ pub struct BlogClassesJSONOut {
 
 ///	BlogClassesJSONIn 文章类型
 ///	author: AT
-///	since: 2024-06-06 08:46:41
+///	since: 2024-06-06 09:16:32
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogClassesJSONIn {
@@ -119,7 +119,7 @@ pub struct BlogClassesJSONIn {
 	pub state: u8,
 }
 
-plier::create_serde_string_length_checker!(check_length_classes_name, 20);
+plier::create_serde_string_length_checker!(check_length_classes_name, 0, 20);
 
 impl BaseModel for BlogClassesModel {
 

@@ -14,7 +14,7 @@ pub const ALIAS:&str = "blogView";
 ///	BlogViewModel 评论
 ///	table - blog_view
 ///	author: AT
-///	since: 2024-06-06 08:46:41
+///	since: 2024-06-06 09:16:32
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogViewModel {
@@ -99,7 +99,7 @@ pub fn pot(row: Row, offset: usize) -> BlogViewModel {
 
 ///	BlogViewJSONOut 评论
 ///	author: AT
-///	since: 2024-06-06 08:46:41
+///	since: 2024-06-06 09:16:32
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogViewJSONOut {
@@ -140,7 +140,7 @@ pub struct BlogViewJSONOut {
 
 ///	BlogViewJSONIn 评论
 ///	author: AT
-///	since: 2024-06-06 08:46:41
+///	since: 2024-06-06 09:16:32
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogViewJSONIn {
@@ -173,12 +173,12 @@ pub struct BlogViewJSONIn {
 	pub x_ip: String,
 }
 
-plier::create_serde_string_length_checker!(check_length_view_content, 200);
-plier::create_serde_string_length_checker!(check_length_coin_symbol, 20);
-plier::create_serde_string_length_checker!(check_length_tip_amount, 79);
-plier::create_serde_string_length_checker!(check_length_address, 155);
-plier::create_serde_string_length_checker!(check_length_tip_amount_usd, 79);
-plier::create_serde_string_length_checker!(check_length_x_ip, 45);
+plier::create_serde_string_length_checker!(check_length_view_content, 0, 200);
+plier::create_serde_string_length_checker!(check_length_coin_symbol, 0, 20);
+plier::create_serde_string_length_checker!(check_length_tip_amount, 0, 79);
+plier::create_serde_string_length_checker!(check_length_address, 0, 155);
+plier::create_serde_string_length_checker!(check_length_tip_amount_usd, 0, 79);
+plier::create_serde_string_length_checker!(check_length_x_ip, 0, 45);
 
 impl BaseModel for BlogViewModel {
 

@@ -14,7 +14,7 @@ pub const ALIAS:&str = "blogLabel";
 ///	BlogLabelModel 文章标签
 ///	table - blog_label
 ///	author: AT
-///	since: 2024-06-06 08:46:41
+///	since: 2024-06-06 09:16:32
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogLabelModel {
@@ -81,7 +81,7 @@ pub fn pot(row: Row, offset: usize) -> BlogLabelModel {
 
 ///	BlogLabelJSONOut 文章标签
 ///	author: AT
-///	since: 2024-06-06 08:46:41
+///	since: 2024-06-06 09:16:32
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogLabelJSONOut {
@@ -104,7 +104,7 @@ pub struct BlogLabelJSONOut {
 
 ///	BlogLabelJSONIn 文章标签
 ///	author: AT
-///	since: 2024-06-06 08:46:41
+///	since: 2024-06-06 09:16:32
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogLabelJSONIn {
@@ -119,7 +119,7 @@ pub struct BlogLabelJSONIn {
 	pub state: u8,
 }
 
-plier::create_serde_string_length_checker!(check_length_label_name, 20);
+plier::create_serde_string_length_checker!(check_length_label_name, 0, 20);
 
 impl BaseModel for BlogLabelModel {
 

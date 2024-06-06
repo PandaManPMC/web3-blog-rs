@@ -19,8 +19,8 @@ pub struct LoginIn {
     pub google_auth_code: String,
 }
 
-plier::create_serde_string_length_checker!(check_length_user_name, 20);
-plier::create_serde_string_length_checker!(check_length_user_pwd, 64);
+plier::create_serde_string_length_checker!(check_length_user_name, 6, 20);
+plier::create_serde_string_length_checker!(check_length_user_pwd, 8, 64);
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct LoginOut {

@@ -14,7 +14,7 @@ pub const ALIAS:&str = "blogAuthor";
 ///	BlogAuthorModel 作者
 ///	table - blog_author
 ///	author: AT
-///	since: 2024-06-06 08:46:41
+///	since: 2024-06-06 09:16:32
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogAuthorModel {
@@ -87,7 +87,7 @@ pub fn pot(row: Row, offset: usize) -> BlogAuthorModel {
 
 ///	BlogAuthorJSONOut 作者
 ///	author: AT
-///	since: 2024-06-06 08:46:41
+///	since: 2024-06-06 09:16:32
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogAuthorJSONOut {
@@ -116,7 +116,7 @@ pub struct BlogAuthorJSONOut {
 
 ///	BlogAuthorJSONIn 作者
 ///	author: AT
-///	since: 2024-06-06 08:46:41
+///	since: 2024-06-06 09:16:32
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogAuthorJSONIn {
@@ -137,10 +137,10 @@ pub struct BlogAuthorJSONIn {
 	pub google_auth_secret: String,
 }
 
-plier::create_serde_string_length_checker!(check_length_pen_name, 20);
-plier::create_serde_string_length_checker!(check_length_user_name, 20);
-plier::create_serde_string_length_checker!(check_length_user_pwd, 64);
-plier::create_serde_string_length_checker!(check_length_google_auth_secret, 64);
+plier::create_serde_string_length_checker!(check_length_pen_name, 0, 20);
+plier::create_serde_string_length_checker!(check_length_user_name, 0, 20);
+plier::create_serde_string_length_checker!(check_length_user_pwd, 0, 64);
+plier::create_serde_string_length_checker!(check_length_google_auth_secret, 0, 64);
 
 impl BaseModel for BlogAuthorModel {
 

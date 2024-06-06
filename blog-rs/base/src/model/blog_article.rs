@@ -14,7 +14,7 @@ pub const ALIAS:&str = "blogArticle";
 ///	BlogArticleModel 文章
 ///	table - blog_article
 ///	author: AT
-///	since: 2024-06-06 08:46:41
+///	since: 2024-06-06 09:16:31
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogArticleModel {
@@ -114,7 +114,7 @@ pub fn pot(row: Row, offset: usize) -> BlogArticleModel {
 
 ///	BlogArticleJSONOut 文章
 ///	author: AT
-///	since: 2024-06-06 08:46:41
+///	since: 2024-06-06 09:16:31
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogArticleJSONOut {
@@ -170,7 +170,7 @@ pub struct BlogArticleJSONOut {
 
 ///	BlogArticleJSONIn 文章
 ///	author: AT
-///	since: 2024-06-06 08:46:41
+///	since: 2024-06-06 09:16:31
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogArticleJSONIn {
@@ -218,9 +218,9 @@ pub struct BlogArticleJSONIn {
 	pub label_list: String,
 }
 
-plier::create_serde_string_length_checker!(check_length_title_article, 50);
-plier::create_serde_string_length_checker!(check_length_content, 2147483647);
-plier::create_serde_string_length_checker!(check_length_label_list, 200);
+plier::create_serde_string_length_checker!(check_length_title_article, 0, 50);
+plier::create_serde_string_length_checker!(check_length_content, 0, 2147483647);
+plier::create_serde_string_length_checker!(check_length_label_list, 0, 200);
 
 impl BaseModel for BlogArticleModel {
 
