@@ -15,10 +15,11 @@ use base::model::blog_label::BlogLabelModel;
 
 pub fn init_router(mut router: Router) -> Router {
     router = router.route("/article/publish", post(publish));
+    router = router.route("/article/createClasses", post(create_classes));
+
     router = router.route("/article/getArticleLst", get(get_article_lst));
     router = router.route("/article/getClassesLst", get(get_classes_lst));
     router = router.route("/article/getLabelLst", get(get_label_lst));
-
     return router;
 }
 
@@ -85,6 +86,29 @@ async fn get_article_lst(
     Json(rsp)
 }
 
+async fn create_classes (
+    Json(payload): Json<bean::article::CreateClassesIN>,
+) -> Json<common::net::rsp::Rsp<u64>> {
+    debug!("{:?}", payload);
+
+    let r = base::service::blog_classes_sve::find_by_classes_name(payload.classes_name.clone());
+    if r.is_err(){
+        tracing::warn!("{:?}", r);
+        return Json(common::net::rsp::Rsp::<u64>::err_de())
+    }
+
+    if r.unwrap().is_some() {
+        return Json(common::net::rsp::Rsp::<u64>::fail("该类型已存在".to_string()))
+    }
+
+    let mut cla = BlogClassesModel::new(payload.classes_name, 1, payload.sequence);
+    let res = base::service::blog_classes_sve::add(&mut cla);
+    if res.is_err() {
+        tracing::warn!("{:?}", res);
+        return Json(common::net::rsp::Rsp::<u64>::err_de())
+    }
+    return Json(common::net::rsp::Rsp::<u64>::ok(cla.id));
+}
 async fn get_classes_lst(
     query: Query<bean::article::GetClassesLstIn>,
 ) -> Json<common::net::rsp::Rsp<Vec<BlogClassesModel>>> {

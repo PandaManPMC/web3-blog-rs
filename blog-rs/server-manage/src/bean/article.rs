@@ -13,7 +13,7 @@ pub struct PublishIn {
     pub id_blog_classes: u64,
 
     /// search文章标题 【max:50】
-    #[serde(rename = "titleArticle")]
+    #[serde(rename = "titleArticle", deserialize_with = "check_length_title_article")]
     pub title_article: String,
 
     /// thing发布状态:1@未发布;2@已发布 【max:3】
@@ -25,7 +25,7 @@ pub struct PublishIn {
     pub state_private: u8,
 
     /// 文章内容 【max:2147483647】
-    #[serde(rename = "content")]
+    #[serde(rename = "content", deserialize_with = "check_length_content")]
     pub content: String,
 
     /// 顺序 【max:10】
@@ -36,6 +36,19 @@ pub struct PublishIn {
 
 plier::create_serde_string_length_checker!(check_length_title_article, 0, 50);
 plier::create_serde_string_length_checker!(check_length_content, 0, 2147483647);
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
+pub struct CreateClassesIN {
+    /// search类型名称 【max:20】
+    #[serde(rename = "classesName", deserialize_with="check_length_classes_name")]
+    pub classes_name: String,
+    /// 顺序 【max:10】
+    #[serde(rename = "sequence")]
+    pub sequence: u32,
+}
+
+plier::create_serde_string_length_checker!(check_length_classes_name, 0, 20);
+
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct GetArticleLstIn {

@@ -14,7 +14,7 @@ pub const ALIAS:&str = "blogArticle";
 ///	BlogArticleModel 文章
 ///	table - blog_article
 ///	author: AT
-///	since: 2024-06-06 15:01:27
+///	since: 2024-06-06 15:57:23
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogArticleModel {
@@ -111,7 +111,7 @@ pub fn pot(row: Row, offset: usize) -> BlogArticleModel {
 
 ///	BlogArticleJSONOut 文章
 ///	author: AT
-///	since: 2024-06-06 15:01:27
+///	since: 2024-06-06 15:57:23
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogArticleJSONOut {
@@ -164,7 +164,7 @@ pub struct BlogArticleJSONOut {
 
 ///	BlogArticleJSONIn 文章
 ///	author: AT
-///	since: 2024-06-06 15:01:27
+///	since: 2024-06-06 15:57:23
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogArticleJSONIn {
@@ -178,7 +178,7 @@ pub struct BlogArticleJSONIn {
 	#[serde(rename = "idBlogClasses")]
 	pub id_blog_classes: u64,
 	/// search文章标题 【max:50】
-	#[serde(rename = "titleArticle")]
+	#[serde(rename = "titleArticle", deserialize_with = "check_length_title_article")]
 	pub title_article: String,
 	/// thing状态:1@正常;2@已删除 【max:3】
 	#[serde(rename = "stateArticle")]
@@ -190,7 +190,7 @@ pub struct BlogArticleJSONIn {
 	#[serde(rename = "statePrivate")]
 	pub state_private: u8,
 	/// 文章内容 【max:2147483647】
-	#[serde(rename = "content")]
+	#[serde(rename = "content", deserialize_with = "check_length_content")]
 	pub content: String,
 	/// 点赞 【max:10】
 	#[serde(rename = "likeCount")]

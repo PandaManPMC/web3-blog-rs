@@ -14,7 +14,7 @@ pub const ALIAS:&str = "blogView";
 ///	BlogViewModel 评论
 ///	table - blog_view
 ///	author: AT
-///	since: 2024-06-06 15:01:27
+///	since: 2024-06-06 15:57:24
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogViewModel {
@@ -99,7 +99,7 @@ pub fn pot(row: Row, offset: usize) -> BlogViewModel {
 
 ///	BlogViewJSONOut 评论
 ///	author: AT
-///	since: 2024-06-06 15:01:27
+///	since: 2024-06-06 15:57:24
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogViewJSONOut {
@@ -140,7 +140,7 @@ pub struct BlogViewJSONOut {
 
 ///	BlogViewJSONIn 评论
 ///	author: AT
-///	since: 2024-06-06 15:01:27
+///	since: 2024-06-06 15:57:24
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogViewJSONIn {
@@ -151,25 +151,25 @@ pub struct BlogViewJSONIn {
 	#[serde(rename = "idBlogArticle")]
 	pub id_blog_article: u64,
 	/// 评论内容 【max:200】
-	#[serde(rename = "viewContent")]
+	#[serde(rename = "viewContent", deserialize_with = "check_length_view_content")]
 	pub view_content: String,
 	/// 代币符号 【max:20】
-	#[serde(rename = "coinSymbol")]
+	#[serde(rename = "coinSymbol", deserialize_with = "check_length_coin_symbol")]
 	pub coin_symbol: String,
 	/// 小费金额 【max:79】
-	#[serde(rename = "tipAmount")]
+	#[serde(rename = "tipAmount", deserialize_with = "check_length_tip_amount")]
 	pub tip_amount: String,
 	/// thing评论可见性:1@可见;2@不可见 【max:3】
 	#[serde(rename = "visible")]
 	pub visible: u8,
 	/// search地址 【max:155】
-	#[serde(rename = "address")]
+	#[serde(rename = "address", deserialize_with = "check_length_address")]
 	pub address: String,
 	/// 小费金额USD 【max:79】
-	#[serde(rename = "tipAmountUsd")]
+	#[serde(rename = "tipAmountUsd", deserialize_with = "check_length_tip_amount_usd")]
 	pub tip_amount_usd: String,
 	/// XIP 【max:45】
-	#[serde(rename = "xip")]
+	#[serde(rename = "xip", deserialize_with = "check_length_x_ip")]
 	pub x_ip: String,
 }
 

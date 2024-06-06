@@ -14,7 +14,7 @@ pub const ALIAS:&str = "blogLabel";
 ///	BlogLabelModel 文章标签
 ///	table - blog_label
 ///	author: AT
-///	since: 2024-06-06 15:01:27
+///	since: 2024-06-06 15:57:24
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogLabelModel {
@@ -84,7 +84,7 @@ pub fn pot(row: Row, offset: usize) -> BlogLabelModel {
 
 ///	BlogLabelJSONOut 文章标签
 ///	author: AT
-///	since: 2024-06-06 15:01:27
+///	since: 2024-06-06 15:57:24
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogLabelJSONOut {
@@ -110,7 +110,7 @@ pub struct BlogLabelJSONOut {
 
 ///	BlogLabelJSONIn 文章标签
 ///	author: AT
-///	since: 2024-06-06 15:01:27
+///	since: 2024-06-06 15:57:24
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogLabelJSONIn {
@@ -118,7 +118,7 @@ pub struct BlogLabelJSONIn {
 	#[serde(rename = "id")]
 	pub id: u64,
 	/// search标签名称 【max:20】
-	#[serde(rename = "labelName")]
+	#[serde(rename = "labelName", deserialize_with = "check_length_label_name")]
 	pub label_name: String,
 	/// thing状态:1@可见;2@不可见 【max:3】
 	#[serde(rename = "state")]

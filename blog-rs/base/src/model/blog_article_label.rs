@@ -14,7 +14,7 @@ pub const ALIAS:&str = "blogArticleLabel";
 ///	BlogArticleLabelModel 文章所有标签
 ///	table - blog_article_label
 ///	author: AT
-///	since: 2024-06-06 15:01:27
+///	since: 2024-06-06 15:57:23
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogArticleLabelModel {
@@ -84,7 +84,7 @@ pub fn pot(row: Row, offset: usize) -> BlogArticleLabelModel {
 
 ///	BlogArticleLabelJSONOut 文章所有标签
 ///	author: AT
-///	since: 2024-06-06 15:01:27
+///	since: 2024-06-06 15:57:23
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogArticleLabelJSONOut {
@@ -110,7 +110,7 @@ pub struct BlogArticleLabelJSONOut {
 
 ///	BlogArticleLabelJSONIn 文章所有标签
 ///	author: AT
-///	since: 2024-06-06 15:01:27
+///	since: 2024-06-06 15:57:23
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogArticleLabelJSONIn {

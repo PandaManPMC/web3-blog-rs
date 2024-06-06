@@ -14,7 +14,7 @@ pub const ALIAS:&str = "blogClasses";
 ///	BlogClassesModel 文章类型
 ///	table - blog_classes
 ///	author: AT
-///	since: 2024-06-06 15:01:27
+///	since: 2024-06-06 15:57:24
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogClassesModel {
@@ -84,7 +84,7 @@ pub fn pot(row: Row, offset: usize) -> BlogClassesModel {
 
 ///	BlogClassesJSONOut 文章类型
 ///	author: AT
-///	since: 2024-06-06 15:01:27
+///	since: 2024-06-06 15:57:24
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogClassesJSONOut {
@@ -110,7 +110,7 @@ pub struct BlogClassesJSONOut {
 
 ///	BlogClassesJSONIn 文章类型
 ///	author: AT
-///	since: 2024-06-06 15:01:27
+///	since: 2024-06-06 15:57:24
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogClassesJSONIn {
@@ -118,7 +118,7 @@ pub struct BlogClassesJSONIn {
 	#[serde(rename = "id")]
 	pub id: u64,
 	/// search类型名称 【max:20】
-	#[serde(rename = "classesName")]
+	#[serde(rename = "classesName", deserialize_with = "check_length_classes_name")]
 	pub classes_name: String,
 	/// thing状态:1@可见;2@不可见 【max:3】
 	#[serde(rename = "state")]

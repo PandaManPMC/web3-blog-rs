@@ -14,7 +14,7 @@ pub const ALIAS:&str = "blogAuthor";
 ///	BlogAuthorModel 作者
 ///	table - blog_author
 ///	author: AT
-///	since: 2024-06-06 15:01:27
+///	since: 2024-06-06 15:57:24
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogAuthorModel {
@@ -87,7 +87,7 @@ pub fn pot(row: Row, offset: usize) -> BlogAuthorModel {
 
 ///	BlogAuthorJSONOut 作者
 ///	author: AT
-///	since: 2024-06-06 15:01:27
+///	since: 2024-06-06 15:57:24
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogAuthorJSONOut {
@@ -116,7 +116,7 @@ pub struct BlogAuthorJSONOut {
 
 ///	BlogAuthorJSONIn 作者
 ///	author: AT
-///	since: 2024-06-06 15:01:27
+///	since: 2024-06-06 15:57:24
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogAuthorJSONIn {
@@ -124,16 +124,16 @@ pub struct BlogAuthorJSONIn {
 	#[serde(rename = "id")]
 	pub id: u64,
 	/// search笔名 【max:20】
-	#[serde(rename = "penName")]
+	#[serde(rename = "penName", deserialize_with = "check_length_pen_name")]
 	pub pen_name: String,
 	/// search用户名 【max:20】
-	#[serde(rename = "userName")]
+	#[serde(rename = "userName", deserialize_with = "check_length_user_name")]
 	pub user_name: String,
 	/// 密码 【max:64】
-	#[serde(rename = "userPwd")]
+	#[serde(rename = "userPwd", deserialize_with = "check_length_user_pwd")]
 	pub user_pwd: String,
 	/// 谷歌验证器 【max:64】
-	#[serde(rename = "googleAuthSecret")]
+	#[serde(rename = "googleAuthSecret", deserialize_with = "check_length_google_auth_secret")]
 	pub google_auth_secret: String,
 }
 
