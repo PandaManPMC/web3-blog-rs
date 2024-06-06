@@ -38,4 +38,21 @@ pub struct GetClassesLstIn {
 
     #[serde(rename = "pageSize")]
     pub page_size: i64,
+
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
+pub struct GetLabelLstIn {
+
+    /// thing状态:1@可见;2@不可见 【max:3】
+    #[serde(rename = "state")]
+    #[serde(default)]
+    pub state: u8,
+
+    #[serde(rename = "pageIndex")]
+    pub page_index: i64,
+
+    #[serde(rename = "pageSize")]
+    pub page_size: i64,
+
 }
