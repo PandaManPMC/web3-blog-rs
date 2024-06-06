@@ -26,3 +26,16 @@ pub struct GetArticleLstIn {
 
 }
 
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
+pub struct GetClassesLstIn {
+    /// thing状态:1@可见;2@不可见 【max:3】
+    #[serde(default)]
+    #[serde(rename = "state")]
+    pub state: u8,
+
+    #[serde(rename = "pageIndex")]
+    pub page_index: i64,
+
+    #[serde(rename = "pageSize")]
+    pub page_size: i64,
+}

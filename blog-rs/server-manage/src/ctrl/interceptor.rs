@@ -13,7 +13,7 @@ use common::net::rsp;
 use common::net::rsp::Rsp;
 use crate::{bean, tool};
 
-pub const WHITE_LIST_URL:[&str;2] = ["/admin/login", "/article/getArticleLst"];
+pub const WHITE_LIST_URL:[&str;3] = ["/admin/login", "/article/getArticleLst", "/article/getClassesLst"];
 
 pub async fn app(mut request: Request, next: Next) -> Result<Response, Json<Rsp<rsp::Default>>> {
     let uri = request.uri().clone();

@@ -10,11 +10,13 @@ use log::debug;
 use crate::bean;
 use i_dao::sql;
 use base::model::blog_article::BlogArticleModel;
-use base::model::blog_author::BlogAuthorModel;
+use base::model::blog_classes::BlogClassesModel;
 
 pub fn init_router(mut router: Router) -> Router {
     // router = router.route("/article/publish", post(publish));
     router = router.route("/article/getArticleLst", get(get_article_lst));
+    router = router.route("/article/getClassesLst", get(get_classes_lst));
+
     return router;
 }
 
@@ -48,17 +50,42 @@ async fn get_article_lst(
         params.insert(String::from("state_publish"), Box::new(query.state_publish));
     }
 
-    let page_index = sql::Condition::PageIndex(1);
-    let page_size = sql::Condition::PageSize(3);
-    let asc = sql::Condition::OrderByAESOrDESC(1);
-
-    let bc = [page_index, page_size, asc, ];
+    let page_index = sql::Condition::PageIndex(query.page_index);
+    let page_size = sql::Condition::PageSize(query.page_size);
+    let bc = [page_index, page_size, ];
 
     let result = base::service::blog_article_sve::query_list(&params, &bc);
 
     if result.is_err() {
         tracing::warn!("{:?}", result);
         return Json(common::net::rsp::Rsp::<Vec<BlogArticleModel>>::err_de())
+    }
+
+    let lst = result.unwrap();
+    let rsp = common::net::rsp::Rsp::ok(lst);
+    Json(rsp)
+}
+
+async fn get_classes_lst(
+    query: Query<bean::article::GetClassesLstIn>,
+) -> Json<common::net::rsp::Rsp<Vec<BlogClassesModel>>> {
+
+    debug!("{:?}", query);
+
+    let mut params:HashMap<String, Box<dyn Any>> = HashMap::new();
+    if 0 != query.state {
+        params.insert(String::from("state"), Box::new(query.state));
+    }
+
+    let page_index = sql::Condition::PageIndex(query.page_index);
+    let page_size = sql::Condition::PageSize(query.page_size);
+    let bc = [page_index, page_size, ];
+
+    let result = base::service::blog_classes_sve::query_list(&params, &bc);
+
+    if result.is_err() {
+        tracing::warn!("{:?}", result);
+        return Json(common::net::rsp::Rsp::<Vec<BlogClassesModel>>::err_de())
     }
 
     let lst = result.unwrap();
