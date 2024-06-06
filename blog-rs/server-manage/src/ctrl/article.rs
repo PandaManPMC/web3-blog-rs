@@ -16,6 +16,7 @@ use base::model::blog_label::BlogLabelModel;
 pub fn init_router(mut router: Router) -> Router {
     router = router.route("/article/publish", post(publish));
     router = router.route("/article/createClasses", post(create_classes));
+    router = router.route("/article/createLabel", post(create_label));
 
     router = router.route("/article/getArticleLst", get(get_article_lst));
     router = router.route("/article/getClassesLst", get(get_classes_lst));
@@ -23,6 +24,7 @@ pub fn init_router(mut router: Router) -> Router {
     return router;
 }
 
+/// publish 发布新文章
 async fn publish(
     headers: HeaderMap,
     Json(payload): Json<bean::article::PublishIn>,
@@ -45,6 +47,7 @@ async fn publish(
     return Json(common::net::rsp::Rsp::<u64>::ok(article.id));
 }
 
+/// get_article_lst 文章列表
 async fn get_article_lst(
     query: Query<bean::article::GetArticleLstIn>,
 ) -> Json<common::net::rsp::Rsp<Vec<BlogArticleModel>>> {
@@ -86,6 +89,7 @@ async fn get_article_lst(
     Json(rsp)
 }
 
+/// create_classes 创建文章类型
 async fn create_classes (
     Json(payload): Json<bean::article::CreateClassesIN>,
 ) -> Json<common::net::rsp::Rsp<u64>> {
@@ -109,6 +113,8 @@ async fn create_classes (
     }
     return Json(common::net::rsp::Rsp::<u64>::ok(cla.id));
 }
+
+/// get_classes_lst 读取文章类型列表
 async fn get_classes_lst(
     query: Query<bean::article::GetClassesLstIn>,
 ) -> Json<common::net::rsp::Rsp<Vec<BlogClassesModel>>> {
@@ -138,6 +144,32 @@ async fn get_classes_lst(
     Json(rsp)
 }
 
+/// create_label 创建标签
+async fn create_label (
+    Json(payload): Json<bean::article::CreateLabelIn>,
+) -> Json<common::net::rsp::Rsp<u64>> {
+    debug!("{:?}", payload);
+
+    let r = base::service::blog_label_sve::find_by_label_name(payload.label_name.clone());
+    if r.is_err(){
+        tracing::warn!("{:?}", r);
+        return Json(common::net::rsp::Rsp::<u64>::err_de())
+    }
+
+    if r.unwrap().is_some() {
+        return Json(common::net::rsp::Rsp::<u64>::fail("该标签已存在".to_string()))
+    }
+
+    let mut cla = BlogLabelModel::new(payload.label_name, 1, payload.sequence);
+    let res = base::service::blog_label_sve::add(&mut cla);
+    if res.is_err() {
+        tracing::warn!("{:?}", res);
+        return Json(common::net::rsp::Rsp::<u64>::err_de())
+    }
+    return Json(common::net::rsp::Rsp::<u64>::ok(cla.id));
+}
+
+/// get_label_lst 获取标签列表
 async fn get_label_lst(
     query: Query<bean::article::GetLabelLstIn>,
 ) -> Json<common::net::rsp::Rsp<Vec<BlogLabelModel>>> {

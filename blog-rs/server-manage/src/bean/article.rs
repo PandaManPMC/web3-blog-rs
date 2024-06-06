@@ -49,6 +49,18 @@ pub struct CreateClassesIN {
 
 plier::create_serde_string_length_checker!(check_length_classes_name, 0, 20);
 
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
+pub struct CreateLabelIn {
+    /// search标签名称 【max:20】
+    #[serde(rename = "labelName", deserialize_with = "check_length_label_name")]
+    pub label_name: String,
+    /// 顺序 【max:10】
+    #[serde(rename = "sequence")]
+    pub sequence: u32,
+}
+
+plier::create_serde_string_length_checker!(check_length_label_name, 0, 20);
+
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct GetArticleLstIn {
