@@ -10,9 +10,9 @@ use crate::tool;
 
 
 pub fn set_user_to_req(request: &mut Request, user: base::model::blog_author::BlogAuthorModel){
-    request.headers_mut().insert("x-user-name", user.user_name.parse().unwrap());
-    request.headers_mut().insert("x-user-id", user.id.into());
-    request.headers_mut().insert("x-user-pen_name", user.pen_name.parse().unwrap());
+    request.headers_mut().insert(tool::X_USER_NAME, user.user_name.parse().unwrap());
+    request.headers_mut().insert(tool::X_USER_ID, user.id.into());
+    request.headers_mut().insert(tool::X_USER_PEN_NAME, user.pen_name.parse().unwrap());
 }
 
 pub fn get_user_id(headers: &HeaderMap) -> u64 {
