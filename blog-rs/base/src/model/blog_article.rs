@@ -2,7 +2,10 @@ use serde::{Serialize, Deserialize};
 use r2d2_mysql::mysql::{params, Row};
 use r2d2_mysql::mysql::params::Params;
 use i_dao::model::BaseModel;
-use i_dao_proc_macro::BaseModel;
+use serde::Deserializer;
+use serde::de;
+use std::fmt;
+use serde::de::Unexpected;
 
 pub const TABLE_NAME:&str = "blog_article";
 pub const FIELDS:[&str;16] = ["id","created_at","updated_at","id_blog_author","id_blog_classes","title_article","state_article","state_publish","state_private","content","like_count","watch_count","view_count","time_publish","sequence","label_list"];
@@ -11,7 +14,7 @@ pub const ALIAS:&str = "blogArticle";
 ///	BlogArticleModel 文章
 ///	table - blog_article
 ///	author: AT
-///	since: 2024-05-03 11:47:00
+///	since: 2024-06-06 08:46:41
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogArticleModel {
@@ -111,7 +114,7 @@ pub fn pot(row: Row, offset: usize) -> BlogArticleModel {
 
 ///	BlogArticleJSONOut 文章
 ///	author: AT
-///	since: 2024-05-03 11:47:00
+///	since: 2024-06-06 08:46:41
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogArticleJSONOut {
@@ -167,7 +170,7 @@ pub struct BlogArticleJSONOut {
 
 ///	BlogArticleJSONIn 文章
 ///	author: AT
-///	since: 2024-05-03 11:47:00
+///	since: 2024-06-06 08:46:41
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogArticleJSONIn {
@@ -214,6 +217,10 @@ pub struct BlogArticleJSONIn {
 	#[serde(rename = "labelList")]
 	pub label_list: String,
 }
+
+plier::create_serde_string_length_checker!(check_length_title_article, 50);
+plier::create_serde_string_length_checker!(check_length_content, 2147483647);
+plier::create_serde_string_length_checker!(check_length_label_list, 200);
 
 impl BaseModel for BlogArticleModel {
 
@@ -323,3 +330,4 @@ impl BaseModel for BlogArticleModel {
     }
 
 }
+

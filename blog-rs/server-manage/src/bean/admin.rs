@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize, de};
 use serde::de::Unexpected;
 use serde::Deserializer;
+use serde::de::{Visitor};
+use std::fmt;
+use serde::de::MapAccess;
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct LoginIn {
@@ -16,17 +19,8 @@ pub struct LoginIn {
     pub google_auth_code: String,
 }
 
-fn check_length_user_name<'de, D>(deserializer: D) -> Result<String, D::Error>
-    where
-        D: Deserializer<'de>,
-{
-    let s: String = Deserialize::deserialize(deserializer)?;
-    if s.len() <= 20 {
-        Ok(s)
-    } else {
-        Err(de::Error::invalid_value(Unexpected::Str(&s), &"a string with at most 20 characters"))
-    }
-}
+plier::create_serde_string_length_checker!(check_length_user_name, 20);
+plier::create_serde_string_length_checker!(check_length_user_pwd, 64);
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct LoginOut {
@@ -40,3 +34,4 @@ pub struct LoginOut {
     #[serde(rename = "userToken")]
     pub user_token: String,
 }
+

@@ -18,3 +18,4 @@ tracing-subscriber = "0.3"
 mysql = "25.0.0"
 r2d2_mysql = "24.0.0"
 lazy_static = "1.4.0"
+plier = {path = "../../../plier-rs"}

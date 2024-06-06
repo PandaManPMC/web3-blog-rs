@@ -233,6 +233,7 @@ dependencies = [
  "lazy_static",
  "log",
  "mysql 25.0.0",
+ "plier",
  "r2d2_mysql",
  "serde",
  "serde_json",

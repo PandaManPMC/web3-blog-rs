@@ -2,7 +2,10 @@ use serde::{Serialize, Deserialize};
 use r2d2_mysql::mysql::{params, Row};
 use r2d2_mysql::mysql::params::Params;
 use i_dao::model::BaseModel;
-use i_dao_proc_macro::BaseModel;
+use serde::Deserializer;
+use serde::de;
+use std::fmt;
+use serde::de::Unexpected;
 
 pub const TABLE_NAME:&str = "blog_author";
 pub const FIELDS:[&str;7] = ["id","created_at","updated_at","pen_name","user_name","user_pwd","google_auth_secret"];
@@ -11,7 +14,7 @@ pub const ALIAS:&str = "blogAuthor";
 ///	BlogAuthorModel 作者
 ///	table - blog_author
 ///	author: AT
-///	since: 2024-05-03 11:47:00
+///	since: 2024-06-06 08:46:41
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogAuthorModel {
@@ -84,7 +87,7 @@ pub fn pot(row: Row, offset: usize) -> BlogAuthorModel {
 
 ///	BlogAuthorJSONOut 作者
 ///	author: AT
-///	since: 2024-05-03 11:47:00
+///	since: 2024-06-06 08:46:41
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogAuthorJSONOut {
@@ -113,7 +116,7 @@ pub struct BlogAuthorJSONOut {
 
 ///	BlogAuthorJSONIn 作者
 ///	author: AT
-///	since: 2024-05-03 11:47:00
+///	since: 2024-06-06 08:46:41
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogAuthorJSONIn {
@@ -133,6 +136,11 @@ pub struct BlogAuthorJSONIn {
 	#[serde(rename = "googleAuthSecret")]
 	pub google_auth_secret: String,
 }
+
+plier::create_serde_string_length_checker!(check_length_pen_name, 20);
+plier::create_serde_string_length_checker!(check_length_user_name, 20);
+plier::create_serde_string_length_checker!(check_length_user_pwd, 64);
+plier::create_serde_string_length_checker!(check_length_google_auth_secret, 64);
 
 impl BaseModel for BlogAuthorModel {
 
@@ -224,3 +232,4 @@ impl BaseModel for BlogAuthorModel {
     }
 
 }
+

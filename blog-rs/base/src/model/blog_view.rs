@@ -2,7 +2,10 @@ use serde::{Serialize, Deserialize};
 use r2d2_mysql::mysql::{params, Row};
 use r2d2_mysql::mysql::params::Params;
 use i_dao::model::BaseModel;
-use i_dao_proc_macro::BaseModel;
+use serde::Deserializer;
+use serde::de;
+use std::fmt;
+use serde::de::Unexpected;
 
 pub const TABLE_NAME:&str = "blog_view";
 pub const FIELDS:[&str;11] = ["id","created_at","updated_at","id_blog_article","view_content","coin_symbol","tip_amount","visible","address","tip_amount_usd","x_ip"];
@@ -11,7 +14,7 @@ pub const ALIAS:&str = "blogView";
 ///	BlogViewModel 评论
 ///	table - blog_view
 ///	author: AT
-///	since: 2024-05-24 17:26:30
+///	since: 2024-06-06 08:46:41
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogViewModel {
@@ -96,7 +99,7 @@ pub fn pot(row: Row, offset: usize) -> BlogViewModel {
 
 ///	BlogViewJSONOut 评论
 ///	author: AT
-///	since: 2024-05-24 17:26:30
+///	since: 2024-06-06 08:46:41
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogViewJSONOut {
@@ -137,7 +140,7 @@ pub struct BlogViewJSONOut {
 
 ///	BlogViewJSONIn 评论
 ///	author: AT
-///	since: 2024-05-24 17:26:30
+///	since: 2024-06-06 08:46:41
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogViewJSONIn {
@@ -169,6 +172,13 @@ pub struct BlogViewJSONIn {
 	#[serde(rename = "xip")]
 	pub x_ip: String,
 }
+
+plier::create_serde_string_length_checker!(check_length_view_content, 200);
+plier::create_serde_string_length_checker!(check_length_coin_symbol, 20);
+plier::create_serde_string_length_checker!(check_length_tip_amount, 79);
+plier::create_serde_string_length_checker!(check_length_address, 155);
+plier::create_serde_string_length_checker!(check_length_tip_amount_usd, 79);
+plier::create_serde_string_length_checker!(check_length_x_ip, 45);
 
 impl BaseModel for BlogViewModel {
 
@@ -268,3 +278,4 @@ impl BaseModel for BlogViewModel {
     }
 
 }
+
