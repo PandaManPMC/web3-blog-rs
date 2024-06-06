@@ -7,18 +7,18 @@ use serde::de;
 use std::fmt;
 use serde::de::Unexpected;
 
-pub const TABLE_NAME:&str = "blog_label";
-pub const FIELDS:[&str;6] = ["id","created_at","updated_at","label_name","state","sequence"];
-pub const ALIAS:&str = "blogLabel";
+pub const TABLE_NAME:&str = "blog_article_label";
+pub const FIELDS:[&str;6] = ["id","created_at","updated_at","id_blog_article","id_blog_label","state"];
+pub const ALIAS:&str = "blogArticleLabel";
 
-///	BlogLabelModel 文章标签
-///	table - blog_label
+///	BlogArticleLabelModel 文章所有标签
+///	table - blog_article_label
 ///	author: AT
 ///	since: 2024-06-06 15:01:27
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
-pub struct BlogLabelModel {
-	/// search文章标签编号 【max:20】 
+pub struct BlogArticleLabelModel {
+	/// search关联编号 【max:20】 
 	#[serde(rename = "id")]
 	pub id: u64,
 	/// 创建时间 【max:20】 
@@ -27,25 +27,25 @@ pub struct BlogLabelModel {
 	/// 最后更新 【max:20】 
 	#[serde(rename = "updatedAt")]
 	pub updated_at: u64,
-	/// search标签名称 【max:20】 
-	#[serde(rename = "labelName")]
-	pub label_name: String,
-	/// thing状态:1@可见;2@不可见 【max:3】 
+	/// 文章编号 【max:20】 
+	#[serde(rename = "idBlogArticle")]
+	pub id_blog_article: u64,
+	/// 标签编号 【max:20】 
+	#[serde(rename = "idBlogLabel")]
+	pub id_blog_label: u64,
+	/// thing状态:1@正常;2@已删除 【max:3】 
 	#[serde(rename = "state")]
 	pub state: u8,
-	/// 顺序 【max:10】 
-	#[serde(rename = "sequence")]
-	pub sequence: u32,
 }
 
-impl BlogLabelModel {
+impl BlogArticleLabelModel {
 
-    pub fn new(label_name: String, state: u8, sequence: u32) -> BlogLabelModel {
-        BlogLabelModel{id:0, created_at: 0, updated_at: 0, label_name, state, sequence}
+    pub fn new(id_blog_article: u64, id_blog_label: u64, state: u8) -> BlogArticleLabelModel {
+        BlogArticleLabelModel{id:0, created_at: 0, updated_at: 0, id_blog_article, id_blog_label, state}
     }
 
-    pub fn new_full(id: u64, created_at: u64, updated_at: u64, label_name: String, state: u8, sequence: u32) -> BlogLabelModel {
-        BlogLabelModel{id, created_at, updated_at, label_name, state, sequence}
+    pub fn new_full(id: u64, created_at: u64, updated_at: u64, id_blog_article: u64, id_blog_label: u64, state: u8) -> BlogArticleLabelModel {
+        BlogArticleLabelModel{id, created_at, updated_at, id_blog_article, id_blog_label, state}
     }
 
     fn set_pk(&mut self, pk: u64) {
@@ -78,17 +78,17 @@ pub fn get_field_sql(alias: &str) -> String {
 }
 
 /// pot 罐子 -> 把 mysql-row 按指定偏移 offset 装入结构体
-pub fn pot(row: Row, offset: usize) -> BlogLabelModel {
-	return BlogLabelModel::new_full(row.get(offset+0).unwrap(),row.get(offset+1).unwrap(),row.get(offset+2).unwrap(),row.get(offset+3).unwrap(),row.get(offset+4).unwrap(),row.get(offset+5).unwrap());
+pub fn pot(row: Row, offset: usize) -> BlogArticleLabelModel {
+	return BlogArticleLabelModel::new_full(row.get(offset+0).unwrap(),row.get(offset+1).unwrap(),row.get(offset+2).unwrap(),row.get(offset+3).unwrap(),row.get(offset+4).unwrap(),row.get(offset+5).unwrap());
 }
 
-///	BlogLabelJSONOut 文章标签
+///	BlogArticleLabelJSONOut 文章所有标签
 ///	author: AT
 ///	since: 2024-06-06 15:01:27
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
-pub struct BlogLabelJSONOut {
-	/// search文章标签编号 【max:20】 
+pub struct BlogArticleLabelJSONOut {
+	/// search关联编号 【max:20】 
 	#[serde(rename = "id")]
 	pub id: u64,
 	/// 创建时间 【max:20】 
@@ -97,40 +97,39 @@ pub struct BlogLabelJSONOut {
 	/// 最后更新 【max:20】 
 	#[serde(rename = "updatedAt")]
 	pub updated_at: u64,
-	/// search标签名称 【max:20】 
-	#[serde(rename = "labelName")]
-	pub label_name: String,
-	/// thing状态:1@可见;2@不可见 【max:3】 
+	/// 文章编号 【max:20】 
+	#[serde(rename = "idBlogArticle")]
+	pub id_blog_article: u64,
+	/// 标签编号 【max:20】 
+	#[serde(rename = "idBlogLabel")]
+	pub id_blog_label: u64,
+	/// thing状态:1@正常;2@已删除 【max:3】 
 	#[serde(rename = "state")]
 	pub state: u8,
-	/// 顺序 【max:10】 
-	#[serde(rename = "sequence")]
-	pub sequence: u32,
 }
 
-///	BlogLabelJSONIn 文章标签
+///	BlogArticleLabelJSONIn 文章所有标签
 ///	author: AT
 ///	since: 2024-06-06 15:01:27
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
-pub struct BlogLabelJSONIn {
-	/// search文章标签编号 【max:20】
+pub struct BlogArticleLabelJSONIn {
+	/// search关联编号 【max:20】
 	#[serde(rename = "id")]
 	pub id: u64,
-	/// search标签名称 【max:20】
-	#[serde(rename = "labelName")]
-	pub label_name: String,
-	/// thing状态:1@可见;2@不可见 【max:3】
+	/// 文章编号 【max:20】
+	#[serde(rename = "idBlogArticle")]
+	pub id_blog_article: u64,
+	/// 标签编号 【max:20】
+	#[serde(rename = "idBlogLabel")]
+	pub id_blog_label: u64,
+	/// thing状态:1@正常;2@已删除 【max:3】
 	#[serde(rename = "state")]
 	pub state: u8,
-	/// 顺序 【max:10】
-	#[serde(rename = "sequence")]
-	pub sequence: u32,
 }
 
-plier::create_serde_string_length_checker!(check_length_label_name, 0, 20);
 
-impl BaseModel for BlogLabelModel {
+impl BaseModel for BlogArticleLabelModel {
 
     fn get_table_name(&self) -> &str {
         return TABLE_NAME;
@@ -179,9 +178,9 @@ impl BaseModel for BlogLabelModel {
         return (params! {
 			"created_at" => self.created_at,
 			"updated_at" => self.updated_at,
-			"label_name" => self.label_name.to_string(),
+			"id_blog_article" => self.id_blog_article,
+			"id_blog_label" => self.id_blog_label,
 			"state" => self.state,
-			"sequence" => self.sequence,
         }, columns, keys);
     }
 
@@ -198,9 +197,9 @@ impl BaseModel for BlogLabelModel {
         return (params! {
 			"created_at" => self.created_at,
 			"updated_at" => self.updated_at,
-			"label_name" => self.label_name.to_string(),
+			"id_blog_article" => self.id_blog_article,
+			"id_blog_label" => self.id_blog_label,
 			"state" => self.state,
-			"sequence" => self.sequence,
             "id" => self.id,
         }, columns, String::from(format!("{}=:{}",  FIELDS[0], FIELDS[0])))
     }

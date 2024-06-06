@@ -8,13 +8,13 @@ use std::fmt;
 use serde::de::Unexpected;
 
 pub const TABLE_NAME:&str = "blog_article";
-pub const FIELDS:[&str;16] = ["id","created_at","updated_at","id_blog_author","id_blog_classes","title_article","state_article","state_publish","state_private","content","like_count","watch_count","view_count","time_publish","sequence","label_list"];
+pub const FIELDS:[&str;15] = ["id","created_at","updated_at","id_blog_author","id_blog_classes","title_article","state_article","state_publish","state_private","content","like_count","watch_count","view_count","time_publish","sequence"];
 pub const ALIAS:&str = "blogArticle";
 
 ///	BlogArticleModel 文章
 ///	table - blog_article
 ///	author: AT
-///	since: 2024-06-06 09:16:31
+///	since: 2024-06-06 15:01:27
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogArticleModel {
@@ -63,19 +63,16 @@ pub struct BlogArticleModel {
 	/// 顺序 【max:10】 
 	#[serde(rename = "sequence")]
 	pub sequence: u32,
-	/// 文章标签 【max:200】 
-	#[serde(rename = "labelList")]
-	pub label_list: String,
 }
 
 impl BlogArticleModel {
 
-    pub fn new(id_blog_author: u64, id_blog_classes: u64, title_article: String, state_article: u8, state_publish: u8, state_private: u8, content: String, like_count: u32, watch_count: u32, view_count: u32, time_publish: u64, sequence: u32, label_list: String) -> BlogArticleModel {
-        BlogArticleModel{id:0, created_at: 0, updated_at: 0, id_blog_author, id_blog_classes, title_article, state_article, state_publish, state_private, content, like_count, watch_count, view_count, time_publish, sequence, label_list}
+    pub fn new(id_blog_author: u64, id_blog_classes: u64, title_article: String, state_article: u8, state_publish: u8, state_private: u8, content: String, like_count: u32, watch_count: u32, view_count: u32, time_publish: u64, sequence: u32) -> BlogArticleModel {
+        BlogArticleModel{id:0, created_at: 0, updated_at: 0, id_blog_author, id_blog_classes, title_article, state_article, state_publish, state_private, content, like_count, watch_count, view_count, time_publish, sequence}
     }
 
-    pub fn new_full(id: u64, created_at: u64, updated_at: u64, id_blog_author: u64, id_blog_classes: u64, title_article: String, state_article: u8, state_publish: u8, state_private: u8, content: String, like_count: u32, watch_count: u32, view_count: u32, time_publish: u64, sequence: u32, label_list: String) -> BlogArticleModel {
-        BlogArticleModel{id, created_at, updated_at, id_blog_author, id_blog_classes, title_article, state_article, state_publish, state_private, content, like_count, watch_count, view_count, time_publish, sequence, label_list}
+    pub fn new_full(id: u64, created_at: u64, updated_at: u64, id_blog_author: u64, id_blog_classes: u64, title_article: String, state_article: u8, state_publish: u8, state_private: u8, content: String, like_count: u32, watch_count: u32, view_count: u32, time_publish: u64, sequence: u32) -> BlogArticleModel {
+        BlogArticleModel{id, created_at, updated_at, id_blog_author, id_blog_classes, title_article, state_article, state_publish, state_private, content, like_count, watch_count, view_count, time_publish, sequence}
     }
 
     fn set_pk(&mut self, pk: u64) {
@@ -109,12 +106,12 @@ pub fn get_field_sql(alias: &str) -> String {
 
 /// pot 罐子 -> 把 mysql-row 按指定偏移 offset 装入结构体
 pub fn pot(row: Row, offset: usize) -> BlogArticleModel {
-	return BlogArticleModel::new_full(row.get(offset+0).unwrap(),row.get(offset+1).unwrap(),row.get(offset+2).unwrap(),row.get(offset+3).unwrap(),row.get(offset+4).unwrap(),row.get(offset+5).unwrap(),row.get(offset+6).unwrap(),row.get(offset+7).unwrap(),row.get(offset+8).unwrap(),row.get(offset+9).unwrap(),row.get(offset+10).unwrap(),row.get(offset+11).unwrap(),row.get(offset+12).unwrap(),row.get(offset+13).unwrap(),row.get(offset+14).unwrap(),row.get(offset+15).unwrap());
+	return BlogArticleModel::new_full(row.get(offset+0).unwrap(),row.get(offset+1).unwrap(),row.get(offset+2).unwrap(),row.get(offset+3).unwrap(),row.get(offset+4).unwrap(),row.get(offset+5).unwrap(),row.get(offset+6).unwrap(),row.get(offset+7).unwrap(),row.get(offset+8).unwrap(),row.get(offset+9).unwrap(),row.get(offset+10).unwrap(),row.get(offset+11).unwrap(),row.get(offset+12).unwrap(),row.get(offset+13).unwrap(),row.get(offset+14).unwrap());
 }
 
 ///	BlogArticleJSONOut 文章
 ///	author: AT
-///	since: 2024-06-06 09:16:31
+///	since: 2024-06-06 15:01:27
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogArticleJSONOut {
@@ -163,14 +160,11 @@ pub struct BlogArticleJSONOut {
 	/// 顺序 【max:10】 
 	#[serde(rename = "sequence")]
 	pub sequence: u32,
-	/// 文章标签 【max:200】 
-	#[serde(rename = "labelList")]
-	pub label_list: String,
 }
 
 ///	BlogArticleJSONIn 文章
 ///	author: AT
-///	since: 2024-06-06 09:16:31
+///	since: 2024-06-06 15:01:27
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogArticleJSONIn {
@@ -213,14 +207,10 @@ pub struct BlogArticleJSONIn {
 	/// 顺序 【max:10】
 	#[serde(rename = "sequence")]
 	pub sequence: u32,
-	/// 文章标签 【max:200】
-	#[serde(rename = "labelList")]
-	pub label_list: String,
 }
 
 plier::create_serde_string_length_checker!(check_length_title_article, 0, 50);
 plier::create_serde_string_length_checker!(check_length_content, 0, 2147483647);
-plier::create_serde_string_length_checker!(check_length_label_list, 0, 200);
 
 impl BaseModel for BlogArticleModel {
 
@@ -283,7 +273,6 @@ impl BaseModel for BlogArticleModel {
 			"view_count" => self.view_count,
 			"time_publish" => self.time_publish,
 			"sequence" => self.sequence,
-			"label_list" => self.label_list.to_string(),
         }, columns, keys);
     }
 
@@ -312,7 +301,6 @@ impl BaseModel for BlogArticleModel {
 			"view_count" => self.view_count,
 			"time_publish" => self.time_publish,
 			"sequence" => self.sequence,
-			"label_list" => self.label_list.to_string(),
             "id" => self.id,
         }, columns, String::from(format!("{}=:{}",  FIELDS[0], FIELDS[0])))
     }

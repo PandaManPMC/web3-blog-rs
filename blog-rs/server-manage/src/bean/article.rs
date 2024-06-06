@@ -2,6 +2,10 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct GetArticleLstIn {
+    /// 文章类型 【max:20】
+    #[serde(default)]
+    #[serde(rename = "idBlogClasses")]
+    pub id_blog_classes: u64,
 
     /// thing状态:1@正常;2@已删除 【max:3】
     #[serde(default)]

@@ -40,6 +40,10 @@ async fn get_article_lst(
     debug!("{:?}", query);
 
     let mut params:HashMap<String, Box<dyn Any>> = HashMap::new();
+    if 0 != query.id_blog_classes {
+        params.insert(String::from("id_blog_classes"), Box::new(query.id_blog_classes));
+    }
+
     if 0 != query.state_article {
         params.insert(String::from("state_article"), Box::new(query.state_article));
     }
@@ -54,7 +58,9 @@ async fn get_article_lst(
 
     let page_index = sql::Condition::PageIndex(query.page_index);
     let page_size = sql::Condition::PageSize(query.page_size);
-    let bc = [page_index, page_size, ];
+    let desc = sql::Condition::OrderByField("sequence".to_string());
+
+    let bc = [page_index, page_size, desc ];
 
     let result = base::service::blog_article_sve::query_list(&params, &bc);
 
@@ -81,7 +87,9 @@ async fn get_classes_lst(
 
     let page_index = sql::Condition::PageIndex(query.page_index);
     let page_size = sql::Condition::PageSize(query.page_size);
-    let bc = [page_index, page_size, ];
+    let desc = sql::Condition::OrderByField("sequence".to_string());
+
+    let bc = [page_index, page_size, desc ];
 
     let result = base::service::blog_classes_sve::query_list(&params, &bc);
 
@@ -108,7 +116,9 @@ async fn get_label_lst(
 
     let page_index = sql::Condition::PageIndex(query.page_index);
     let page_size = sql::Condition::PageSize(query.page_size);
-    let bc = [page_index, page_size, ];
+    let desc = sql::Condition::OrderByField("sequence".to_string());
+
+    let bc = [page_index, page_size, desc ];
 
     let result = base::service::blog_label_sve::query_list(&params, &bc);
 
