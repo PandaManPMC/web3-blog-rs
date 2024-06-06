@@ -1,13 +1,20 @@
+use std::any::Any;
+use std::collections::HashMap;
 use axum::{
     routing::{get, post},
     http::StatusCode,
     Json, Router,
+    extract::Query,
 };
 use log::debug;
 use crate::bean;
+use i_dao::sql;
+use base::model::blog_article::BlogArticleModel;
+use base::model::blog_author::BlogAuthorModel;
 
 pub fn init_router(mut router: Router) -> Router {
     // router = router.route("/article/publish", post(publish));
+    router = router.route("/article/getArticleLst", get(get_article_lst));
     return router;
 }
 
@@ -21,3 +28,40 @@ pub fn init_router(mut router: Router) -> Router {
 //
 //     (StatusCode::CREATED, Json(out))
 // }
+
+async fn get_article_lst(
+    query: Query<bean::article::GetArticleLstIn>,
+) -> Json<common::net::rsp::Rsp<Vec<BlogArticleModel>>> {
+
+    debug!("{:?}", query);
+
+    let mut params:HashMap<String, Box<dyn Any>> = HashMap::new();
+    if 0 != query.state_article {
+        params.insert(String::from("state_article"), Box::new(query.state_article));
+    }
+
+    if 0 != query.state_private {
+        params.insert(String::from("state_private"), Box::new(query.state_private));
+    }
+
+    if 0 != query.state_publish {
+        params.insert(String::from("state_publish"), Box::new(query.state_publish));
+    }
+
+    let page_index = sql::Condition::PageIndex(1);
+    let page_size = sql::Condition::PageSize(3);
+    let asc = sql::Condition::OrderByAESOrDESC(1);
+
+    let bc = [page_index, page_size, asc, ];
+
+    let result = base::service::blog_article_sve::query_list(&params, &bc);
+
+    if result.is_err() {
+        tracing::warn!("{:?}", result);
+        return Json(common::net::rsp::Rsp::<Vec<BlogArticleModel>>::err_de())
+    }
+
+    let lst = result.unwrap();
+    let rsp = common::net::rsp::Rsp::ok(lst);
+    Json(rsp)
+}
