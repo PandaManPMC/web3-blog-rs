@@ -4,8 +4,8 @@ use axum::{
     http::header::HeaderMap,
     response::IntoResponse,
     Json, Router,
+    extract::Request,
 };
-use axum::extract::Request;
 use serde::{Deserialize, Serialize};
 use log::{warn,info, debug};
 use crate::bean;
@@ -56,7 +56,11 @@ async fn login(
         }
 
         let ut = common::token::generate_user_token(au.user_name.clone());
-        common::cache::member_rds::set_user_by_ut(ut.clone(), ac);
+        // let re = common::cache::member_rds::set_user_by_token(ut.clone(), ac.clone()).await;
+        // if re.is_err() {
+        //     tracing::warn!("{:?}", re);
+        //     return Json(common::net::rsp::Rsp::<bean::admin::LoginOut>::err_de())
+        // }
 
         let out = bean::admin::LoginOut {
             id: au.id,

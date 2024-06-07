@@ -43,26 +43,26 @@ pub async fn app(mut request: Request, next: Next) -> Result<Response, Json<Rsp<
 
     if let Some(x) = user_token {
         let ut = x.to_str().unwrap().to_string();
-        let user_res = common::cache::member_rds::get_user_by_ut(ut);
-        if let Some(u) = user_res {
-            tool::req::set_user_to_req(&mut req, u);
-        } else {
+        // let user_res = common::cache::member_rds::get_user_by_ut(ut);
+        // if let Some(u) = user_res {
+        //     tool::req::set_user_to_req(&mut req, u);
+        // } else {
+        //     return Err(Json(Rsp::<rsp::Default>::not_login()))
+        // }
+
+        let user_res = common::cache::member_rds::get_user_by_token(ut.clone()).await;
+
+        if user_res.is_err() {
+            tracing::error!("get_user_by_token：{:?}", user_res);
             return Err(Json(Rsp::<rsp::Default>::not_login()))
         }
 
-        // let user_res = common::cache::member_rds::get_user_by_token(ut).await;
-
-        // if user_res.is_err() {
-        //     tracing::error!("get_user_by_token：{:?}", user_res);
-        //     return Err(Json(Rsp::<rsp::Default>::not_login()))
-        // }
-        //
-        // let user = user_res.unwrap();
-        // if let Some(u) = user {
-        //      set_user_to_req(&mut req, u);
-        // } else{
-        //     return Err(Json(Rsp::<rsp::Default>::not_login()))
-        // }
+        let user = user_res.unwrap();
+        if let Some(u) = user {
+            tool::req::set_user_to_req(&mut req, u);
+        } else{
+            return Err(Json(Rsp::<rsp::Default>::not_login()))
+        }
     }else{
         return Err(Json(Rsp::<rsp::Default>::not_login()))
     }
