@@ -5,14 +5,13 @@ use axum::{
     response::IntoResponse,
     Json, Router,
     extract::Request,
+    extract::FromRequest,
 };
 use serde::{Deserialize, Serialize};
-use log::{warn,info, debug};
-use crate::bean;
-use axum::async_trait;
-use axum::extract::FromRequest;
 use serde::de::DeserializeOwned;
-use hyper::body::Body;
+use log::{warn,info, debug};
+use crate::{bean, tool};
+use axum::debug_handler;
 
 pub fn init_router(mut router: Router) -> Router {
     router = router.route("/admin/login", post(login));
@@ -21,6 +20,7 @@ pub fn init_router(mut router: Router) -> Router {
 }
 
 /// login 登录
+#[debug_handler]
 async fn login(
     headers: HeaderMap,
     Json(payload): Json<bean::admin::LoginIn>
@@ -55,8 +55,9 @@ async fn login(
 
         }
 
+
         let ut = common::token::generate_user_token(au.user_name.clone());
-        // let re = common::cache::member_rds::set_user_by_token(ut.clone(), ac.clone()).await;
+        // let re = common::cache::member_rds::set_user_by_token(ut.clone(), ac).await;
         // if re.is_err() {
         //     tracing::warn!("{:?}", re);
         //     return Json(common::net::rsp::Rsp::<bean::admin::LoginOut>::err_de())
@@ -77,3 +78,4 @@ async fn login(
     }
 
 }
+

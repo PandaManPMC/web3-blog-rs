@@ -1,3 +1,5 @@
+use log::info;
+
 pub mod req;
 
 pub const X_USER_TOKEN: &str = "x-user-token";
