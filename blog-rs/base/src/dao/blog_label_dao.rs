@@ -1,19 +1,20 @@
 ///	blogLabelDao
 ///	标准 DAO - 文章标签 - blog_label
 ///	author: AT
-///	since: 2024-05-03 11:47:00
+///	since: 2024-06-07 15:32:12
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 
 use log::{debug, warn};
 use std::collections::HashMap;
 use std::any::Any;
 use r2d2_mysql::mysql::{Transaction, Value, Row, params::Params, prelude::Queryable};
-use i_dao::{sql, dao};
+use i_dao::{sql};
+use i_dao::tok::dao;
 use r2d2_mysql::{MySqlConnectionManager, r2d2};
 use mysql::params;
 use crate::{model::blog_label,model::blog_label::BlogLabelModel};
 
-pub fn query_list(tx: &mut Transaction, condition_params: &HashMap<String, Box<dyn Any>>, condition: &[sql:: Condition]) -> Result<Vec<BlogLabelModel>, Box<dyn std::error::Error>> {
+pub fn query_list(tx: &mut Transaction, condition_params: &HashMap<String, Box<dyn Any>>, condition: &[sql:: Condition]) -> Result<Vec<BlogLabelModel>, String> {
     let mut query_sql = format!("SELECT {} FROM {}", blog_label::get_field_sql(""), blog_label::TABLE_NAME);
     let mut params: Vec<Value> = vec![];
 
@@ -48,13 +49,13 @@ pub fn query_list(tx: &mut Transaction, condition_params: &HashMap<String, Box<d
 
     if result.is_err() {
         warn!("b_d::blog_label_dao::query_list 失败！ res={:?}", result);
-        return Ok(result?);
+        return Err(result.err().unwrap().to_string());
     }
 
-    return Ok(result?);
+    return Ok(result.unwrap());
 }
 
-pub fn query_count(conn: &mut r2d2::PooledConnection<MySqlConnectionManager>, condition_params: &HashMap<String, Box<dyn Any>>, condition: &[sql:: Condition]) -> Result<u64, Box<dyn std::error::Error>> {
+pub fn query_count(conn: &mut r2d2::PooledConnection<MySqlConnectionManager>, condition_params: &HashMap<String, Box<dyn Any>>, condition: &[sql:: Condition]) -> Result<u64, String> {
     let mut query_sql = format!("SELECT COUNT(1) AS co FROM {}", blog_label::TABLE_NAME);
     let mut params: Vec<Value> = vec![];
 
@@ -83,7 +84,7 @@ pub fn query_count(conn: &mut r2d2::PooledConnection<MySqlConnectionManager>, co
 
     return match result {
         Err(e) => {
-            Err(Box::new(e))
+           Err(e.to_string().into())
         },
         Ok(op) => {
             return match op {
@@ -98,7 +99,7 @@ pub fn query_count(conn: &mut r2d2::PooledConnection<MySqlConnectionManager>, co
     };
 }
 
-pub fn find_by_id(tx: &mut Transaction, id: u64) -> Result<Option<BlogLabelModel>, Box<dyn std::error::Error>> {
+pub fn find_by_id(tx: &mut Transaction, id: u64) -> Result<Option<BlogLabelModel>, String> {
     let query_sql = format!("SELECT {} FROM {} WHERE {} = ? LIMIT 0,1", blog_label::get_field_sql("") ,blog_label::TABLE_NAME, blog_label::FIELDS[0]);
     let result = tx.exec_map(
         query_sql, (id,),|row: Row| blog_label::pot(row, 0)
@@ -107,7 +108,7 @@ pub fn find_by_id(tx: &mut Transaction, id: u64) -> Result<Option<BlogLabelModel
         warn!("b_d::blog_label_dao::find_by_id 失败！ res={:?}", result);
         return match result {
             Err(e) => {
-                Err(Box::new(e))
+                Err(e.to_string().into())
             },
             Ok(_) => {
                 unimplemented!()
@@ -125,7 +126,7 @@ pub fn find_by_id(tx: &mut Transaction, id: u64) -> Result<Option<BlogLabelModel
 }
 
 
-pub fn  find_by_label_name(tx: &mut Transaction, label_name: String) -> Result<Option<BlogLabelModel>, Box<dyn std::error::Error>> {
+pub fn find_by_label_name(tx: &mut Transaction, label_name: String) -> Result<Option<BlogLabelModel>, String> {
     let query_sql = format!("SELECT {} FROM {} WHERE label_name = ? ORDER BY id DESC LIMIT 0,1", blog_label::get_field_sql(""), blog_label::TABLE_NAME);
     let result = tx.exec_map(
         query_sql, (label_name,),|row: Row| blog_label::pot(row, 0)
@@ -134,7 +135,7 @@ pub fn  find_by_label_name(tx: &mut Transaction, label_name: String) -> Result<O
         warn!("b_d::blog_label_dao::label_name 失败！ res={:?}", result);
         return match result {
             Err(e) => {
-                Err(Box::new(e))
+                Err(e.to_string().into())
             },
             Ok(_) => {
                 unimplemented!()

@@ -1184,9 +1184,9 @@ dependencies = [
 
 [[package]]
 name = "i_dao"
-version = "0.1.4"
+version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0aa4bc7bbf42040a92f87211365223ae296c7aa57eda3016400fc1f1e5132761"
+checksum = "e63bf07cd52191c4c978aec163543c41ed9beb807ea34f40687754d5d2590743"
 dependencies = [
  "env_logger",
  "i_dao_proc_macro",
@@ -1196,6 +1196,7 @@ dependencies = [
  "r2d2_mysql",
  "serde",
  "serde_json",
+ "tokio",
 ]
 
 [[package]]
@@ -3005,7 +3006,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "97fee6b57c6a41524a810daee9286c02d7752c4253064d0b05472833a438f675"
 dependencies = [
  "cfg-if",
- "rand 0.8.5",
+ "rand 0.3.23",
  "static_assertions",
 ]
 

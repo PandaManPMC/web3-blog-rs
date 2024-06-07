@@ -30,7 +30,7 @@ async fn login(
     tracing::info!("login 访问者 ip={:?}", real_ip);
     tracing::debug!("{:?}", payload);
 
-    let author_res = base::service::blog_author_sve::find_by_user_name(payload.user_name);
+    let author_res = base::service::blog_author_sve::find_by_user_name(payload.user_name).await;
 
     if author_res.is_err() {
         return Json(common::net::rsp::Rsp::<bean::admin::LoginOut>::err_de())
@@ -55,13 +55,12 @@ async fn login(
 
         }
 
-
         let ut = common::token::generate_user_token(au.user_name.clone());
-        // let re = common::cache::member_rds::set_user_by_token(ut.clone(), ac).await;
-        // if re.is_err() {
-        //     tracing::warn!("{:?}", re);
-        //     return Json(common::net::rsp::Rsp::<bean::admin::LoginOut>::err_de())
-        // }
+        let re = common::cache::member_rds::set_user_by_token(ut.clone(), ac).await;
+        if re.is_err() {
+            tracing::warn!("{:?}", re);
+            return Json(common::net::rsp::Rsp::<bean::admin::LoginOut>::err_de())
+        }
 
         let out = bean::admin::LoginOut {
             id: au.id,

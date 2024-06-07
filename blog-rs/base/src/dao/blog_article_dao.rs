@@ -1,19 +1,20 @@
 ///	blogArticleDao
 ///	标准 DAO - 文章 - blog_article
 ///	author: AT
-///	since: 2024-05-03 11:47:00
+///	since: 2024-06-07 15:32:12
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 
 use log::{debug, warn};
 use std::collections::HashMap;
 use std::any::Any;
 use r2d2_mysql::mysql::{Transaction, Value, Row, params::Params, prelude::Queryable};
-use i_dao::{sql, dao};
+use i_dao::{sql};
+use i_dao::tok::dao;
 use r2d2_mysql::{MySqlConnectionManager, r2d2};
 use mysql::params;
 use crate::{model::blog_article,model::blog_article::BlogArticleModel};
 
-pub fn query_list(tx: &mut Transaction, condition_params: &HashMap<String, Box<dyn Any>>, condition: &[sql:: Condition]) -> Result<Vec<BlogArticleModel>, Box<dyn std::error::Error>> {
+pub fn query_list(tx: &mut Transaction, condition_params: &HashMap<String, Box<dyn Any>>, condition: &[sql:: Condition]) -> Result<Vec<BlogArticleModel>, String> {
     let mut query_sql = format!("SELECT {} FROM {}", blog_article::get_field_sql(""), blog_article::TABLE_NAME);
     let mut params: Vec<Value> = vec![];
 
@@ -48,13 +49,13 @@ pub fn query_list(tx: &mut Transaction, condition_params: &HashMap<String, Box<d
 
     if result.is_err() {
         warn!("b_d::blog_article_dao::query_list 失败！ res={:?}", result);
-        return Ok(result?);
+        return Err(result.err().unwrap().to_string());
     }
 
-    return Ok(result?);
+    return Ok(result.unwrap());
 }
 
-pub fn query_count(conn: &mut r2d2::PooledConnection<MySqlConnectionManager>, condition_params: &HashMap<String, Box<dyn Any>>, condition: &[sql:: Condition]) -> Result<u64, Box<dyn std::error::Error>> {
+pub fn query_count(conn: &mut r2d2::PooledConnection<MySqlConnectionManager>, condition_params: &HashMap<String, Box<dyn Any>>, condition: &[sql:: Condition]) -> Result<u64, String> {
     let mut query_sql = format!("SELECT COUNT(1) AS co FROM {}", blog_article::TABLE_NAME);
     let mut params: Vec<Value> = vec![];
 
@@ -83,7 +84,7 @@ pub fn query_count(conn: &mut r2d2::PooledConnection<MySqlConnectionManager>, co
 
     return match result {
         Err(e) => {
-            Err(Box::new(e))
+           Err(e.to_string().into())
         },
         Ok(op) => {
             return match op {
@@ -98,7 +99,7 @@ pub fn query_count(conn: &mut r2d2::PooledConnection<MySqlConnectionManager>, co
     };
 }
 
-pub fn find_by_id(tx: &mut Transaction, id: u64) -> Result<Option<BlogArticleModel>, Box<dyn std::error::Error>> {
+pub fn find_by_id(tx: &mut Transaction, id: u64) -> Result<Option<BlogArticleModel>, String> {
     let query_sql = format!("SELECT {} FROM {} WHERE {} = ? LIMIT 0,1", blog_article::get_field_sql("") ,blog_article::TABLE_NAME, blog_article::FIELDS[0]);
     let result = tx.exec_map(
         query_sql, (id,),|row: Row| blog_article::pot(row, 0)
@@ -107,7 +108,7 @@ pub fn find_by_id(tx: &mut Transaction, id: u64) -> Result<Option<BlogArticleMod
         warn!("b_d::blog_article_dao::find_by_id 失败！ res={:?}", result);
         return match result {
             Err(e) => {
-                Err(Box::new(e))
+                Err(e.to_string().into())
             },
             Ok(_) => {
                 unimplemented!()
@@ -125,7 +126,7 @@ pub fn find_by_id(tx: &mut Transaction, id: u64) -> Result<Option<BlogArticleMod
 }
 
 
-pub fn  find_by_id_blog_author(tx: &mut Transaction, id_blog_author: u64) -> Result<Option<BlogArticleModel>, Box<dyn std::error::Error>> {
+pub fn find_by_id_blog_author(tx: &mut Transaction, id_blog_author: u64) -> Result<Option<BlogArticleModel>, String> {
     let query_sql = format!("SELECT {} FROM {} WHERE id_blog_author = ? ORDER BY id DESC LIMIT 0,1", blog_article::get_field_sql(""), blog_article::TABLE_NAME);
     let result = tx.exec_map(
         query_sql, (id_blog_author,),|row: Row| blog_article::pot(row, 0)
@@ -134,7 +135,7 @@ pub fn  find_by_id_blog_author(tx: &mut Transaction, id_blog_author: u64) -> Res
         warn!("b_d::blog_article_dao::id_blog_author 失败！ res={:?}", result);
         return match result {
             Err(e) => {
-                Err(Box::new(e))
+                Err(e.to_string().into())
             },
             Ok(_) => {
                 unimplemented!()
@@ -151,7 +152,7 @@ pub fn  find_by_id_blog_author(tx: &mut Transaction, id_blog_author: u64) -> Res
     return Ok(one);
 }
 
-pub fn  find_by_id_blog_classes(tx: &mut Transaction, id_blog_classes: u64) -> Result<Option<BlogArticleModel>, Box<dyn std::error::Error>> {
+pub fn find_by_id_blog_classes(tx: &mut Transaction, id_blog_classes: u64) -> Result<Option<BlogArticleModel>, String> {
     let query_sql = format!("SELECT {} FROM {} WHERE id_blog_classes = ? ORDER BY id DESC LIMIT 0,1", blog_article::get_field_sql(""), blog_article::TABLE_NAME);
     let result = tx.exec_map(
         query_sql, (id_blog_classes,),|row: Row| blog_article::pot(row, 0)
@@ -160,7 +161,7 @@ pub fn  find_by_id_blog_classes(tx: &mut Transaction, id_blog_classes: u64) -> R
         warn!("b_d::blog_article_dao::id_blog_classes 失败！ res={:?}", result);
         return match result {
             Err(e) => {
-                Err(Box::new(e))
+                Err(e.to_string().into())
             },
             Ok(_) => {
                 unimplemented!()

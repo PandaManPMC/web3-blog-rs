@@ -14,13 +14,13 @@ use base::model::blog_classes::BlogClassesModel;
 use base::model::blog_label::BlogLabelModel;
 
 pub fn init_router(mut router: Router) -> Router {
-    router = router.route("/article/publish", post(publish));
-    router = router.route("/article/createClasses", post(create_classes));
-    router = router.route("/article/createLabel", post(create_label));
-
-    router = router.route("/article/getArticleLst", get(get_article_lst));
-    router = router.route("/article/getClassesLst", get(get_classes_lst));
-    router = router.route("/article/getLabelLst", get(get_label_lst));
+    // router = router.route("/article/publish", post(publish));
+    // router = router.route("/article/createClasses", post(create_classes));
+    // router = router.route("/article/createLabel", post(create_label));
+    //
+    // router = router.route("/article/getArticleLst", get(get_article_lst));
+    // router = router.route("/article/getClassesLst", get(get_classes_lst));
+    // router = router.route("/article/getLabelLst", get(get_label_lst));
     return router;
 }
 
@@ -38,7 +38,7 @@ async fn publish(
                           payload.state_publish, payload.state_private,
                           payload.content, 0,0,0, now, payload.sequence);
 
-    let res = base::service::blog_article_sve::add(&mut article);
+    let res = base::service::blog_article_sve::add(&mut article).await;
     if res.is_err() {
         tracing::warn!("{:?}", res);
         return Json(common::net::rsp::Rsp::<u64>::err_de())
@@ -77,7 +77,7 @@ async fn get_article_lst(
 
     let bc = [page_index, page_size, desc ];
 
-    let result = base::service::blog_article_sve::query_list(&params, &bc);
+    let result = base::service::blog_article_sve::query_list(&params, &bc).await;
 
     if result.is_err() {
         tracing::warn!("{:?}", result);
@@ -95,7 +95,7 @@ async fn create_classes (
 ) -> Json<common::net::rsp::Rsp<u64>> {
     debug!("{:?}", payload);
 
-    let r = base::service::blog_classes_sve::find_by_classes_name(payload.classes_name.clone());
+    let r = base::service::blog_classes_sve::find_by_classes_name(payload.classes_name.clone()).await;
     if r.is_err(){
         tracing::warn!("{:?}", r);
         return Json(common::net::rsp::Rsp::<u64>::err_de())
@@ -106,7 +106,7 @@ async fn create_classes (
     }
 
     let mut cla = BlogClassesModel::new(payload.classes_name, 1, payload.sequence);
-    let res = base::service::blog_classes_sve::add(&mut cla);
+    let res = base::service::blog_classes_sve::add(&mut cla).await;
     if res.is_err() {
         tracing::warn!("{:?}", res);
         return Json(common::net::rsp::Rsp::<u64>::err_de())
@@ -132,7 +132,7 @@ async fn get_classes_lst(
 
     let bc = [page_index, page_size, desc ];
 
-    let result = base::service::blog_classes_sve::query_list(&params, &bc);
+    let result = base::service::blog_classes_sve::query_list(&params, &bc).await;
 
     if result.is_err() {
         tracing::warn!("{:?}", result);
@@ -150,7 +150,7 @@ async fn create_label (
 ) -> Json<common::net::rsp::Rsp<u64>> {
     debug!("{:?}", payload);
 
-    let r = base::service::blog_label_sve::find_by_label_name(payload.label_name.clone());
+    let r = base::service::blog_label_sve::find_by_label_name(payload.label_name.clone()).await;
     if r.is_err(){
         tracing::warn!("{:?}", r);
         return Json(common::net::rsp::Rsp::<u64>::err_de())
@@ -161,7 +161,7 @@ async fn create_label (
     }
 
     let mut cla = BlogLabelModel::new(payload.label_name, 1, payload.sequence);
-    let res = base::service::blog_label_sve::add(&mut cla);
+    let res = base::service::blog_label_sve::add(&mut cla).await;
     if res.is_err() {
         tracing::warn!("{:?}", res);
         return Json(common::net::rsp::Rsp::<u64>::err_de())
@@ -187,7 +187,7 @@ async fn get_label_lst(
 
     let bc = [page_index, page_size, desc ];
 
-    let result = base::service::blog_label_sve::query_list(&params, &bc);
+    let result = base::service::blog_label_sve::query_list(&params, &bc).await;
 
     if result.is_err() {
         tracing::warn!("{:?}", result);
