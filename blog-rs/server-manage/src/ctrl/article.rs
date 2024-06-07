@@ -14,11 +14,11 @@ use base::model::blog_classes::BlogClassesModel;
 use base::model::blog_label::BlogLabelModel;
 
 pub fn init_router(mut router: Router) -> Router {
-    // router = router.route("/article/publish", post(publish));
-    // router = router.route("/article/createClasses", post(create_classes));
-    // router = router.route("/article/createLabel", post(create_label));
-    //
-    // router = router.route("/article/getArticleLst", get(get_article_lst));
+    router = router.route("/article/publish", post(publish));
+    router = router.route("/article/createClasses", post(create_classes));
+    router = router.route("/article/createLabel", post(create_label));
+
+    router = router.route("/article/getArticleLst", get(get_article_lst));
     // router = router.route("/article/getClassesLst", get(get_classes_lst));
     // router = router.route("/article/getLabelLst", get(get_label_lst));
     return router;

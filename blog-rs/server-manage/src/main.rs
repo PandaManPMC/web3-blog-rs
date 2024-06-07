@@ -44,7 +44,7 @@ async fn main() {
 
         info!("server = {:?}", format!("0.0.0.0:{}", configs::get_int("basics", "port")));
 
-        // init_author().await;
+        init_author().await;
 
         let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{:?}", configs::get_int("basics", "port"))).await.unwrap();
         axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>()).await.unwrap();
@@ -97,8 +97,8 @@ async unsafe fn init_mysql() {
 
     i_mysql::init(base::service::get_data_source_key().await, opts, configs::get_int("mysql_db1", "max_size") as u32, configs::get_int("mysql_db1", "max_idle") as u32).await;
 
-    // let conn = i_mysql::get_conn(&base::service::get_data_source_key()).await;
-    let conn = i_mysql::get_conn(&service::get_data_source_key().await).await;
+    let conn = i_mysql::get_conn(&base::service::get_data_source_key().await).await;
+    // let conn = i_mysql::get_conn(&service::get_data_source_key().await).await;
 
     if conn.is_err() {
         warn!("init_mysql {:?}", conn);
