@@ -1184,9 +1184,9 @@ dependencies = [
 
 [[package]]
 name = "i_dao"
-version = "0.1.6"
+version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e63bf07cd52191c4c978aec163543c41ed9beb807ea34f40687754d5d2590743"
+checksum = "d06d04dded7ebb571e973b793807f88712158c09fee4013a74d12243017c0aa3"
 dependencies = [
  "env_logger",
  "i_dao_proc_macro",

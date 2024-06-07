@@ -18,7 +18,7 @@ serde = { version = "1.0.199", features = ["derive"] }
 serde_json = "1.0.116"
 tracing = "0.1.40"
 tracing-subscriber = "0.3.18"
-i_dao = "0.1.6"
+i_dao = "0.1.7"
 i_dao_proc_macro = "0.1.0"
 mysql = "25.0.0"
 r2d2_mysql = "24.0.0"

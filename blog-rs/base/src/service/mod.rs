@@ -3,6 +3,7 @@ pub mod blog_author_sve;
 pub mod blog_classes_sve;
 pub mod blog_label_sve;
 pub mod blog_view_sve;
+pub mod blog_article_label_sve;
 
 use tokio::sync::RwLock;
 use tokio::sync::OnceCell;

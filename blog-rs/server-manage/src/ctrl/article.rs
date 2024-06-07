@@ -12,6 +12,8 @@ use i_dao::sql;
 use base::model::blog_article::BlogArticleModel;
 use base::model::blog_classes::BlogClassesModel;
 use base::model::blog_label::BlogLabelModel;
+use tokio::sync::RwLock;
+use std::sync::Arc;
 
 pub fn init_router(mut router: Router) -> Router {
     router = router.route("/article/publish", post(publish));
@@ -54,21 +56,21 @@ async fn get_article_lst(
 
     debug!("{:?}", query);
 
-    let mut params:HashMap<String, Box<dyn Any>> = HashMap::new();
+    let mut params:HashMap<String, sql::Params> = HashMap::new();
     if 0 != query.id_blog_classes {
-        params.insert(String::from("id_blog_classes"), Box::new(query.id_blog_classes));
+        params.insert(String::from("id_blog_classes"), sql::Params::UInteger64(query.id_blog_classes));
     }
 
     if 0 != query.state_article {
-        params.insert(String::from("state_article"), Box::new(query.state_article));
+        params.insert(String::from("state_article"), sql::Params::UInteger8(query.state_article));
     }
 
     if 0 != query.state_private {
-        params.insert(String::from("state_private"), Box::new(query.state_private));
+        params.insert(String::from("state_private"), sql::Params::UInteger8(query.state_private));
     }
 
     if 0 != query.state_publish {
-        params.insert(String::from("state_publish"), Box::new(query.state_publish));
+        params.insert(String::from("state_publish"), sql::Params::UInteger8(query.state_publish));
     }
 
     let page_index = sql::Condition::PageIndex(query.page_index);
@@ -78,7 +80,6 @@ async fn get_article_lst(
     let bc = [page_index, page_size, desc ];
 
     let result = base::service::blog_article_sve::query_list(&params, &bc).await;
-
     if result.is_err() {
         tracing::warn!("{:?}", result);
         return Json(common::net::rsp::Rsp::<Vec<BlogArticleModel>>::err_de())
@@ -114,35 +115,35 @@ async fn create_classes (
     return Json(common::net::rsp::Rsp::<u64>::ok(cla.id));
 }
 
-/// get_classes_lst 读取文章类型列表
-async fn get_classes_lst(
-    query: Query<bean::article::GetClassesLstIn>,
-) -> Json<common::net::rsp::Rsp<Vec<BlogClassesModel>>> {
-
-    debug!("{:?}", query);
-
-    let mut params:HashMap<String, Box<dyn Any>> = HashMap::new();
-    if 0 != query.state {
-        params.insert(String::from("state"), Box::new(query.state));
-    }
-
-    let page_index = sql::Condition::PageIndex(query.page_index);
-    let page_size = sql::Condition::PageSize(query.page_size);
-    let desc = sql::Condition::OrderByField("sequence".to_string());
-
-    let bc = [page_index, page_size, desc ];
-
-    let result = base::service::blog_classes_sve::query_list(&params, &bc).await;
-
-    if result.is_err() {
-        tracing::warn!("{:?}", result);
-        return Json(common::net::rsp::Rsp::<Vec<BlogClassesModel>>::err_de())
-    }
-
-    let lst = result.unwrap();
-    let rsp = common::net::rsp::Rsp::ok(lst);
-    Json(rsp)
-}
+// /// get_classes_lst 读取文章类型列表
+// async fn get_classes_lst(
+//     query: Query<bean::article::GetClassesLstIn>,
+// ) -> Json<common::net::rsp::Rsp<Vec<BlogClassesModel>>> {
+//
+//     debug!("{:?}", query);
+//
+//     let mut params:HashMap<String, Box<dyn Any>> = HashMap::new();
+//     if 0 != query.state {
+//         params.insert(String::from("state"), Box::new(query.state));
+//     }
+//
+//     let page_index = sql::Condition::PageIndex(query.page_index);
+//     let page_size = sql::Condition::PageSize(query.page_size);
+//     let desc = sql::Condition::OrderByField("sequence".to_string());
+//
+//     let bc = [page_index, page_size, desc ];
+//
+//     let result = base::service::blog_classes_sve::query_list(&params, &bc).await;
+//
+//     if result.is_err() {
+//         tracing::warn!("{:?}", result);
+//         return Json(common::net::rsp::Rsp::<Vec<BlogClassesModel>>::err_de())
+//     }
+//
+//     let lst = result.unwrap();
+//     let rsp = common::net::rsp::Rsp::ok(lst);
+//     Json(rsp)
+// }
 
 /// create_label 创建标签
 async fn create_label (
@@ -169,32 +170,32 @@ async fn create_label (
     return Json(common::net::rsp::Rsp::<u64>::ok(cla.id));
 }
 
-/// get_label_lst 获取标签列表
-async fn get_label_lst(
-    query: Query<bean::article::GetLabelLstIn>,
-) -> Json<common::net::rsp::Rsp<Vec<BlogLabelModel>>> {
-
-    debug!("{:?}", query);
-
-    let mut params:HashMap<String, Box<dyn Any>> = HashMap::new();
-    if 0 != query.state {
-        params.insert(String::from("state"), Box::new(query.state));
-    }
-
-    let page_index = sql::Condition::PageIndex(query.page_index);
-    let page_size = sql::Condition::PageSize(query.page_size);
-    let desc = sql::Condition::OrderByField("sequence".to_string());
-
-    let bc = [page_index, page_size, desc ];
-
-    let result = base::service::blog_label_sve::query_list(&params, &bc).await;
-
-    if result.is_err() {
-        tracing::warn!("{:?}", result);
-        return Json(common::net::rsp::Rsp::<Vec<BlogLabelModel>>::err_de())
-    }
-
-    let lst = result.unwrap();
-    let rsp = common::net::rsp::Rsp::ok(lst);
-    Json(rsp)
-}
+// /// get_label_lst 获取标签列表
+// async fn get_label_lst(
+//     query: Query<bean::article::GetLabelLstIn>,
+// ) -> Json<common::net::rsp::Rsp<Vec<BlogLabelModel>>> {
+//
+//     debug!("{:?}", query);
+//
+//     let mut params:HashMap<String, Box<dyn Any>> = HashMap::new();
+//     if 0 != query.state {
+//         params.insert(String::from("state"), Box::new(query.state));
+//     }
+//
+//     let page_index = sql::Condition::PageIndex(query.page_index);
+//     let page_size = sql::Condition::PageSize(query.page_size);
+//     let desc = sql::Condition::OrderByField("sequence".to_string());
+//
+//     let bc = [page_index, page_size, desc ];
+//
+//     let result = base::service::blog_label_sve::query_list(&params, &bc).await;
+//
+//     if result.is_err() {
+//         tracing::warn!("{:?}", result);
+//         return Json(common::net::rsp::Rsp::<Vec<BlogLabelModel>>::err_de())
+//     }
+//
+//     let lst = result.unwrap();
+//     let rsp = common::net::rsp::Rsp::ok(lst);
+//     Json(rsp)
+// }

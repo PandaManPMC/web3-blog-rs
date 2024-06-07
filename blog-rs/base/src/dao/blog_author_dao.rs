@@ -1,7 +1,7 @@
 ///	blogAuthorDao
 ///	标准 DAO - 作者 - blog_author
 ///	author: AT
-///	since: 2024-06-07 15:32:12
+///	since: 2024-06-07 17:05:23
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 
 use log::{debug, warn};
@@ -14,7 +14,7 @@ use r2d2_mysql::{MySqlConnectionManager, r2d2};
 use mysql::params;
 use crate::{model::blog_author,model::blog_author::BlogAuthorModel};
 
-pub fn query_list(tx: &mut Transaction, condition_params: &HashMap<String, Box<dyn Any>>, condition: &[sql:: Condition]) -> Result<Vec<BlogAuthorModel>, String> {
+pub fn query_list(tx: &mut Transaction, condition_params: &HashMap<String, sql::Params>, condition: &[sql:: Condition]) -> Result<Vec<BlogAuthorModel>, String> {
     let mut query_sql = format!("SELECT {} FROM {}", blog_author::get_field_sql(""), blog_author::TABLE_NAME);
     let mut params: Vec<Value> = vec![];
 
@@ -28,8 +28,8 @@ pub fn query_list(tx: &mut Transaction, condition_params: &HashMap<String, Box<d
             where_sql = format!(" {} {} ?", i_key, operator)
         }
 
-        if !sql::pot_params_condition(&mut params, &val) {
-            warn!("blog_author_dao::query_list::pot_params_condition - {} 参数装入失败", key)
+        if !sql::pot_params_condition_by_enum(&mut params, val) {
+            warn!("test_user_dao::query_list::pot_params_condition - {} 参数装入失败", key)
         }
     }
 
@@ -55,7 +55,7 @@ pub fn query_list(tx: &mut Transaction, condition_params: &HashMap<String, Box<d
     return Ok(result.unwrap());
 }
 
-pub fn query_count(conn: &mut r2d2::PooledConnection<MySqlConnectionManager>, condition_params: &HashMap<String, Box<dyn Any>>, condition: &[sql:: Condition]) -> Result<u64, String> {
+pub fn query_count(conn: &mut r2d2::PooledConnection<MySqlConnectionManager>, condition_params: &HashMap<String, sql::Params>, condition: &[sql:: Condition]) -> Result<u64, String> {
     let mut query_sql = format!("SELECT COUNT(1) AS co FROM {}", blog_author::TABLE_NAME);
     let mut params: Vec<Value> = vec![];
 
@@ -69,8 +69,8 @@ pub fn query_count(conn: &mut r2d2::PooledConnection<MySqlConnectionManager>, co
             where_sql = format!(" {} {} ?", i_key, operator)
         }
 
-        if !sql::pot_params_condition(&mut params, &val) {
-            warn!("blog_author_dao::query_count::pot_params_condition - {} 参数装入失败", key)
+        if !sql::pot_params_condition_by_enum(&mut params, val) {
+            warn!("test_user_dao::query_count::pot_params_condition - {} 参数装入失败", key)
         }
     }
 

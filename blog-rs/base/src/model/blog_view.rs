@@ -14,7 +14,7 @@ pub const ALIAS:&str = "blogView";
 ///	BlogViewModel 评论
 ///	table - blog_view
 ///	author: AT
-///	since: 2024-06-06 15:57:24
+///	since: 2024-06-07 17:02:09
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogViewModel {
@@ -99,7 +99,7 @@ pub fn pot(row: Row, offset: usize) -> BlogViewModel {
 
 ///	BlogViewJSONOut 评论
 ///	author: AT
-///	since: 2024-06-06 15:57:24
+///	since: 2024-06-07 17:02:09
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogViewJSONOut {
@@ -140,7 +140,7 @@ pub struct BlogViewJSONOut {
 
 ///	BlogViewJSONIn 评论
 ///	author: AT
-///	since: 2024-06-06 15:57:24
+///	since: 2024-06-07 17:02:09
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogViewJSONIn {

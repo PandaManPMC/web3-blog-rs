@@ -14,7 +14,7 @@ pub const ALIAS:&str = "blogAuthor";
 ///	BlogAuthorModel 作者
 ///	table - blog_author
 ///	author: AT
-///	since: 2024-06-06 15:57:24
+///	since: 2024-06-07 17:02:09
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogAuthorModel {
@@ -87,7 +87,7 @@ pub fn pot(row: Row, offset: usize) -> BlogAuthorModel {
 
 ///	BlogAuthorJSONOut 作者
 ///	author: AT
-///	since: 2024-06-06 15:57:24
+///	since: 2024-06-07 17:02:09
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogAuthorJSONOut {
@@ -116,7 +116,7 @@ pub struct BlogAuthorJSONOut {
 
 ///	BlogAuthorJSONIn 作者
 ///	author: AT
-///	since: 2024-06-06 15:57:24
+///	since: 2024-06-07 17:02:09
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogAuthorJSONIn {
