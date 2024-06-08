@@ -133,7 +133,7 @@ async fn change_article_label(
 
     // update union
     let mut al = lst.get_mut(0).unwrap();
-    if al.state = 1 {
+    if al.state == 1 {
         al.state = 2;
     }else{
         al.state = 1;
