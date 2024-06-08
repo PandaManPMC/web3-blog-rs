@@ -109,12 +109,7 @@ async fn change_article_label(
     params.insert(String::from("id_blog_article"), sql::Params::UInteger64(lemon.id));
     params.insert(String::from("id_blog_label"), sql::Params::UInteger64(payload.id_label));
 
-    let page_index = sql::Condition::PageIndex(1);
-    let page_size = sql::Condition::PageSize(1000);
-
-    let bc = [page_index, page_size ];
-
-    let lst_res = base::service::blog_article_label_sve::query_list(&params, &bc).await;
+    let lst_res = base::service::blog_article_label_sve::query_list(&params, &tool::limit_min()).await;
     if lst_res.is_err() {
         tracing::warn!("{:?}", lst_res);
         return Json(common::net::rsp::Rsp::<u64>::err_de());
