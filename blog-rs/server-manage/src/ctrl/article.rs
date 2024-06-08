@@ -17,6 +17,8 @@ use std::sync::Arc;
 
 pub fn init_router(mut router: Router) -> Router {
     router = router.route("/article/publish", post(publish));
+    router = router.route("/article/changeArticle", post(change_article));
+
     router = router.route("/article/createClasses", post(create_classes));
     router = router.route("/article/createLabel", post(create_label));
 
@@ -47,6 +49,40 @@ async fn publish(
     }
 
     return Json(common::net::rsp::Rsp::<u64>::ok(article.id));
+}
+
+async fn change_article(
+    Json(payload): Json<bean::article::ChangeArticleIN>,
+) -> Json<common::net::rsp::Rsp<u64>> {
+    debug!("{:?}", payload);
+
+    let article_res = base::service::blog_article_sve::find_by_id(payload.id).await;
+    if article_res.is_err() {
+        tracing::warn!("{:?}", article_res);
+        return Json(common::net::rsp::Rsp::<u64>::err_de());
+    }
+
+    let article = article_res.unwrap();
+    if article.is_none() {
+        return Json(common::net::rsp::Rsp::<u64>::fail("文章不存在".to_string()));
+    }
+
+    let mut lemon = article.unwrap();
+    lemon.id_blog_classes = payload.id_blog_classes;
+    lemon.title_article = payload.title_article;
+    lemon.state_article = payload.state_article;
+    lemon.state_publish = payload.state_publish;
+    lemon.state_private = payload.state_private;
+    lemon.content = payload.content;
+    lemon.sequence = payload.sequence;
+
+    let res = base::service::blog_article_sve::update_by_id(&mut lemon).await;
+    if res.is_err() {
+        tracing::warn!("{:?}", res);
+        return Json(common::net::rsp::Rsp::<u64>::err_de());
+    }
+
+    return Json(common::net::rsp::Rsp::<u64>::ok(lemon.id));
 }
 
 /// get_article_lst 文章列表
@@ -199,3 +235,4 @@ async fn get_label_lst(
     let rsp = common::net::rsp::Rsp::ok(lst);
     Json(rsp)
 }
+
