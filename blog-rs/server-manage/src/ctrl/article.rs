@@ -133,7 +133,11 @@ async fn change_article_label(
 
     // update union
     let mut al = lst.get_mut(0).unwrap();
-    al.state = 1u8;
+    if al.state = 1 {
+        al.state = 2;
+    }else{
+        al.state = 1;
+    }
     let res = base::service::blog_article_label_sve::update_by_id(&mut al).await;
     if res.is_err() {
         return Json(common::net::rsp::Rsp::<u64>::err_de());
