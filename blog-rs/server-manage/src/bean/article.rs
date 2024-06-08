@@ -66,6 +66,19 @@ pub struct ChangeArticleIN {
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
+pub struct ChangeArticleLabelIn {
+    /// search文章编号 【max:20】
+    #[serde(rename = "id")]
+    pub id: u64,
+
+    /// label id
+    #[serde(rename = "id_label")]
+    pub id_label: u64,
+}
+
+
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct CreateClassesIN {
     /// search类型名称 【max:20】
     #[serde(rename = "classesName", deserialize_with="check_length_classes_name")]

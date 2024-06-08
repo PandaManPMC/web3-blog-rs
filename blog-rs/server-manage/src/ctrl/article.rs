@@ -14,10 +14,12 @@ use base::model::blog_classes::BlogClassesModel;
 use base::model::blog_label::BlogLabelModel;
 use tokio::sync::RwLock;
 use std::sync::Arc;
+use base::model::blog_article_label::BlogArticleLabelModel;
 
 pub fn init_router(mut router: Router) -> Router {
     router = router.route("/article/publish", post(publish));
     router = router.route("/article/changeArticle", post(change_article));
+    router = router.route("/article/changeArticleLabel", post(change_article_label));
 
     router = router.route("/article/createClasses", post(create_classes));
     router = router.route("/article/createLabel", post(create_label));
@@ -83,6 +85,61 @@ async fn change_article(
     }
 
     return Json(common::net::rsp::Rsp::<u64>::ok(lemon.id));
+}
+
+/// change_article_label 改变文章标签
+async fn change_article_label(
+    Json(payload): Json<bean::article::ChangeArticleLabelIn>,
+) -> Json<common::net::rsp::Rsp<u64>> {
+    debug!("{:?}", payload);
+
+    let article_res = base::service::blog_article_sve::find_by_id(payload.id).await;
+    if article_res.is_err() {
+        tracing::warn!("{:?}", article_res);
+        return Json(common::net::rsp::Rsp::<u64>::err_de());
+    }
+
+    let article = article_res.unwrap();
+    if article.is_none() {
+        return Json(common::net::rsp::Rsp::<u64>::fail("文章不存在".to_string()));
+    }
+    let lemon = article.unwrap();
+
+    let mut params:HashMap<String, sql::Params> = HashMap::new();
+    params.insert(String::from("id_blog_article"), sql::Params::UInteger64(lemon.id));
+    params.insert(String::from("id_blog_label"), sql::Params::UInteger64(payload.id_label));
+
+    let page_index = sql::Condition::PageIndex(1);
+    let page_size = sql::Condition::PageSize(1000);
+
+    let bc = [page_index, page_size ];
+
+    let lst_res = base::service::blog_article_label_sve::query_list(&params, &bc).await;
+    if lst_res.is_err() {
+        tracing::warn!("{:?}", lst_res);
+        return Json(common::net::rsp::Rsp::<u64>::err_de());
+    }
+
+    let mut lst = lst_res.unwrap();
+    if 0 == lst.len() {
+        // add new one
+        let mut al = base::model::blog_article_label::BlogArticleLabelModel::new(lemon.id, payload.id_label, 1);
+        let res = base::service::blog_article_label_sve::add(&mut al).await;
+        if res.is_err() {
+            return Json(common::net::rsp::Rsp::<u64>::err_de());
+        }
+        return Json(common::net::rsp::Rsp::<u64>::ok(al.id));
+    }
+
+    // update union
+    let mut al = lst.get_mut(0).unwrap();
+    al.state = 1u8;
+    let res = base::service::blog_article_label_sve::update_by_id(&mut al).await;
+    if res.is_err() {
+        return Json(common::net::rsp::Rsp::<u64>::err_de());
+    }
+
+    return Json(common::net::rsp::Rsp::<u64>::ok(al.id));
 }
 
 /// get_article_lst 文章列表
