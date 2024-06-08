@@ -76,8 +76,6 @@ pub struct ChangeArticleLabelIn {
     pub id_label: u64,
 }
 
-
-
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct CreateClassesIN {
     /// search类型名称 【max:20】
