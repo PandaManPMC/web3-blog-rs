@@ -4,7 +4,7 @@ port = 51080
 
 [author]
 username="laoniqiu"
-userpwd="123456"
+userpwd="12345678"
 penname="老泥鳅-PMC"
 
 [mysql_db1]

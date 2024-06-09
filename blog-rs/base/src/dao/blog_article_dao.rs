@@ -1,7 +1,7 @@
 ///	blogArticleDao
 ///	标准 DAO - 文章 - blog_article
 ///	author: AT
-///	since: 2024-06-07 17:05:23
+///	since: 2024-06-09 15:31:16
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 
 use log::{debug, warn};
@@ -159,6 +159,32 @@ pub fn find_by_id_blog_classes(tx: &mut Transaction, id_blog_classes: u64) -> Re
     );
     if result.is_err() {
         warn!("b_d::blog_article_dao::id_blog_classes 失败！ res={:?}", result);
+        return match result {
+            Err(e) => {
+                Err(e.to_string().into())
+            },
+            Ok(_) => {
+                unimplemented!()
+            },
+        };
+    }
+
+    let mut lst = result.unwrap();
+    if 0 == lst.len() {
+        return Ok(None);
+    }
+
+    let one:Option<BlogArticleModel> = lst.pop();
+    return Ok(one);
+}
+
+pub fn find_by_title_article(tx: &mut Transaction, title_article: String) -> Result<Option<BlogArticleModel>, String> {
+    let query_sql = format!("SELECT {} FROM {} WHERE title_article = ? ORDER BY id DESC LIMIT 0,1", blog_article::get_field_sql(""), blog_article::TABLE_NAME);
+    let result = tx.exec_map(
+        query_sql, (title_article,),|row: Row| blog_article::pot(row, 0)
+    );
+    if result.is_err() {
+        warn!("b_d::blog_article_dao::title_article 失败！ res={:?}", result);
         return match result {
             Err(e) => {
                 Err(e.to_string().into())

@@ -1,7 +1,7 @@
 ///	blogAuthorService
 ///	标准 service - 作者 - blog_author
 ///	author: AT
-///	since: 2024-06-07 17:02:09
+///	since: 2024-06-09 15:31:16
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 
 use mysql::{Result};

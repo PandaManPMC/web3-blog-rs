@@ -12,6 +12,14 @@ use serde::de::DeserializeOwned;
 use log::{warn,info, debug};
 use crate::{bean, tool};
 use axum::debug_handler;
+use tokio::sync::Mutex;
+use std::sync::Arc;
+
+lazy_static::lazy_static! {
+    static ref LOCK: Arc<Mutex<bool>> = Arc::new(Mutex::new({
+        true
+    }));
+}
 
 pub fn init_router(mut router: Router) -> Router {
     router = router.route("/admin/login", post(login));
@@ -25,6 +33,7 @@ async fn login(
     headers: HeaderMap,
     Json(payload): Json<bean::admin::LoginIn>
 ) -> Json<common::net::rsp::Rsp<bean::admin::LoginOut>> {
+    let _ = LOCK.lock().await;
 
     let real_ip = common::net::get_client_real_ip(&headers);
     tracing::info!("login 访问者 ip={:?}", real_ip);
@@ -84,6 +93,7 @@ async fn change_pwd(
     headers: HeaderMap,
     Json(payload): Json<bean::admin::ChangePwdIn>
 ) -> Json<common::net::rsp::Rsp<u8>> {
+    let _ = LOCK.lock().await;
 
     let author_res = base::service::blog_author_sve::find_by_id(tool::req::get_user_id(&headers)).await;
 

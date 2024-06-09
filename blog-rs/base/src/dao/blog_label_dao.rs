@@ -1,7 +1,7 @@
 ///	blogLabelDao
 ///	标准 DAO - 文章标签 - blog_label
 ///	author: AT
-///	since: 2024-06-07 17:05:23
+///	since: 2024-06-09 15:31:16
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 
 use log::{debug, warn};
