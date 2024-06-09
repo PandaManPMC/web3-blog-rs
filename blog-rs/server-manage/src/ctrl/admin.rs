@@ -15,7 +15,7 @@ use axum::debug_handler;
 
 pub fn init_router(mut router: Router) -> Router {
     router = router.route("/admin/login", post(login));
-
+    router = router.route("/admin/changePwd", post(change_pwd));
     return router;
 }
 
@@ -33,6 +33,7 @@ async fn login(
     let author_res = base::service::blog_author_sve::find_by_user_name(payload.user_name).await;
 
     if author_res.is_err() {
+        tracing::warn!("{:?}", author_res);
         return Json(common::net::rsp::Rsp::<bean::admin::LoginOut>::err_de())
     }
 
@@ -78,3 +79,27 @@ async fn login(
 
 }
 
+/// change_pwd 修改密码
+async fn change_pwd(
+    headers: HeaderMap,
+    Json(payload): Json<bean::admin::ChangePwdIn>
+) -> Json<common::net::rsp::Rsp<u8>> {
+
+    let author_res = base::service::blog_author_sve::find_by_id(tool::req::get_user_id(&headers)).await;
+
+    if author_res.is_err() {
+        tracing::warn!("{:?}", author_res);
+        return Json(common::net::rsp::Rsp::<u8>::err_de())
+    }
+
+    let mut author = author_res.unwrap().unwrap();
+    let pwd = plier::md::sha256(payload.user_pwd);
+    author.user_pwd = pwd;
+
+    let res = base::service::blog_author_sve::update_by_id(&mut author).await;
+    if res.is_err() {
+        tracing::warn!("{:?}", res);
+        return Json(common::net::rsp::Rsp::<u8>::err_de())
+    }
+    Json(common::net::rsp::Rsp::ok(1))
+}
