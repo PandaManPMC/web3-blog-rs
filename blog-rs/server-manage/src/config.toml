@@ -16,3 +16,7 @@ password = "abcd#1890dda1"
 max_size = 20
 max_idle = 3
 connect_timeout = 50
+
+[aes]
+key="an example very very secret key."
+iv="unique init vect"

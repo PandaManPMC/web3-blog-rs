@@ -42,3 +42,10 @@ pub struct LoginOut {
     pub user_token: String,
 }
 
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
+pub struct GetStartBindGoogleSecretOut {
+    #[serde(rename = "secret")]
+    pub secret: String,
+    #[serde(rename = "qrCodeUrl")]
+    pub qr_code_url: String,
+}

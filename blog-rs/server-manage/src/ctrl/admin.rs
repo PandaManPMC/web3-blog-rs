@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use axum::{
     routing::{get, post},
     http::StatusCode,
@@ -14,6 +15,11 @@ use crate::{bean, tool};
 use axum::debug_handler;
 use tokio::sync::Mutex;
 use std::sync::Arc;
+use axum::extract::Query;
+use i_dao::sql;
+use iconf::configs;
+use base::model::blog_article::BlogArticleModel;
+use common::cache;
 
 lazy_static::lazy_static! {
     static ref LOCK: Arc<Mutex<bool>> = Arc::new(Mutex::new({
@@ -24,6 +30,10 @@ lazy_static::lazy_static! {
 pub fn init_router(mut router: Router) -> Router {
     router = router.route("/admin/login", post(login));
     router = router.route("/admin/changePwd", post(change_pwd));
+
+    router = router.route("/admin/getStartBindGoogleSecret", get(get_start_bind_google_secret));
+
+
     return router;
 }
 
@@ -113,3 +123,49 @@ async fn change_pwd(
     }
     Json(common::net::rsp::Rsp::ok(1))
 }
+
+
+
+/// get_start_bind_google_secret 开始绑定google验证码
+async fn get_start_bind_google_secret(
+    headers: HeaderMap,
+) -> Json<common::net::rsp::Rsp<bean::admin::GetStartBindGoogleSecretOut>> {
+    let _ = LOCK.lock().await;
+
+    let user_name = tool::req::get_user_name(&headers);
+
+    let au_res = base::service::blog_author_sve::find_by_user_name(user_name.clone()).await;
+    if au_res.is_err() {
+        tracing::warn!("{:?}", au_res);
+        return Json(common::net::rsp::Rsp::<bean::admin::GetStartBindGoogleSecretOut>::err_de())
+    }
+
+    if let Some(au) = au_res.unwrap() {
+        if "" != au.google_auth_secret {
+            return Json(common::net::rsp::Rsp::<bean::admin::GetStartBindGoogleSecretOut>::fail("不可重复绑定".to_string()));
+        }
+    }
+
+    let secret = plier::authenticator::google_secret(32);
+    let qr_code_url = plier::authenticator::google_qr_url(secret.clone(), user_name.clone(), format!("web3-blog：{}",user_name ).to_string());
+
+    unsafe {
+        let aes_key = configs::get_str("aes", "key");
+        let aes_iv = configs::get_str("aes", "iv");
+
+        let secret_aes = plier::aes::aes256_encrypt_string(secret.clone(), aes_key, aes_iv);
+        let cache_res = cache::member_rds::set_user_secret(user_name.clone(), secret_aes).await;
+        if cache_res.is_err() {
+            tracing::warn!("{:?}", cache_res);
+            return Json(common::net::rsp::Rsp::<bean::admin::GetStartBindGoogleSecretOut>::err_de())
+        }
+    }
+
+    let lemon = bean::admin::GetStartBindGoogleSecretOut{
+        secret,
+        qr_code_url,
+    };
+    Json(common::net::rsp::Rsp::ok(lemon))
+}
+
+
