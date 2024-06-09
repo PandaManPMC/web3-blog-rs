@@ -67,12 +67,27 @@ async fn login(
         }
 
         // google 验证器校验
-        if plier::str::is_not_blank(au.google_auth_secret) {
-            if plier::str::is_blank(payload.google_auth_code) {
+        if "" != au.google_auth_secret {
+            if plier::str::is_blank(payload.google_auth_code.clone()) {
                 return Json(common::net::rsp::Rsp::<bean::admin::LoginOut>::fail("google 验证码错误".to_string()))
             }
             // ---- 进行校验
+            unsafe {
+                let aes_key = configs::get_str("aes", "key");
+                let aes_iv = configs::get_str("aes", "iv");
 
+                let dec = plier::aes::aes256_decrypt_string(au.google_auth_secret.clone(), aes_key, aes_iv);
+                if dec.is_err() {
+                    tracing::warn!("{:?}", dec);
+                    return Json(common::net::rsp::Rsp::<bean::admin::LoginOut>::err_de())
+                }
+
+                let secret = dec.unwrap();
+
+                if !plier::authenticator::google_verify_code(secret, payload.google_auth_code.clone(), 0) {
+                    return Json(common::net::rsp::Rsp::<bean::admin::LoginOut>::fail("验证码错误".to_string()));
+                }
+            }
         }
 
         let ut = common::token::generate_user_token(au.user_name.clone());
@@ -168,7 +183,7 @@ async fn get_start_bind_google_secret(
     Json(common::net::rsp::Rsp::ok(lemon))
 }
 
-
+/// bind_google_secret 绑定google验证器
 async fn bind_google_secret (
     headers: HeaderMap,
     Json(payload): Json<bean::admin::BindGoogleSecretIn>,
@@ -211,7 +226,7 @@ async fn bind_google_secret (
 
         let secret = dec.unwrap();
 
-        if !plier::authenticator::google_verify_code(secret.clone(), payload.code, 0) {
+        if !plier::authenticator::google_verify_code(secret, payload.google_auth_code, 0) {
             return Json(common::net::rsp::Rsp::<u8>::fail("验证码错误".to_string()));
         }
 
