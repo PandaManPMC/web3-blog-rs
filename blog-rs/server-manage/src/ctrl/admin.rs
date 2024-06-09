@@ -32,7 +32,7 @@ pub fn init_router(mut router: Router) -> Router {
     router = router.route("/admin/changePwd", post(change_pwd));
 
     router = router.route("/admin/getStartBindGoogleSecret", get(get_start_bind_google_secret));
-
+    router = router.route("/admin/bindGoogleSecret", post(bind_google_secret));
 
     return router;
 }
@@ -169,3 +169,61 @@ async fn get_start_bind_google_secret(
 }
 
 
+async fn bind_google_secret (
+    headers: HeaderMap,
+    Json(payload): Json<bean::admin::BindGoogleSecretIn>,
+) -> Json<common::net::rsp::Rsp<u8>> {
+    let _ = LOCK.lock().await;
+
+    let user_name = tool::req::get_user_name(&headers);
+
+    let au_res = base::service::blog_author_sve::find_by_user_name(user_name.clone()).await;
+    if au_res.is_err() {
+        tracing::warn!("{:?}", au_res);
+        return Json(common::net::rsp::Rsp::<u8>::err_de())
+    }
+
+    let mut au = au_res.unwrap().unwrap();
+    if "" != au.google_auth_secret {
+        return Json(common::net::rsp::Rsp::<u8>::fail("不可重复绑定".to_string()));
+    }
+
+    let cache_res = cache::member_rds::get_user_secret(user_name.clone()).await;
+    if cache_res.is_err() {
+        tracing::warn!("{:?}", cache_res);
+        return Json(common::net::rsp::Rsp::<u8>::err_de())
+    }
+
+    let cac = cache_res.unwrap();
+    if "" == cac {
+        return Json(common::net::rsp::Rsp::<u8>::fail("操作时间太长，secret 已经失效".to_string()));
+    }
+
+    unsafe {
+        let aes_key = configs::get_str("aes", "key");
+        let aes_iv = configs::get_str("aes", "iv");
+
+        let dec = plier::aes::aes256_decrypt_string(cac.clone(), aes_key, aes_iv);
+        if dec.is_err() {
+            tracing::warn!("{:?}", dec);
+            return Json(common::net::rsp::Rsp::<u8>::err_de())
+        }
+
+        let secret = dec.unwrap();
+
+        if !plier::authenticator::google_verify_code(secret.clone(), payload.code, 0) {
+            return Json(common::net::rsp::Rsp::<u8>::fail("验证码错误".to_string()));
+        }
+
+        au.google_auth_secret = cac;
+
+        let orange = base::service::blog_author_sve::update_by_id(&mut au).await;
+        if orange.is_err() {
+            tracing::warn!("{:?}", orange);
+            return Json(common::net::rsp::Rsp::<u8>::err_de())
+        }
+
+    }
+
+    return Json(common::net::rsp::Rsp::<u8>::ok_de())
+}

@@ -49,3 +49,11 @@ pub struct GetStartBindGoogleSecretOut {
     #[serde(rename = "qrCodeUrl")]
     pub qr_code_url: String,
 }
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
+pub struct BindGoogleSecretIn {
+    #[serde(rename = "code", deserialize_with = "check_length_code")]
+    pub code: String,
+}
+
+plier::create_serde_string_length_checker!(check_length_code, 6, 6);
