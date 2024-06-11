@@ -57,6 +57,7 @@ async fn login(
     }
 
     let author = author_res.unwrap();
+    let mut google_auth = false;
 
     if let Some(au) = author {
         let ac = au.clone();
@@ -68,6 +69,8 @@ async fn login(
 
         // google 验证器校验
         if "" != au.google_auth_secret {
+            google_auth = true;
+
             if plier::str::is_blank(payload.google_auth_code.clone()) {
                 return Json(common::net::rsp::Rsp::<bean::admin::LoginOut>::fail("google 验证码错误".to_string()))
             }
@@ -101,6 +104,7 @@ async fn login(
             id: au.id,
             pen_name: au.pen_name,
             user_token: ut,
+            google_auth,
         };
 
 
