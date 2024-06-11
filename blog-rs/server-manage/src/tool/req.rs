@@ -15,6 +15,27 @@ pub fn set_user_to_req(request: &mut Request, user: base::model::blog_author::Bl
     request.headers_mut().insert(tool::X_USER_PEN_NAME, user.pen_name.parse().unwrap());
 }
 
+pub fn get_user_name(headers: &HeaderMap) -> String {
+    let mut res:String = "".to_string();
+    match headers.get(tool::X_USER_NAME).cloned() {
+        Some(value) => {
+            match value.to_str() {
+                Ok(value_str) => {
+                    res = value_str.to_string();
+
+                }
+                Err(_) => {
+                    // 头部值不是有效的字符串
+                }
+            }
+        }
+        None => {
+            // 请求头缺失
+        }
+    }
+    return res;
+}
+
 pub fn get_user_id(headers: &HeaderMap) -> u64 {
     let mut res:u64 = 0;
     match headers.get(tool::X_USER_ID).cloned() {

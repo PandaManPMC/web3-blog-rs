@@ -12,9 +12,15 @@ use i_dao::sql;
 use base::model::blog_article::BlogArticleModel;
 use base::model::blog_classes::BlogClassesModel;
 use base::model::blog_label::BlogLabelModel;
-use tokio::sync::RwLock;
+use tokio::sync::Mutex;
 use std::sync::Arc;
 use base::model::blog_article_label::BlogArticleLabelModel;
+
+lazy_static::lazy_static! {
+    static ref LOCK: Arc<Mutex<bool>> = Arc::new(Mutex::new({
+        true
+    }));
+}
 
 pub fn init_router(mut router: Router) -> Router {
     router = router.route("/article/publish", post(publish));
@@ -37,7 +43,21 @@ async fn publish(
     headers: HeaderMap,
     Json(payload): Json<bean::article::PublishIn>,
 ) -> Json<common::net::rsp::Rsp<u64>> {
+    let _ = LOCK.lock().await;
+
     debug!("{:?}", payload);
+
+    match base::service::blog_article_sve::find_by_title_article(payload.title_article.clone()).await {
+        Ok(a) => {
+            if a.is_some() {
+                return Json(common::net::rsp::Rsp::<u64>::fail("文章已存在".to_string()))
+            }
+        }
+        Err(e) => {
+            tracing::warn!("{:?}", e);
+            return Json(common::net::rsp::Rsp::<u64>::err_de())
+        }
+    }
 
     let now = plier::time::unix_second();
     let mut article = BlogArticleModel::new(tool::req::get_user_id(&headers),
@@ -58,6 +78,8 @@ async fn publish(
 async fn change_article(
     Json(payload): Json<bean::article::ChangeArticleIN>,
 ) -> Json<common::net::rsp::Rsp<u64>> {
+    let _ = LOCK.lock().await;
+
     debug!("{:?}", payload);
 
     let article_res = base::service::blog_article_sve::find_by_id(payload.id).await;
@@ -93,6 +115,8 @@ async fn change_article(
 async fn change_article_label(
     Json(payload): Json<bean::article::ChangeArticleLabelIn>,
 ) -> Json<common::net::rsp::Rsp<u64>> {
+    let _ = LOCK.lock().await;
+
     debug!("{:?}", payload);
 
     let article_res = base::service::blog_article_sve::find_by_id(payload.id).await;
@@ -188,6 +212,8 @@ async fn get_article_lst(
 async fn create_classes (
     Json(payload): Json<bean::article::CreateClassesIN>,
 ) -> Json<common::net::rsp::Rsp<u64>> {
+    let _ = LOCK.lock().await;
+
     debug!("{:?}", payload);
 
     let r = base::service::blog_classes_sve::find_by_classes_name(payload.classes_name.clone()).await;
@@ -219,6 +245,8 @@ async fn create_classes (
 async fn del_classes (
     Json(payload): Json<bean::PkIn>,
 ) -> Json<common::net::rsp::Rsp<u64>> {
+    let _ = LOCK.lock().await;
+
     debug!("{:?}", payload);
 
     let r = base::service::blog_classes_sve::find_by_id(payload.id).await;
@@ -274,6 +302,8 @@ async fn get_classes_lst(
 async fn create_label (
     Json(payload): Json<bean::article::CreateLabelIn>,
 ) -> Json<common::net::rsp::Rsp<u64>> {
+    let _ = LOCK.lock().await;
+
     debug!("{:?}", payload);
 
     let r = base::service::blog_label_sve::find_by_label_name(payload.label_name.clone()).await;
@@ -305,6 +335,8 @@ async fn create_label (
 async fn del_label (
     Json(payload): Json<bean::PkIn>,
 ) -> Json<common::net::rsp::Rsp<u64>> {
+    let _ = LOCK.lock().await;
+
     debug!("{:?}", payload);
 
     let r = base::service::blog_label_sve::find_by_id(payload.id).await;

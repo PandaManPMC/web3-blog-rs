@@ -31,3 +31,13 @@ pub async fn get_user_by_token(user_token: String) -> Result<Option<base::model:
     return Ok(Some(deserialized));
 }
 
+pub async fn set_user_secret(user_name: String, secret :String) -> Result<(), RedisError> {
+    let rw = RDS.get().unwrap().write().await;
+    rw.set_expire(&format!("secret:{}", user_name), secret, 120000).await
+}
+
+pub async fn get_user_secret(user_name: String) -> Result<String, RedisError> {
+    let rd = RDS.get().unwrap().read().await;
+    let res = rd.get_string(&format!("secret:{}", user_name)).await;
+    return res;
+}

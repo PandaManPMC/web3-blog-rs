@@ -67,6 +67,22 @@ impl<T> Rsp<T> {
         }
     }
 
+    pub fn ok_tip(tip: String) -> Self {
+        Rsp {
+            code: CODE_OK,
+            tip,
+            data: None,
+        }
+    }
+
+    pub fn ok_de() -> Self {
+        Rsp {
+            code: CODE_OK,
+            tip: "Success".to_string(),
+            data: None,
+        }
+    }
+
     pub fn fail_de() -> Self {
         Rsp {
             code: CODE_FAIL,

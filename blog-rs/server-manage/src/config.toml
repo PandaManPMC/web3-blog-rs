@@ -4,7 +4,7 @@ port = 51080
 
 [author]
 username="laoniqiu"
-userpwd="123456"
+userpwd="12345678"
 penname="老泥鳅-PMC"
 
 [mysql_db1]
@@ -16,3 +16,7 @@ password = "abcd#1890dda1"
 max_size = 20
 max_idle = 3
 connect_timeout = 50
+
+[aes]
+key="an example very very secret key."
+iv="unique init vect"
