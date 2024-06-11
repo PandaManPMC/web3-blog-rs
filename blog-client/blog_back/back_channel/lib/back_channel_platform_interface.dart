@@ -23,7 +23,7 @@ abstract class BackChannelPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> getPlatformVersion() {
-    throw UnimplementedError('platformVersion() has not been implemented.');
+  Future<String?> getDataDirectory() {
+    throw UnimplementedError('getDataDirectory() has not been implemented.');
   }
 }

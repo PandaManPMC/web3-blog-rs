@@ -17,7 +17,7 @@ class BackChannelPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
   private var activity: Activity? = null
 
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "native_channel")
+    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "back_channel")
     channel.setMethodCallHandler(this)
   }
 

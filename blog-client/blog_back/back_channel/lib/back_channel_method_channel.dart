@@ -10,8 +10,8 @@ class MethodChannelBackChannel extends BackChannelPlatform {
   final methodChannel = const MethodChannel('back_channel');
 
   @override
-  Future<String?> getPlatformVersion() async {
-    final version = await methodChannel.invokeMethod<String>('getPlatformVersion');
-    return version;
+  Future<String?> getDataDirectory() async {
+    final path = await methodChannel.invokeMethod<String>('getDataDirectory');
+    return path;
   }
 }
