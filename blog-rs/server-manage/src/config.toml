@@ -1,6 +1,8 @@
 [basics]
 env = "dev"
 port = 51080
+file_http="http://192.168.30.12:80/uploads"
+file_path= "E:\\b\\files\\uploads"
 
 [author]
 username="laoniqiu"

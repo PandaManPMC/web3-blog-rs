@@ -15,6 +15,7 @@ use axum::{
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
 use plier::rds;
+use axum::extract::DefaultBodyLimit;
 
 mod ctrl;
 mod service;
@@ -73,8 +74,10 @@ fn init_router(mut router: Router) -> Router {
     router = ctrl::test::init_router(router);
     router = ctrl::admin::init_router(router);
     router = ctrl::article::init_router(router);
+    router = ctrl::common::init_router(router);
     router = router.layer(middleware::from_fn(common::net::interceptor::error_handling));
     router = router.layer(middleware::from_fn(ctrl::interceptor::app));
+    router = router.layer(DefaultBodyLimit::max(100 * 1024 * 1024));
     return router;
 }
 

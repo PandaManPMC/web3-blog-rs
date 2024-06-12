@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 
 pub mod admin;
 pub mod article;
+pub mod common;
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct PkIn {
