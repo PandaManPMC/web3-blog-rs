@@ -22,3 +22,7 @@ connect_timeout = 50
 [aes]
 key="an example very very secret key."
 iv="unique init vect"
+
+[reCAPTCHA]
+HTML = "6Lcn0fYpAAAAALGpkke4_lQtZEg8XqvjYlhSsb74"
+SERVER = "6Lcn0fYpAAAAAEYCampr8WtStPNe8Qz2YTAkZ4Ra"
