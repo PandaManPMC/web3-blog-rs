@@ -45,6 +45,19 @@ async fn login(
 ) -> Json<common::net::rsp::Rsp<bean::admin::LoginOut>> {
     let _ = LOCK.lock().await;
 
+    if "" != payload.captcha_token {
+        let c_res = common::cache::member_rds::get_user_captcha_token(payload.captcha_token.clone()).await;
+        if c_res.is_err() {
+            tracing::warn!("{:?}", c_res);
+            return Json(common::net::rsp::Rsp::<bean::admin::LoginOut>::err_de())
+        }
+
+        let r = c_res.unwrap();
+        if "1" != r{
+            return Json(common::net::rsp::Rsp::<bean::admin::LoginOut>::fail("recaptcha 通行凭证错误".to_string()));
+        }
+    }
+
     let real_ip = common::net::get_client_real_ip(&headers);
     tracing::info!("login 访问者 ip={:?}", real_ip);
     tracing::debug!("{:?}", payload);

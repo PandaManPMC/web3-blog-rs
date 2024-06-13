@@ -98,7 +98,7 @@ async fn verify_re_captcha_token_v2(
     debug!("{:?}", query);
 
     unsafe {
-        let res = tool::http::verify_re_captcha_token_v2(query.captcha_token, configs::get_str("reCAPTCHA", "SERVER")).await;
+        let res = tool::http::verify_re_captcha_token_v2(query.captcha_token.clone(), configs::get_str("reCAPTCHA", "SERVER")).await;
         tracing::info!("{:?}", res);
         if res.is_err() {
             tracing::error!("{:?}", res);
