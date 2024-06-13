@@ -9,3 +9,9 @@ pub struct FileUploadOut {
     pub file_url: String,
 
 }
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
+pub struct VerifyReCaptchaTokenIn{
+    #[serde(rename = "captchaToken")]
+    pub captcha_token: String,
+}

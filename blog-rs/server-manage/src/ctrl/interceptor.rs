@@ -13,7 +13,8 @@ use common::net::rsp;
 use common::net::rsp::Rsp;
 use crate::{bean, tool};
 
-pub const WHITE_LIST_URL:[&str;11] = ["/admin/login", "/article/getArticleLst",
+pub const WHITE_LIST_URL:[&str;12] = ["/admin/login", "/common/verifyReCaptchaToken",
+    "/article/getArticleLst",
     "/article/getClassesLst", "/article/getLabelLst", "/article/createClasses",
     "/article/createLabel", "/test/test", "/article/changeArticle",
     "/article/changeArticleLabel", "/article/delClasses", "/article/delLabel"];

@@ -31,6 +31,7 @@ lazy_static::lazy_static! {
 
 pub fn init_router(mut router: Router) -> Router {
     router = router.route("/common/fileUpload", post(file_upload));
+    router = router.route("/common/verifyReCaptchaToken", get(verify_re_captcha_token_v2));
 
     return router;
 }
@@ -88,4 +89,36 @@ async fn file_upload(headers: HeaderMap, mut multipart: Multipart) -> Json<commo
 
     }
 
+}
+
+/// verify_re_captcha_token_v2 验证码校验
+async fn verify_re_captcha_token_v2(
+    query: Query<bean::common::VerifyReCaptchaTokenIn>,
+) -> Json<common::net::rsp::Rsp<String>> {
+    debug!("{:?}", query);
+
+    unsafe {
+        let res = tool::http::verify_re_captcha_token_v2(query.captcha_token, configs::get_str("reCAPTCHA", "SERVER")).await;
+        tracing::info!("{:?}", res);
+        if res.is_err() {
+            tracing::error!("{:?}", res);
+            return Json(common::net::rsp::Rsp::<String>::err_de())
+        }
+
+        let ver = res.unwrap();
+        if !ver.success {
+            return Json(common::net::rsp::Rsp::<String>::fail("验证码错误".to_string()))
+        }
+    }
+
+    let ran = plier::uid::uid_v4();
+
+    let c_res = common::cache::member_rds::set_user_captcha_token(ran.clone()).await;
+    if c_res.is_err() {
+        tracing::error!("{:?}", c_res);
+        return Json(common::net::rsp::Rsp::<String>::err_de())
+    }
+
+    let rsp = common::net::rsp::Rsp::ok(ran);
+    return Json(rsp);
 }
