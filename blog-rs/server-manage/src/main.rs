@@ -54,18 +54,28 @@ async fn main() {
 }
 
 async fn init_rds(){
-    let url = "redis://rust1:rust1_abc1234@34.118.182.28:26379/0";
-    let size: usize = 2;
+    unsafe {
+        // let url = "redis://username:pwd@host:port/db";
 
-    let res_rds = rds::init_rds(url, size).await;
-    info!("res_rds={:?}", res_rds);
+        let url = &format!("redis://{}:{}@{}:{}/{}",
+                           configs::get_str("redis", "username"),
+                           configs::get_str("redis", "pwd"),
+                           configs::get_str("redis", "host"),
+                           configs::get_str("redis", "port"),
+                           configs::get_str("redis", "db"));
 
-    let rds = res_rds.unwrap();
+        let size: usize = 2;
 
-    common::cache::member_rds::initialize_global_object(rds).await;
+        let res_rds = rds::init_rds(url, size).await;
+        info!("res_rds={:?}", res_rds);
 
-    let res = common::cache::member_rds::get_user_by_token("abc".to_string()).await;
-    info!("init_rds get_user_by_token={:?}", res);
+        let rds = res_rds.unwrap();
+
+        common::cache::member_rds::initialize_global_object(rds).await;
+
+        let res = common::cache::member_rds::get_user_by_token("abc".to_string()).await;
+        info!("init_rds get_user_by_token={:?}", res);
+    }
 }
 
 /// init_router 初始化路由
