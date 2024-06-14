@@ -179,7 +179,7 @@ async fn get_start_bind_google_secret(
     }
 
     let secret = plier::authenticator::google_secret(32);
-    let qr_code_url = plier::authenticator::google_qr_url(secret.clone(), user_name.clone(), format!("web3-blog：{}",user_name ).to_string());
+    // let qr_code_url = plier::authenticator::google_qr_url(secret.clone(), user_name.clone(), format!("web3-blog：{}",user_name ).to_string());
 
     unsafe {
         let aes_key = configs::get_str("aes", "key");
@@ -192,6 +192,8 @@ async fn get_start_bind_google_secret(
             return Json(common::net::rsp::Rsp::<bean::admin::GetStartBindGoogleSecretOut>::err_de())
         }
     }
+
+    let qr_code_url = format!("otpauth://totp/web3-blog@{}?secret={}", user_name, secret);
 
     let lemon = bean::admin::GetStartBindGoogleSecretOut{
         secret,
