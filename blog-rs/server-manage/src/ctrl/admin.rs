@@ -187,6 +187,7 @@ async fn get_start_bind_google_secret(
 
         let secret_aes = plier::aes::aes256_encrypt_string(secret.clone(), aes_key, aes_iv);
         let cache_res = cache::member_rds::set_user_secret(user_name.clone(), secret_aes).await;
+
         if cache_res.is_err() {
             tracing::warn!("{:?}", cache_res);
             return Json(common::net::rsp::Rsp::<bean::admin::GetStartBindGoogleSecretOut>::err_de())
@@ -236,6 +237,7 @@ async fn bind_google_secret (
     unsafe {
         let aes_key = configs::get_str("aes", "key");
         let aes_iv = configs::get_str("aes", "iv");
+        tracing::info!("{}-{}-{}", cac, aes_key, aes_iv);
 
         let dec = plier::aes::aes256_decrypt_string(cac.clone(), aes_key, aes_iv);
         if dec.is_err() {

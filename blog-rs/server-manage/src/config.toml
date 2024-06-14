@@ -27,8 +27,8 @@ port = "26379"
 db = "0"
 
 [aes]
-key="an example very very secret key."
-iv="unique init vect"
+key="0123456789abcdef0123456789abcdef"
+iv="abcdef9876543210"
 
 [reCAPTCHA]
 HTML = "6Lcn0fYpAAAAALGpkke4_lQtZEg8XqvjYlhSsb74"
