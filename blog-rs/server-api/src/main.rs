@@ -93,7 +93,7 @@ async unsafe fn init_mysql() {
 
     let opts = OptsBuilder::new()
         .ip_or_hostname(Some(configs::get_str("mysql_db1", "host")))
-        .user(Some(configs::get_str("mysql_db1", "dbname")))
+        .user(Some(configs::get_str("mysql_db1", "username")))
         .pass(Some(configs::get_str("mysql_db1", "password")))
         .db_name(Some(configs::get_str("mysql_db1", "dbname")))
         .tcp_port(configs::get_int("mysql_db1", "port") as u16)

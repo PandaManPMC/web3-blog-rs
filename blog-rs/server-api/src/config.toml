@@ -4,11 +4,11 @@ port = 51081
 file_http="http://192.168.30.12:80/uploads"
 
 [mysql_db1]
-host = "34.150.97.232"
-port = 23306
-dbname = "rs_blog"
-username = "rs_blog"
-password = "abcd#1890dda1"
+host = "92.118.228.90"
+port = 53306
+dbname = "test_web3_rs_blog"
+username = "test_blog_u"
+password = "kgd4MQD5_776dsa"
 max_size = 20
 max_idle = 3
 connect_timeout = 50

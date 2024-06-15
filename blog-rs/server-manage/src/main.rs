@@ -1,7 +1,7 @@
 // use i_dao::i_mysql;
 use i_dao::tok::i_mysql;
 use iconf::configs;
-use log::{warn, info, error};
+use log::{warn, info, error, debug};
 use std::env;
 use plier;
 use r2d2_mysql::mysql::OptsBuilder;
@@ -16,6 +16,7 @@ use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
 use plier::rds;
 use axum::extract::DefaultBodyLimit;
+use tracing::field::debug;
 
 mod ctrl;
 mod service;
@@ -102,11 +103,13 @@ async unsafe fn init_mysql() {
 
     let opts = OptsBuilder::new()
         .ip_or_hostname(Some(configs::get_str("mysql_db1", "host")))
-        .user(Some(configs::get_str("mysql_db1", "dbname")))
+        .user(Some(configs::get_str("mysql_db1", "username")))
         .pass(Some(configs::get_str("mysql_db1", "password")))
         .db_name(Some(configs::get_str("mysql_db1", "dbname")))
         .tcp_port(configs::get_int("mysql_db1", "port") as u16)
         .tcp_connect_timeout(Some(Duration::from_secs(configs::get_int("mysql_db1", "connect_timeout").try_into().unwrap())));
+
+    debug!("{:?}", opts);
 
     i_mysql::init(base::service::get_data_source_key().await, opts, configs::get_int("mysql_db1", "max_size") as u32, configs::get_int("mysql_db1", "max_idle") as u32).await;
 
