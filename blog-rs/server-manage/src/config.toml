@@ -20,10 +20,10 @@ max_idle = 3
 connect_timeout = 50
 
 [redis] # "redis://username:pwd@host:port/db"
-username = "rust1"
-pwd = "rust1_abc1234"
-host = "34.118.182.28"
-port = "26379"
+username = "test_user"
+pwd = "test*user77122"
+host = "92.118.228.90"
+port = "56379"
 db = "0"
 
 [aes]
