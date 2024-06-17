@@ -11,7 +11,7 @@ common = { path = "../common" }
 plier = {path = "../../../plier-rs"}
 log = "0.4.21"
 log4rs = "1.3.0"
-axum = { version = "0.7.5", features = ["macros"] }
+axum = { version = "0.7.5", features = ["macros", "multipart"] }
 hyper = "1.3.1"
 tokio = { version = "1.38.0", features = ["full"] }
 serde = { version = "1.0.199", features = ["derive"] }
@@ -27,3 +27,4 @@ iconf = "0.1.2"
 http-body-util = "0.1.1"
 thiserror = "1.0.59"
 tower = "0.4.13"
+reqwest = "0.12.4"

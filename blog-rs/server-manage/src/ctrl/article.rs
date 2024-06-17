@@ -35,6 +35,9 @@ pub fn init_router(mut router: Router) -> Router {
     router = router.route("/article/getArticleLst", get(get_article_lst));
     router = router.route("/article/getClassesLst", get(get_classes_lst));
     router = router.route("/article/getLabelLst", get(get_label_lst));
+
+    router = router.route("/article/getArticleLabelLst", get(get_article_label_lst));
+
     return router;
 }
 
@@ -388,3 +391,37 @@ async fn get_label_lst(
     Json(rsp)
 }
 
+/// get_article_label_lst 获取文章的标签列表
+async fn get_article_label_lst(
+    query: Query<bean::PkIn>,
+) -> Json<common::net::rsp::Rsp<Vec<u64>>> {
+    debug!("{:?}", query);
+
+    let mut params:HashMap<String, sql::Params> = HashMap::new();
+    params.insert("id_blog_article".to_string(), sql::Params::UInteger64(query.id));
+    params.insert("state".to_string(), sql::Params::UInteger8(1));
+    let result = base::service::blog_article_label_sve::query_list(&params, &tool::limit_max()).await;
+    if result.is_err() {
+        tracing::warn!("{:?}", result);
+        return Json(common::net::rsp::Rsp::<Vec<u64>>::err_de())
+    }
+
+    let mut vec:Vec<u64> = vec![];
+    let lst = result.unwrap();
+
+    for val in lst {
+        let r = base::service::blog_label_sve::find_by_id(val.id_blog_label).await;
+        if r.is_err() {
+            tracing::warn!("{:?}", r);
+            return Json(common::net::rsp::Rsp::<Vec<u64>>::err_de())
+        }
+        let banana = r.unwrap();
+        if banana.is_none() {
+            continue
+        }
+        vec.push(val.id_blog_label);
+    }
+
+    let rsp = common::net::rsp::Rsp::ok(vec);
+    Json(rsp)
+}

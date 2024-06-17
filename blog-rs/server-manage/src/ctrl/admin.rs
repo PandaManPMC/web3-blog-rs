@@ -45,6 +45,19 @@ async fn login(
 ) -> Json<common::net::rsp::Rsp<bean::admin::LoginOut>> {
     let _ = LOCK.lock().await;
 
+    if "" != payload.captcha_token {
+        let c_res = common::cache::member_rds::get_user_captcha_token(payload.captcha_token.clone()).await;
+        if c_res.is_err() {
+            tracing::warn!("{:?}", c_res);
+            return Json(common::net::rsp::Rsp::<bean::admin::LoginOut>::err_de())
+        }
+
+        let r = c_res.unwrap();
+        if "1" != r{
+            return Json(common::net::rsp::Rsp::<bean::admin::LoginOut>::fail("recaptcha 通行凭证错误".to_string()));
+        }
+    }
+
     let real_ip = common::net::get_client_real_ip(&headers);
     tracing::info!("login 访问者 ip={:?}", real_ip);
     tracing::debug!("{:?}", payload);
@@ -166,7 +179,7 @@ async fn get_start_bind_google_secret(
     }
 
     let secret = plier::authenticator::google_secret(32);
-    let qr_code_url = plier::authenticator::google_qr_url(secret.clone(), user_name.clone(), format!("web3-blog：{}",user_name ).to_string());
+    // let qr_code_url = plier::authenticator::google_qr_url(secret.clone(), user_name.clone(), format!("web3-blog：{}",user_name ).to_string());
 
     unsafe {
         let aes_key = configs::get_str("aes", "key");
@@ -174,11 +187,14 @@ async fn get_start_bind_google_secret(
 
         let secret_aes = plier::aes::aes256_encrypt_string(secret.clone(), aes_key, aes_iv);
         let cache_res = cache::member_rds::set_user_secret(user_name.clone(), secret_aes).await;
+
         if cache_res.is_err() {
             tracing::warn!("{:?}", cache_res);
             return Json(common::net::rsp::Rsp::<bean::admin::GetStartBindGoogleSecretOut>::err_de())
         }
     }
+
+    let qr_code_url = format!("otpauth://totp/web3-blog@{}?secret={}", user_name, secret);
 
     let lemon = bean::admin::GetStartBindGoogleSecretOut{
         secret,
@@ -221,6 +237,7 @@ async fn bind_google_secret (
     unsafe {
         let aes_key = configs::get_str("aes", "key");
         let aes_iv = configs::get_str("aes", "iv");
+        tracing::info!("{}-{}-{}", cac, aes_key, aes_iv);
 
         let dec = plier::aes::aes256_decrypt_string(cac.clone(), aes_key, aes_iv);
         if dec.is_err() {

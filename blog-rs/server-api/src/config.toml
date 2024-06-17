@@ -1,13 +1,7 @@
 [basics]
 env = "dev"
-port = 51080
+port = 51081
 file_http="http://192.168.30.12:80/uploads"
-file_path= "E:\\b\\files\\uploads"
-
-[author]
-username="laoniqiu"
-userpwd="12345678"
-penname="老泥鳅-PMC"
 
 [mysql_db1]
 host = "92.118.228.90"
@@ -27,8 +21,8 @@ port = "56379"
 db = "0"
 
 [aes]
-key="0123456789abcdef0123456789abcdef"
-iv="abcdef9876543210"
+key="an example very very secret key."
+iv="unique init vect"
 
 [reCAPTCHA]
 HTML = "6Lcn0fYpAAAAALGpkke4_lQtZEg8XqvjYlhSsb74"

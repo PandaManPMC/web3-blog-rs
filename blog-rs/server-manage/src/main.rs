@@ -1,7 +1,7 @@
 // use i_dao::i_mysql;
 use i_dao::tok::i_mysql;
 use iconf::configs;
-use log::{warn, info, error};
+use log::{warn, info, error, debug};
 use std::env;
 use plier;
 use r2d2_mysql::mysql::OptsBuilder;
@@ -15,6 +15,8 @@ use axum::{
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
 use plier::rds;
+use axum::extract::DefaultBodyLimit;
+use tracing::field::debug;
 
 mod ctrl;
 mod service;
@@ -53,18 +55,28 @@ async fn main() {
 }
 
 async fn init_rds(){
-    let url = "redis://rust1:rust1_abc1234@34.118.182.28:26379/0";
-    let size: usize = 2;
+    unsafe {
+        // let url = "redis://username:pwd@host:port/db";
 
-    let res_rds = rds::init_rds(url, size).await;
-    info!("res_rds={:?}", res_rds);
+        let url = &format!("redis://{}:{}@{}:{}/{}",
+                           configs::get_str("redis", "username"),
+                           configs::get_str("redis", "pwd"),
+                           configs::get_str("redis", "host"),
+                           configs::get_str("redis", "port"),
+                           configs::get_str("redis", "db"));
 
-    let rds = res_rds.unwrap();
+        let size: usize = 2;
 
-    common::cache::member_rds::initialize_global_object(rds).await;
+        let res_rds = rds::init_rds(url, size).await;
+        info!("res_rds={:?}", res_rds);
 
-    let res = common::cache::member_rds::get_user_by_token("abc".to_string()).await;
-    info!("init_rds get_user_by_token={:?}", res);
+        let rds = res_rds.unwrap();
+
+        common::cache::member_rds::initialize_global_object(rds).await;
+
+        let res = common::cache::member_rds::get_user_by_token("abc".to_string()).await;
+        info!("init_rds get_user_by_token={:?}", res);
+    }
 }
 
 /// init_router 初始化路由
@@ -73,8 +85,10 @@ fn init_router(mut router: Router) -> Router {
     router = ctrl::test::init_router(router);
     router = ctrl::admin::init_router(router);
     router = ctrl::article::init_router(router);
+    router = ctrl::common::init_router(router);
     router = router.layer(middleware::from_fn(common::net::interceptor::error_handling));
     router = router.layer(middleware::from_fn(ctrl::interceptor::app));
+    router = router.layer(DefaultBodyLimit::max(100 * 1024 * 1024));
     return router;
 }
 
@@ -89,11 +103,13 @@ async unsafe fn init_mysql() {
 
     let opts = OptsBuilder::new()
         .ip_or_hostname(Some(configs::get_str("mysql_db1", "host")))
-        .user(Some(configs::get_str("mysql_db1", "dbname")))
+        .user(Some(configs::get_str("mysql_db1", "username")))
         .pass(Some(configs::get_str("mysql_db1", "password")))
         .db_name(Some(configs::get_str("mysql_db1", "dbname")))
         .tcp_port(configs::get_int("mysql_db1", "port") as u16)
         .tcp_connect_timeout(Some(Duration::from_secs(configs::get_int("mysql_db1", "connect_timeout").try_into().unwrap())));
+
+    debug!("{:?}", opts);
 
     i_mysql::init(base::service::get_data_source_key().await, opts, configs::get_int("mysql_db1", "max_size") as u32, configs::get_int("mysql_db1", "max_idle") as u32).await;
 

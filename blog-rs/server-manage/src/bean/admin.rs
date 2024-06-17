@@ -17,6 +17,11 @@ pub struct LoginIn {
     #[serde(default)]
     #[serde(rename = "googleAuthCode")]
     pub google_auth_code: String,
+
+    /// verify_re_captcha_token_v2 验证码 token
+    #[serde(default)]
+    #[serde(rename = "captchaToken")]
+    pub captcha_token: String,
 }
 
 plier::create_serde_string_length_checker!(check_length_user_name, 6, 20);

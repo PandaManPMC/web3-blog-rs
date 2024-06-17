@@ -41,3 +41,14 @@ pub async fn get_user_secret(user_name: String) -> Result<String, RedisError> {
     let res = rd.get_string(&format!("secret:{}", user_name)).await;
     return res;
 }
+
+pub async fn set_user_captcha_token(captcha_token: String) -> Result<(), RedisError> {
+    let rw = RDS.get().unwrap().write().await;
+    rw.set_expire(&format!("captcha_token:{}", captcha_token), "1", 120000).await
+}
+
+pub async fn get_user_captcha_token(captcha_token: String) -> Result<String, RedisError> {
+    let rd = RDS.get().unwrap().read().await;
+    let res = rd.get_string(&format!("captcha_token:{}", captcha_token)).await;
+    return res;
+}
