@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 ThemeData appTheme = ThemeData.light().copyWith(
-  useMaterial3: true,
   scaffoldBackgroundColor: const Color(0xFFE6EAF1),
   inputDecorationTheme: const InputDecorationTheme(
     floatingLabelBehavior: FloatingLabelBehavior.always,

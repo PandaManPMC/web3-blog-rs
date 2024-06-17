@@ -1,11 +1,11 @@
 name: back_channel
-description: A new Flutter plugin project.
+description: "A new Flutter plugin project."
 version: 0.0.1
 homepage:
 
 environment:
-  sdk: '>=3.0.3 <4.0.0'
-  flutter: ">=3.3.0"
+  sdk: '>=3.4.0 <4.0.0'
+  flutter: '>=3.3.0'
 
 dependencies:
   flutter:
@@ -15,7 +15,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -35,7 +35,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.channel.back.back_channel
+        package: com.blog.club.back_channel
         pluginClass: BackChannelPlugin
 
   # To add assets to your plugin package, add an assets section, like this:

@@ -44,7 +44,7 @@ class LoginFormComponent extends StatelessWidget {
           maxLength: 6,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           decoration: const InputDecoration(
-            labelText: "GoogleAuth Code",
+            labelText: "TOTP Code",
             counterText: "",
           ),
         ),

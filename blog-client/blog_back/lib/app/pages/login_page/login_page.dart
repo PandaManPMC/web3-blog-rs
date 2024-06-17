@@ -50,27 +50,24 @@ class _LoginPageState extends State<LoginPage>
 
     return ChangeNotifierProvider(
       create: (_) => LoginProvider(),
-      child: WillPopScope(
-        onWillPop: () async => false,
-        child: Scaffold(
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(width: double.infinity, height: 120 + top),
-              Image.asset("images/logo.png", height: 56),
-            ],
-          ),
-          bottomSheet: Container(
-            padding: const EdgeInsets.only(top: 50),
-            decoration: const BoxDecoration(
-                borderRadius: borderRadius, color: Color(0xFF376AED)),
-            child: SlideTransition(
-              position: Tween<Offset>(
-                      begin: const Offset(0, 2), end: const Offset(0, 0))
-                  .animate(CurvedAnimation(
-                      parent: animCtr, curve: Curves.fastOutSlowIn)),
-              child: const LoginComponent(),
-            ),
+      child: Scaffold(
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(width: double.infinity, height: 120 + top),
+            Image.asset("images/logo.png", height: 56),
+          ],
+        ),
+        bottomSheet: Container(
+          padding: const EdgeInsets.only(top: 50),
+          decoration: const BoxDecoration(
+              borderRadius: borderRadius, color: Color(0xFF376AED)),
+          child: SlideTransition(
+            position: Tween<Offset>(
+                    begin: const Offset(0, 2), end: const Offset(0, 0))
+                .animate(CurvedAnimation(
+                    parent: animCtr, curve: Curves.fastOutSlowIn)),
+            child: const LoginComponent(),
           ),
         ),
       ),

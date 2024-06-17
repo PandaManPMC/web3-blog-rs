@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title></title>
+</head>
+<body>
+<script>
+    function dataCallback(token) {
+      console.log(recaptchaIp);
+      console.log(token);
+    }
+
+    function errorCallback(err) {
+
+    }
+
+    var recaptchaIp;
+
+    fetch("https://www.cloudflare.com/cdn-cgi/trace")
+      .then(response => response.text())
+      .then(result => {
+        var resultList = result.split('\n');
+        for(var i = 0, len = resultList.length; i < len; i++)	{
+          var temp = resultList[i].split('=');
+          if(temp[0] == 'ip') {
+            recaptchaIp = temp[1];
+            break;
+          }
+        }
+      })
+      .catch(err => {
+        window.JsBridge.postMessage("{'code': -1, 'data': {'error': err} }")
+      });
+  </script>
+<div class="g-recaptcha" data-sitekey="6Lcn0fYpAAAAALGpkke4_lQtZEg8XqvjYlhSsb74" data-theme="light" data-callback="dataCallback" data-error-callback="errorCallback"></div>
+<script src="https://www.recaptcha.net/recaptcha/api.js" async="async" defer="defer"></script>
+</body>
+</html>

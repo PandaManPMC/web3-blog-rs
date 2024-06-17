@@ -47,8 +47,8 @@ class _SplashPageState extends State<SplashPage>
 
     return ChangeNotifierProvider(
       create: (_) => SplashProvider(),
-      child: WillPopScope(
-        onWillPop: () async => false,
+      child: PopScope(
+        canPop: false,
         child: Scaffold(
           body: SingleChildScrollView(
             padding: EdgeInsets.fromLTRB(20, top + 60, 20, 0),

@@ -21,6 +21,9 @@ class GlobalStorage {
   String _username = "";
   String get username => _username;
 
+  bool _hasTotpAuth = false;
+  bool get hasTotpAuth => _hasTotpAuth;
+
   Future<void> initialize() async {
     await storage.initialize(fileKey: "blog-storage");
     readUserInfo();
@@ -31,14 +34,26 @@ class GlobalStorage {
     Map user = storage.read(GlobalStorageKey.user.name) ?? {};
     _accessToken = user["userToken"] ?? "";
     _username = user["penName"] ?? "";
+    _hasTotpAuth = user["googleAuth"] ?? false;
   }
 
   void saveUserInfo(user) {
     try {
       _accessToken = user["userToken"] ?? "";
       _username = user["penName"] ?? "";
+      _hasTotpAuth = user["googleAuth"] ?? false;
       storage.save(GlobalStorageKey.user.name, user);
     } catch (_) {}
+  }
+
+  void onTotpAuth() {
+    _hasTotpAuth = true;
+    Map user = {
+      "userToken": _accessToken,
+      "penName": _username,
+      "googleAuth": true,
+    };
+    storage.save(GlobalStorageKey.user.name, user);
   }
 
   @override

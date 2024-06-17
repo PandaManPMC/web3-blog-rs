@@ -75,7 +75,9 @@ class LocalRequest {
       debugPrint("\x1B[32m Data = ${result.data} \x1B[0m");
       debugPrint("\x1B[32m success ------------ \x1B[0m");
     } else {
-      if (_error != null) _error!(result);
+      if (result.code != RequestError.codeCancel) {
+        if (_error != null) _error!(result);
+      }
       debugPrint("\x1B[31m error ------------ \x1B[0m");
       debugPrint("\x1B[31m Link = ${dio.options.baseUrl}$_path \x1B[0m");
       debugPrint("\x1B[31m Header = ${dio.options.headers} \x1B[0m");
