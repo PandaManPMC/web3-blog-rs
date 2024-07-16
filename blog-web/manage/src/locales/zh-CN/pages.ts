@@ -64,4 +64,5 @@ export default {
   'pages.searchTable.tenThousand': '万',
   'pages.searchTable.batchDeletion': '批量删除',
   'pages.searchTable.batchApproval': '批量审批',
+  'pages.login.metaMaskLogin.tab': 'MetaMask 登录',
 };
