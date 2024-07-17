@@ -6,17 +6,18 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-auto-imports.d.ts
-pnpm-lock.yaml
 
 node_modules
 dist
 dist-ssr
 *.local
+stats.html
+
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
 .idea
 .DS_Store
 *.suo
@@ -24,81 +25,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-/target
-.idea/
-bin/
-*/target/*
-*.exe
-*.pdb
-target/*
-target
-*.log
-
-# Node modules
-node_modules/
-
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Environment variables
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Next.js build output
-.next/
-out/
-
-# System files
-.DS_Store
-Thumbs.db
-
-# Coverage directory used by tools like istanbul
-coverage/
-
-# Node modules
-node_modules/
-
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Dependency directories
-jspm_packages/
-
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Next.js build output
-.next/
-out/
-
-# Coverage directory used by tools like istanbul
-coverage/
-
-# System files
-.DS_Store
-Thumbs.db
-
-# Production build output
-dist/
-build/
-
-# Editor directories and files
-.idea
-.vscode
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
