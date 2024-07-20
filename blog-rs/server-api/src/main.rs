@@ -24,12 +24,18 @@ async fn main() {
     let p = plier::files::get_current_dir_str();
     println!("{:?}", p);
 
-    let file_path = String::from("server-api/src/config.toml");
+    let mut conf_file_path = String::from("server-api/src/config.toml");
+    let mut log_conf_path = String::from("server-api/src/log4rs.yaml");
+
+    if cfg!(target_os = "linux") {
+        conf_file_path = String::from("./config.toml");
+        log_conf_path = String::from("./log4rs.yaml");
+    }
 
     unsafe {
-        let res = configs::init(file_path.clone());
-        log4rs::init_file("server-api/src/log4rs.yaml", Default::default()).unwrap();
-        info!("log4rs::init_file {:?}", file_path.clone());
+        let res = configs::init(conf_file_path.clone());
+        log4rs::init_file(log_conf_path.clone(), Default::default()).unwrap();
+        info!("log4rs::init_file {:?}", log_conf_path.clone());
 
         info!("env = {}", configs::get_str("basics", "env"));
         info!("port = {}", configs::get_int("basics", "port"));

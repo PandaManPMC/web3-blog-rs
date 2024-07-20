@@ -2,6 +2,7 @@
 env = "dev"
 port = 51081
 file_http="http://192.168.30.12:80/uploads"
+#file_http="http://testblog.wearelucky2025.top/a769x"
 
 [mysql_db1]
 host = "92.118.228.90"
