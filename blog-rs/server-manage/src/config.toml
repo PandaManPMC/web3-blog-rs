@@ -4,6 +4,9 @@ port = 51080
 file_http="http://192.168.30.12:80/uploads"
 file_path= "E:\\b\\files\\uploads"
 
+#file_http="http://testblog.wearelucky2025.top/a769x"
+#file_path= "/home/test_blog/blog/webapp/files/a769x"
+
 [author]
 username="laoniqiu"
 userpwd="12345678"
