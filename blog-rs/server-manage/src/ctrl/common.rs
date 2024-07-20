@@ -30,8 +30,8 @@ lazy_static::lazy_static! {
 }
 
 pub fn init_router(mut router: Router) -> Router {
-    router = router.route("/common/fileUpload", post(file_upload));
-    router = router.route("/common/verifyReCaptchaToken", get(verify_re_captcha_token_v2));
+    router = router.route("/a770x/common/fileUpload", post(file_upload));
+    router = router.route("/a770x/common/verifyReCaptchaToken", get(verify_re_captcha_token_v2));
 
     return router;
 }

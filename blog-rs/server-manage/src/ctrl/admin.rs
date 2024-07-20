@@ -28,11 +28,11 @@ lazy_static::lazy_static! {
 }
 
 pub fn init_router(mut router: Router) -> Router {
-    router = router.route("/admin/login", post(login));
-    router = router.route("/admin/changePwd", post(change_pwd));
+    router = router.route("/a770x/admin/login", post(login));
+    router = router.route("/a770x/admin/changePwd", post(change_pwd));
 
-    router = router.route("/admin/getStartBindGoogleSecret", get(get_start_bind_google_secret));
-    router = router.route("/admin/bindGoogleSecret", post(bind_google_secret));
+    router = router.route("/a770x/admin/getStartBindGoogleSecret", get(get_start_bind_google_secret));
+    router = router.route("/a770x/admin/bindGoogleSecret", post(bind_google_secret));
 
     return router;
 }

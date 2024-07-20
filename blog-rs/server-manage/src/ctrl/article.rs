@@ -23,20 +23,20 @@ lazy_static::lazy_static! {
 }
 
 pub fn init_router(mut router: Router) -> Router {
-    router = router.route("/article/publish", post(publish));
-    router = router.route("/article/changeArticle", post(change_article));
-    router = router.route("/article/changeArticleLabel", post(change_article_label));
+    router = router.route("/a770x/article/publish", post(publish));
+    router = router.route("/a770x/article/changeArticle", post(change_article));
+    router = router.route("/a770x/article/changeArticleLabel", post(change_article_label));
 
-    router = router.route("/article/createClasses", post(create_classes));
-    router = router.route("/article/createLabel", post(create_label));
-    router = router.route("/article/delClasses", post(del_classes));
-    router = router.route("/article/delLabel", post(del_label));
+    router = router.route("/a770x/article/createClasses", post(create_classes));
+    router = router.route("/a770x/article/createLabel", post(create_label));
+    router = router.route("/a770x/article/delClasses", post(del_classes));
+    router = router.route("/a770x/article/delLabel", post(del_label));
 
-    router = router.route("/article/getArticleLst", get(get_article_lst));
-    router = router.route("/article/getClassesLst", get(get_classes_lst));
-    router = router.route("/article/getLabelLst", get(get_label_lst));
+    router = router.route("/a770x/article/getArticleLst", get(get_article_lst));
+    router = router.route("/a770x/article/getClassesLst", get(get_classes_lst));
+    router = router.route("/a770x/article/getLabelLst", get(get_label_lst));
 
-    router = router.route("/article/getArticleLabelLst", get(get_article_label_lst));
+    router = router.route("/a770x/article/getArticleLabelLst", get(get_article_label_lst));
 
     return router;
 }

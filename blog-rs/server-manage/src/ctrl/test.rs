@@ -6,7 +6,7 @@ use crate::bean;
 use crate::service;
 
 pub fn init_router(mut router: Router) -> Router {
-    router = router.route("/test/test", post(test));
+    router = router.route("/a770x/test/test", post(test));
     return router;
 }
 
