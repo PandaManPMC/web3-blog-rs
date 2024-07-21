@@ -15,9 +15,12 @@ use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
 use plier::rds;
 use axum::extract::DefaultBodyLimit;
+use tokio_cron_scheduler::{JobScheduler, Job};
 
 mod ctrl;
 mod service;
+mod bean;
+mod utils;
 
 #[tokio::main]
 async fn main() {
@@ -114,4 +117,30 @@ async unsafe fn init_mysql() {
         warn!("init_mysql {:?}", conn);
         panic!("init_mysql");
     }
+}
+
+async fn init_schedule() {
+    let sched = JobScheduler::new().await.unwrap();
+
+    // 每十分钟执行一次, 缓存作者
+    sched.add(Job::new("0 0/10 * * * ?", |_, _| {
+        let _ = Box::pin(async {
+            service::blog::cache_author().await;
+        });
+    }).unwrap()).await.unwrap();
+
+
+    // 缓存标签
+    sched.add(Job::new("0 0/10 * * * ?",  |_, _| {
+        let _ = Box::pin(async {
+            service::blog::cache_label().await;
+        });
+    }).unwrap()).await.unwrap();
+
+
+    // 开始调度
+    sched.start().await.unwrap();
+
+    // 让主任务运行一段时间以观察调度效果
+    tokio::time::sleep(Duration::from_secs(60)).await;
 }
