@@ -33,6 +33,6 @@ db = "0"
 key="0123456789abcdef0123456789abcdef"
 iv="abcdef9876543210"
 
-[reCAPTCHA]
+[reCAPTCHA] # https://developers.google.com/recaptcha/docs/display?hl=zh-cn
 HTML = "6Lcn0fYpAAAAALGpkke4_lQtZEg8XqvjYlhSsb74"
 SERVER = "6Lcn0fYpAAAAAEYCampr8WtStPNe8Qz2YTAkZ4Ra"
