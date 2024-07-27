@@ -9,10 +9,13 @@ use base::model::blog_classes::BlogClassesModel;
 use crate::{bean, utils};
 use std::collections::HashMap;
 use base::model::blog_label::BlogLabelModel;
+use base::model::blog_view::{BlogViewJSONOut, BlogViewModel};
+use crate::ctrl::PREIFIX;
 
 pub fn init_router(mut router: Router) -> Router {
-    router = router.route("/article/list", get(get_article_list));
-    router = router.route("/article/classes", get(get_classes_list));
+    router = router.route(&format!("{}{}", PREIFIX, "/article/list"), get(get_article_list));
+    router = router.route(&format!("{}{}", PREIFIX, "/article/classes"), get(get_classes_list));
+    router = router.route(&format!("{}{}", PREIFIX, "/article/comments"), get(get_article_comments));
     return router;
 }
 
@@ -96,3 +99,27 @@ async fn get_label_list() -> Json<common::net::rsp::Rsp<Vec<BlogLabelModel>>> {
     Json(rsp)
 }
 
+/// 获取文章评论
+async fn get_article_comments(
+    query: Query<bean::article::GetArticleComment>,
+) -> Json<common::net::rsp::Rsp<Vec<BlogViewModel>>> {
+    let mut params:HashMap<String, sql::Params> = HashMap::new();
+    // thing状态:1@可见;2@不可见
+    params.insert(String::from("visible"), sql::Params::UInteger8(1));
+    params.insert(String::from("id_blog_article"), sql::Params::UInteger64(query.id_blog));
+
+    let page_index = sql::Condition::PageIndex(query.page_index);
+    let page_size = sql::Condition::PageSize(query.page_size);
+
+    let bc = [page_index, page_size];
+
+    let result = base::service::blog_view_sve::query_list(&params, &bc).await;
+    if result.is_err() {
+        tracing::warn!("{:?}", result);
+        return Json(common::net::rsp::Rsp::<Vec<BlogViewModel>>::err_de())
+    }
+
+    let lst = result.unwrap();
+    let rsp = common::net::rsp::Rsp::ok(lst);
+    Json(rsp)
+}
