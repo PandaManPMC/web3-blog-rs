@@ -122,6 +122,22 @@ impl<T> Rsp<T> {
             data: None,
         }
     }
+
+    pub fn fail_params() -> Self {
+        Rsp{
+            code: CODE_FAIL_PARAMS,
+            tip: "Required parameters are missing".to_string(),
+            data: None
+        }
+    }
+
+    pub fn fail_params_tip(tip: String) -> Self {
+        Rsp{
+            code: CODE_FAIL_PARAMS,
+            tip,
+            data: None
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]

@@ -150,6 +150,9 @@ async fn get_label_list() -> Json<common::net::rsp::Rsp<Vec<BlogLabelModel>>> {
 async fn get_article_comments(
     query: Query<bean::article::GetArticleComment>,
 ) -> Json<common::net::rsp::Rsp<Vec<BlogViewModel>>> {
+    if 0 == query.id_blog {
+        return Json(common::net::rsp::Rsp::fail_params_tip("缺少必传参数【id_blog】".to_string()))
+    }
     let mut params:HashMap<String, sql::Params> = HashMap::new();
     // thing状态:1@可见;2@不可见
     params.insert(String::from("visible"), sql::Params::UInteger8(1));
