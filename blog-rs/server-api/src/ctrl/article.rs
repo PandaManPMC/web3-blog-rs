@@ -6,8 +6,9 @@ use i_dao::sql;
 use log::debug;
 use base::model::blog_article::BlogArticleModel;
 use base::model::blog_classes::BlogClassesModel;
-use crate::{bean, utils};
+use crate::{bean, service, utils};
 use std::collections::HashMap;
+use r2d2_mysql::mysql::Value;
 use base::model::blog_label::BlogLabelModel;
 use base::model::blog_view::{BlogViewJSONOut, BlogViewModel};
 use crate::ctrl::PREIFIX;
@@ -22,7 +23,7 @@ pub fn init_router(mut router: Router) -> Router {
 /// article_list 获取博客列表
 async fn get_article_list(
     query: Query<bean::article::GetArticleList>,
-) -> Json<common::net::rsp::Rsp<Vec<BlogArticleModel>>> {
+) -> Json<common::net::rsp::Rsp<Vec<bean::article::BlogArticleOut>>> {
 
     debug!("{:?}", query);
 
@@ -47,11 +48,57 @@ async fn get_article_list(
     let result = base::service::blog_article_sve::query_list(&params, &bc).await;
     if result.is_err() {
         tracing::warn!("{:?}", result);
-        return Json(common::net::rsp::Rsp::<Vec<BlogArticleModel>>::err_de())
+        return Json(common::net::rsp::Rsp::<Vec<bean::article::BlogArticleOut>>::err_de())
     }
 
     let lst = result.unwrap();
-    let rsp = common::net::rsp::Rsp::ok(lst);
+
+    let mut list: Vec<bean::article::BlogArticleOut> = vec![];
+
+    for article in lst {
+        // 查询作者
+        let pem_name = service::blog::find_author_by_id(article.id_blog_author).await;
+
+        // 查询关联标签
+        let mut params1:HashMap<String, sql::Params> = HashMap::new();
+        params1.insert(String::from("id_blog_article"), sql::Params::UInteger64(article.id_blog_classes));
+        params1.insert(String::from("state"), sql::Params::UInteger8(1));
+        let res = base::service::blog_article_label_sve::query_list(&params, &utils::limit_max()).await;
+        if res.is_err() {
+            tracing::warn!("{:?}", result);
+            return Json(common::net::rsp::Rsp::<Vec<bean::article::BlogArticleOut>>::err_de())
+        }
+
+        let lst1 = res.unwrap();
+
+        let mut labels = vec![];
+        for articleLabel in lst1 {
+            let label = service::blog::find_label_by_id(articleLabel.id_blog_label).await;
+            labels.push(label);
+        }
+
+        let target = bean::article::BlogArticleOut{
+            id: article.id,
+            created_at: article.created_at,
+            updated_at: article.updated_at,
+            id_blog_classes: article.id_blog_classes,
+            title_article: article.title_article,
+            state_article: article.state_article,
+            state_publish: article.state_publish,
+            state_private: article.state_private,
+            content: article.content,
+            like_count: article.like_count,
+            watch_count: article.watch_count,
+            view_count: article.view_count,
+            time_publish: article.time_publish,
+            sequence: article.sequence,
+            pem_name,
+            labels,
+        };
+        list.push(target);
+    }
+
+    let rsp = common::net::rsp::Rsp::ok(list);
     Json(rsp)
 }
 

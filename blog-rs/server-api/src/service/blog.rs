@@ -24,7 +24,7 @@ pub async fn cache_author() {
 
 /// 获取作者信息
 /// id -> pen_name
-async fn find_author_by_id(id: u64) -> String {
+pub async  fn find_author_by_id(id: u64) -> String {
     // 1. 查询缓存, 不存在重新获取缓存
     let cache = AUTHOR_LIST.lock().unwrap();
     if let Some(value) = cache.get(&id) {
@@ -58,7 +58,7 @@ pub async fn cache_label() {
 
 /// 获取标签名称
 /// id -> label_name
-async fn find_label_by_id(id: u64) -> String {
+pub async fn find_label_by_id(id: u64) -> String {
     // 1. 查询缓存, 不存在重新获取缓存
     let cache = AUTHOR_LIST.lock().unwrap();
     if let Some(value) = cache.get(&id) {
