@@ -21,6 +21,7 @@ mod ctrl;
 mod service;
 mod bean;
 mod utils;
+mod dao;
 
 #[tokio::main]
 async fn main() {
@@ -36,7 +37,7 @@ async fn main() {
     }
 
     unsafe {
-        let res = configs::init(conf_file_path.clone());
+        let _res = configs::init(conf_file_path.clone());
         log4rs::init_file(log_conf_path.clone(), Default::default()).unwrap();
         info!("log4rs::init_file {:?}", log_conf_path.clone());
 

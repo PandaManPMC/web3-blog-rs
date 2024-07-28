@@ -1,22 +1,20 @@
-use axum::http::HeaderMap;
 use axum::{Json, Router};
 use axum::extract::Query;
 use axum::routing::{get};
 use i_dao::sql;
 use log::debug;
-use base::model::blog_article::BlogArticleModel;
 use base::model::blog_classes::BlogClassesModel;
 use crate::{bean, service, utils};
 use std::collections::HashMap;
-use r2d2_mysql::mysql::Value;
 use base::model::blog_label::BlogLabelModel;
-use base::model::blog_view::{BlogViewJSONOut, BlogViewModel};
+use base::model::blog_view::BlogViewModel;
 use crate::ctrl::PREIFIX;
 
 pub fn init_router(mut router: Router) -> Router {
     router = router.route(&format!("{}{}", PREIFIX, "/article/list"), get(get_article_list));
     router = router.route(&format!("{}{}", PREIFIX, "/article/classes"), get(get_classes_list));
     router = router.route(&format!("{}{}", PREIFIX, "/article/comments"), get(get_article_comments));
+    router = router.route(&format!("{}{}", PREIFIX, "/article/labels"), get(get_label_list));
     return router;
 }
 
@@ -30,6 +28,10 @@ async fn get_article_list(
     let mut params:HashMap<String, sql::Params> = HashMap::new();
     if 0 != query.id_blog_classes {
         params.insert(String::from("id_blog_classes"), sql::Params::UInteger64(query.id_blog_classes));
+    } else {
+        if 0 != query.id_blog_label {
+            params.insert(String::from("id_blog_label"), sql::Params::UInteger64(query.id_blog_label));
+        }
     }
     // thing状态:1@正常;2@已删除
     params.insert(String::from("state_article"), sql::Params::UInteger8(1));
@@ -45,27 +47,31 @@ async fn get_article_list(
 
     let bc = [page_index, page_size, desc ];
 
-    let result = base::service::blog_article_sve::query_list(&params, &bc).await;
+    let result = service::blog::query_list(&params, &bc).await;
     if result.is_err() {
         tracing::warn!("{:?}", result);
         return Json(common::net::rsp::Rsp::<Vec<bean::article::BlogArticleOut>>::err_de())
     }
 
-    let lst = result.unwrap();
+    let lst = result.clone().unwrap();
 
     let mut list: Vec<bean::article::BlogArticleOut> = vec![];
 
     for article in lst {
         // 查询作者
-        let pem_name = service::blog::find_author_by_id(article.id_blog_author).await;
-
+        let pn = service::blog::find_author_by_id(article.id_blog_author).await;
+        if pn.is_err() {
+            tracing::warn!("{:?}", pn);
+            return Json(common::net::rsp::Rsp::<Vec<bean::article::BlogArticleOut>>::err_de())
+        }
+        let pem_name = pn.unwrap();
         // 查询关联标签
         let mut params1:HashMap<String, sql::Params> = HashMap::new();
         params1.insert(String::from("id_blog_article"), sql::Params::UInteger64(article.id_blog_classes));
         params1.insert(String::from("state"), sql::Params::UInteger8(1));
         let res = base::service::blog_article_label_sve::query_list(&params, &utils::limit_max()).await;
         if res.is_err() {
-            tracing::warn!("{:?}", result);
+            tracing::warn!("{:?}", res);
             return Json(common::net::rsp::Rsp::<Vec<bean::article::BlogArticleOut>>::err_de())
         }
 
@@ -74,7 +80,13 @@ async fn get_article_list(
         let mut labels = vec![];
         for articleLabel in lst1 {
             let label = service::blog::find_label_by_id(articleLabel.id_blog_label).await;
-            labels.push(label);
+            if !(label.is_err()) {
+                let label_name = label.unwrap();
+                labels.push(label_name);
+                continue;
+            }
+            tracing::warn!("{:?}", label);
+            return Json(common::net::rsp::Rsp::<Vec<bean::article::BlogArticleOut>>::err_de());
         }
 
         let target = bean::article::BlogArticleOut{
