@@ -22,7 +22,7 @@ pub async fn cache_author() {
     }
     let lst = result.unwrap();
 
-    let mut cache = AUTHOR_LIST.lock().unwrap();
+    let mut cache = AUTHOR_LIST.lock().await;
     for author in lst {
         cache.insert(author.id, author.pen_name);
     }
@@ -32,13 +32,13 @@ pub async fn cache_author() {
 /// id -> pen_name
 pub async  fn find_author_by_id(id: u64) -> Result<String, String> {
     // 1. 查询缓存, 不存在重新获取缓存
-    let cache = AUTHOR_LIST.lock().unwrap();
+    let cache = AUTHOR_LIST.lock().await;
     if let Some(value) = cache.get(&id) {
         Ok(value.to_string())
     } else {
         cache_author().await;
         // 2. 二次查找缓存
-        let cache = AUTHOR_LIST.lock().unwrap();
+        let cache = AUTHOR_LIST.lock().await;
         if let Some(value) = cache.get(&id) {
             Ok(value.to_string())
         } else {
@@ -57,7 +57,7 @@ pub async fn cache_label() {
     }
     let lst = result.unwrap();
 
-    let mut cache = LABEL_LIST.lock().unwrap();
+    let mut cache = LABEL_LIST.lock().await;
     for label in lst {
         cache.insert(label.id, label.label_name);
     }
@@ -67,13 +67,13 @@ pub async fn cache_label() {
 /// id -> label_name
 pub async fn find_label_by_id(id: u64) -> Result<String, String> {
     // 1. 查询缓存, 不存在重新获取缓存
-    let cache = AUTHOR_LIST.lock().unwrap();
+    let cache = AUTHOR_LIST.lock().await;
     if let Some(value) = cache.get(&id) {
         Ok(value.to_string())
     } else {
         cache_author().await;
         // 2. 二次查找缓存
-        let cache = AUTHOR_LIST.lock().unwrap();
+        let cache = AUTHOR_LIST.lock().await;
         if let Some(value) = cache.get(&id) {
             Ok(value.to_string())
         } else {
