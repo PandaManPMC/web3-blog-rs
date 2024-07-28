@@ -8,7 +8,6 @@ import AuthRouter from "@/routers/utils/authRouter";
 import Router from "@/routers/index";
 import useTheme from "@/hooks/useTheme";
 import zhCN from "antd/lib/locale/zh_CN";
-//import enUS from "antd/lib/locale/en_US";
 import i18n from "i18next";
 import "moment/dist/locale/zh-cn";
 

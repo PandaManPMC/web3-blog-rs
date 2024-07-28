@@ -19,7 +19,7 @@ const PasswordModal = (props: Props) => {
 
 	const handleOk = () => {
 		setIsModalVisible(false);
-		message.success("修改密码成功 🎉🎉🎉");
+		message.success("正在施工中...");
 	};
 
 	const handleCancel = () => {
@@ -27,9 +27,9 @@ const PasswordModal = (props: Props) => {
 	};
 	return (
 		<Modal title="修改密码" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} destroyOnClose={true}>
-			<p>Some Password...</p>
-			<p>Some Password...</p>
-			<p>Some Password...</p>
+			<p>正在施工中...</p>
+			<p>正在施工中...</p>
+			<p>正在施工中...</p>
 		</Modal>
 	);
 };

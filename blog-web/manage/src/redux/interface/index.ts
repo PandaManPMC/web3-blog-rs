@@ -13,7 +13,6 @@ export interface ThemeConfigProp {
 /* GlobalState */
 export interface GlobalState {
 	token: string;
-	userInfo: any;
 	assemblySize: SizeType;
 	language: string;
 	themeConfig: ThemeConfigProp;
@@ -45,3 +44,10 @@ export interface AuthState {
 	};
 	authRouter: string[];
 }
+
+/* user */
+export interface UserState {
+	userName: string;
+}
+
+export class user {}

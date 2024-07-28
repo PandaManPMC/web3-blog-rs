@@ -46,9 +46,9 @@ module.exports = {
 		"no-use-before-define": "off", // 禁止在 函数/类/变量 定义之前使用它们
 		"prefer-const": "off", // 此规则旨在标记使用 let 关键字声明但在初始分配后从未重新分配的变量，要求使用 const
 		"no-irregular-whitespace": "off", // 禁止不规则的空白
-
 		// typeScript (https://typescript-eslint.io/rules)
-		"@typescript-eslint/no-unused-vars": "error", // 禁止定义未使用的变量
+		"react/prop-types":"off",
+		"@typescript-eslint/no-unused-vars":"off",
 		"@typescript-eslint/no-inferrable-types": "off", // 可以轻松推断的显式类型可能会增加不必要的冗长
 		"@typescript-eslint/no-namespace": "off", // 禁止使用自定义 TypeScript 模块和命名空间。
 		"@typescript-eslint/no-explicit-any": "off", // 禁止使用 any 类型

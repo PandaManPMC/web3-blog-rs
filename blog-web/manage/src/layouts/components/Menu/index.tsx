@@ -78,7 +78,7 @@ const LayoutMenu = (props: any) => {
 						icon: item.meta?.icon,
 						title: item.meta?.title,
 						sort: item.sort,
-						path: item.children[0].path
+						path: item.path + "/index"
 					};
 					// @ts-ignore
 					data.push(temp);
@@ -99,6 +99,7 @@ const LayoutMenu = (props: any) => {
 						children: list
 					};
 					// @ts-ignore
+					//加菜单权限
 					data.push(temp);
 				}
 			});

@@ -15,7 +15,7 @@ const config = {
 	// 默认地址请求地址，可在 .env 开头文件中修改
 	baseURL: import.meta.env.VITE_API_URL as string,
 	// 设置超时时间（10s）
-	timeout: 10000,
+	timeout: 30000,
 	// 跨域时候允许携带凭证
 	withCredentials: true
 };
@@ -39,7 +39,7 @@ class RequestHttp {
 				// * 如果当前请求不需要显示 loading,在api服务中通过指定的第三个参数: { headers: { noLoading: true } }来控制不显示loading，参见loginApi
 				config.headers!.noLoading || showFullScreenLoading();
 				const token: string = store.getState().global.token;
-				return { ...config, headers: { ...config.headers, "x-access-token": token } };
+				return { ...config, headers: { ...config.headers, "x-user-token": token } };
 			},
 			(error: AxiosError) => {
 				return Promise.reject(error);
@@ -58,15 +58,24 @@ class RequestHttp {
 				axiosCanceler.removePending(config);
 				tryHideFullScreenLoading();
 				// * 登录失效（code == 599）
-				if (data.code == ResultEnum.OVERDUE) {
+				if (data.code == ResultEnum.CODE_NOT_LOGIN) {
 					store.dispatch(setToken(""));
-					message.error(data.msg);
+					message.error(data.tip);
 					window.location.hash = "/login";
+					return Promise.reject(data);
+				}
+				if (
+					data.code == ResultEnum.ERROR ||
+					data.code == ResultEnum.CODE_FAIL_PARAMS ||
+					data.code == ResultEnum.CODE_ERROR ||
+					data.code == ResultEnum.CODE_WARN
+				) {
+					message.error(data.tip);
 					return Promise.reject(data);
 				}
 				// * 全局错误信息拦截（防止下载文件得时候返回数据流，没有code，直接报错）
 				if (data.code && data.code !== ResultEnum.SUCCESS) {
-					message.error(data.msg);
+					message.error(data.tip);
 					return Promise.reject(data);
 				}
 				// * 成功请求（在页面上除非特殊情况，否则不用处理失败逻辑）

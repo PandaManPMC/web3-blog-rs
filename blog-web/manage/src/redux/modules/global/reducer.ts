@@ -5,7 +5,6 @@ import * as types from "@/redux/mutation-types";
 
 const globalState: GlobalState = {
 	token: "",
-	userInfo: "",
 	assemblySize: "middle",
 	language: "",
 	themeConfig: {

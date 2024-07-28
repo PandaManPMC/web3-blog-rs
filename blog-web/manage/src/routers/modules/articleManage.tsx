@@ -15,25 +15,45 @@ const proTableRouter: Array<RouteObject> = [
 		sort: 2,
 		children: [
 			{
-				path: "/articleManage/useHooks",
-				element: lazyLoad(React.lazy(() => import("@/views/proTable/useHooks/index"))),
+				path: "/articleManage/articleList",
+				element: lazyLoad(React.lazy(() => import("@/views/articleCenter/articleList/index"))),
 				meta: {
 					requiresAuth: true,
-					title: "标签管理",
-					icon: "AppstoreOutlined",
-					key: "useHooks"
+					title: "文章列表",
+					key: "articleList",
+					icon: "AppstoreOutlined"
 				}
 			},
 			{
-				path: "/articleManage/useComponent",
-				element: lazyLoad(React.lazy(() => import("@/views/proTable/useComponent/index"))),
+				path: "/articleManage/classesList",
+				element: lazyLoad(React.lazy(() => import("@/views/articleCenter/classsesList/index"))),
 				meta: {
 					requiresAuth: true,
-					title: "文章管理",
-					key: "useComponent",
+					title: "类型列表",
+					key: "classesList",
+					icon: "AppstoreOutlined"
+				}
+			},
+			{
+				path: "/articleManage/labelList",
+				element: lazyLoad(React.lazy(() => import("@/views/articleCenter/labelList/index"))),
+				meta: {
+					requiresAuth: true,
+					title: "标签列表",
+					key: "labelList",
 					icon: "AppstoreOutlined"
 				}
 			}
+			// {
+			// 	path: "/articleManage/articleLabel",
+			// 	element: lazyLoad(React.lazy(() => import("@/views/articleCenter/articleLabel/index"))),
+			// 	meta: {
+			// 		requiresAuth: true,
+			// 		title: "文章关联标签列表",
+			// 		key: "articleLabel",
+			// 		icon: "AppstoreOutlined"
+			// 	}
+			// }
 		]
 	}
 ];

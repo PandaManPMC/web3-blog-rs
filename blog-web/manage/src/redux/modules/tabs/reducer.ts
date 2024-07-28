@@ -5,8 +5,9 @@ import produce from "immer";
 import * as types from "@/redux/mutation-types";
 
 const tabsState: TabsState = {
-	// tabsActive 其实没啥用，使用 pathname 就可以了😂
+	// tabsActive 其实没啥用，使用 pathname 就可以
 	tabsActive: HOME_URL,
+	// @ts-ignore
 	tabsList: [{ title: "首页", path: HOME_URL }]
 };
 

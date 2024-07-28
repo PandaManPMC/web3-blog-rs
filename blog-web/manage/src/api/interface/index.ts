@@ -1,7 +1,7 @@
 // * 请求响应参数(不包含data)
 export interface Result {
 	code: string;
-	msg: string;
+	tip: string;
 }
 
 // * 请求响应参数(包含data)
@@ -26,8 +26,10 @@ export interface ReqPage {
 // * 登录
 export namespace Login {
 	export interface ReqLoginForm {
-		username: string;
-		password: string;
+		userName: string;
+		userPwd: string;
+		googleAuthCode?: string;
+		captchaToken?: string;
 	}
 	export interface ResLogin {
 		access_token: string;
