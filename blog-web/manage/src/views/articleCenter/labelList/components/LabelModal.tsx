@@ -41,7 +41,14 @@ const LabelModal = (props: any) => {
 	};
 	return (
 		<>
-			<Modal title="新增标签" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+			<Modal
+				title="新增标签"
+				visible={isModalVisible}
+				onOk={handleOk}
+				onCancel={handleCancel}
+				keyboard={false}
+				maskClosable={false}
+			>
 				<Input
 					size="large"
 					placeholder="请输入标签名称"

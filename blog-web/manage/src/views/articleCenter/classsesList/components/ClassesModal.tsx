@@ -41,7 +41,14 @@ const ClassesModal = (props: any) => {
 	};
 	return (
 		<>
-			<Modal title="新增类型" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+			<Modal
+				title="新增类型"
+				visible={isModalVisible}
+				onOk={handleOk}
+				onCancel={handleCancel}
+				keyboard={false}
+				maskClosable={false}
+			>
 				<Input
 					size="large"
 					placeholder="请输入类型名称"

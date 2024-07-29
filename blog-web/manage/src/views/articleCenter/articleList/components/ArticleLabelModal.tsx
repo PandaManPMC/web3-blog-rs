@@ -3,7 +3,6 @@ import { Modal, message, Select } from "antd";
 import { changeArticleLabel } from "@/api/modules/article";
 import { getLabelLst } from "@/api/modules/label";
 const ArticleLabelModal = (props: any) => {
-	console.log(props);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [articleLabelId, setArticleLabelId] = useState([]); //当前文章的label列表
 	const [articleLabelList, setArticleLabelList] = useState([]);
@@ -51,7 +50,14 @@ const ArticleLabelModal = (props: any) => {
 	};
 	return (
 		<>
-			<Modal title={"文章标签"} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+			<Modal
+				title={"文章标签"}
+				visible={isModalVisible}
+				onOk={handleOk}
+				onCancel={handleCancel}
+				keyboard={false}
+				maskClosable={false}
+			>
 				{/*<Select*/}
 				{/*	mode="multiple"*/}
 				{/*	value={articleLabelId}*/}

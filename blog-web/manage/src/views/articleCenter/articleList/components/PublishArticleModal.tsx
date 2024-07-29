@@ -1,17 +1,13 @@
 import { useState, useImperativeHandle, useEffect } from "react";
+// @ts-ignore
+import MarkdownIt from "markdown-it";
+import MdEditor from "react-markdown-editor-lite";
+import "react-markdown-editor-lite/lib/index.css";
 import { Modal, Input, Select, message } from "antd";
 import { articPublish, changeArticle } from "@/api/modules/article";
-const { TextArea } = Input;
 
 const PublishArticleModal = (props: any) => {
-	useEffect(() => {
-		if (props.setRowData) {
-			setEditState(true);
-			setPublish({ ...props.setRowData });
-		} else {
-			setEditState(false);
-		}
-	}, [props.setRowData]);
+	const mdParser = new MarkdownIt(/* Markdown-it options */);
 	const [editState, setEditState] = useState(false);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [publish, setPublish] = useState<any>({
@@ -19,22 +15,27 @@ const PublishArticleModal = (props: any) => {
 		titleArticle: null,
 		statePublish: null,
 		statePrivate: null,
-		content: null,
+		content: "",
 		sequence: null
 	});
 	useImperativeHandle(props.innerRef, () => ({
 		showModal
 	}));
-
+	useEffect(() => {
+		if (JSON.stringify(props.setRowData) !== "{}") {
+			setEditState(true);
+			setPublish({ ...props.setRowData });
+		} else {
+			setEditState(false);
+		}
+	}, [props.setRowData]);
 	const showModal = (params: any) => {
-		console.log(editState);
 		if (params.isModalVisible) {
 			setIsModalVisible(true);
 		} else {
 			setIsModalVisible(false);
 		}
 	};
-
 	const handleOk = async () => {
 		if (editState) {
 			// @ts-ignore
@@ -48,7 +49,7 @@ const PublishArticleModal = (props: any) => {
 					titleArticle: null,
 					statePublish: null,
 					statePrivate: null,
-					content: null,
+					content: "",
 					sequence: null
 				});
 				setEditState(false);
@@ -68,7 +69,7 @@ const PublishArticleModal = (props: any) => {
 					titleArticle: null,
 					statePublish: null,
 					statePrivate: null,
-					content: null,
+					content: "",
 					sequence: null
 				});
 				setEditState(false);
@@ -78,15 +79,37 @@ const PublishArticleModal = (props: any) => {
 			}
 		}
 	};
-
 	const handleCancel = () => {
 		setEditState(false);
 		props.onCancel();
 		setIsModalVisible(false);
+		setPublish({
+			idBlogClasses: null,
+			titleArticle: null,
+			statePublish: null,
+			statePrivate: null,
+			content: "",
+			sequence: null
+		});
 	};
+	// Finish!
+	// @ts-ignore
+	function handleEditorChange({ text }) {
+		setPublish({ ...publish, content: text });
+	}
 	return (
 		<>
-			<Modal title={editState ? "编辑文章" : "新增文章"} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+			<Modal
+				title={editState ? "编辑文章" : "新增文章"}
+				visible={isModalVisible}
+				onOk={handleOk}
+				onCancel={handleCancel}
+				style={{ width: "100vw", top: "0", paddingBottom: "0" }}
+				bodyStyle={{ height: "calc(100vh - 55px - 53px)", overflowY: "auto" }}
+				keyboard={false}
+				maskClosable={false}
+				width={"100%"}
+			>
 				<Input
 					size="large"
 					placeholder="请输入文章类型"
@@ -139,14 +162,11 @@ const PublishArticleModal = (props: any) => {
 						setPublish({ ...publish, sequence: Number(e.target.value.trim()) });
 					}}
 				/>
-				<TextArea
-					rows={4}
-					placeholder="请输入文章内容"
-					style={{ marginTop: "10px" }}
+				<MdEditor
 					value={publish.content}
-					onChange={e => {
-						setPublish({ ...publish, content: String(e.target.value) });
-					}}
+					style={{ height: "500px", marginTop: "10px" }}
+					renderHTML={text => mdParser.render(text)}
+					onChange={handleEditorChange}
 				/>
 			</Modal>
 		</>

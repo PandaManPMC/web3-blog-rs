@@ -1,16 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { Table, Input, Row, Col, Button, Select, message } from "antd";
 import { SearchOutlined, PlusOutlined } from "@ant-design/icons";
-import { getArticleLst, getArticleLabelLst, createClasses } from "@/api/modules/article";
+import { getArticleLst, getArticleLabelLst } from "@/api/modules/article";
 import "./index.less";
 import { formatTime } from "@/utils/time";
 import PublishArticleModal from "./components/PublishArticleModal";
 import ArticleLabelModal from "./components/ArticleLabelModal";
+import ContentModal from "./components/ContentModal";
 import { getLabelLst } from "@/api/modules/label";
 const ArticleList = () => {
 	// 按钮权限
 	const [dataSource, setDataSource] = useState<Array<any>>([]);
 	const [rowData, setRowData] = useState({});
+	const [contentData, setContentData] = useState("");
 	const [rowId, setRowId] = useState(null);
 	const [rowLabel, setRowLabel] = useState([]);
 	const [articleLabelList, setArticleLabelList] = useState([]);
@@ -24,6 +26,7 @@ const ArticleList = () => {
 	});
 	const publishRef = useRef(null);
 	const articleLabelRef = useRef(null);
+	const contentRef = useRef(null);
 	// const [pagination, setPagination] = useState({
 	// 	current: 1,
 	// 	pageSize: 20
@@ -163,6 +166,9 @@ const ArticleList = () => {
 			render: (record: any) => {
 				return (
 					<>
+						<Button type={"link"} onClick={() => handleOpenContent(record)}>
+							查看内容
+						</Button>
 						<Button type={"link"} onClick={() => handleOpen("edit", record)}>
 							编辑文章
 						</Button>
@@ -217,6 +223,11 @@ const ArticleList = () => {
 		} else {
 			message.error(tip);
 		}
+	};
+	const handleOpenContent = (row: any) => {
+		setContentData(row.content);
+		// @ts-ignore
+		contentRef.current!.showModal({ isModalVisible: true });
 	};
 	return (
 		<div className="card content-box">
@@ -319,9 +330,6 @@ const ArticleList = () => {
 				rowKey={record => String(record.id)}
 				// pagination={pagination}
 				// onChange={handleTableChange}
-				expandable={{
-					expandedRowRender: record => <p style={{ margin: 0, display: "flex", justifyContent: "center" }}>{record.content}</p>
-				}}
 			></Table>
 			<PublishArticleModal
 				innerRef={publishRef}
@@ -337,6 +345,7 @@ const ArticleList = () => {
 				onCancel={() => setRowLabel([])}
 				labelList={articleLabelList}
 			></ArticleLabelModal>
+			<ContentModal innerRef={contentRef} setContent={contentData} onCancel={() => setContentData("")}></ContentModal>
 		</div>
 	);
 };
