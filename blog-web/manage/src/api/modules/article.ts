@@ -31,3 +31,8 @@ export const delClasses = async (params: any) => {
 export const getArticleLabelLst = async (params: any) => {
 	return http.get(`/article/getArticleLabelLst`, params);
 };
+
+// * 更新文章标签
+export const changeArticleLabel = async (params: any) => {
+	return http.post(`/article/changeArticleLabel`, params);
+};

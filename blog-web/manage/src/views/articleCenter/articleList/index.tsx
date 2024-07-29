@@ -1,14 +1,19 @@
 import { useEffect, useRef, useState } from "react";
-import { Table, Input, Row, Col, Button, Select } from "antd";
+import { Table, Input, Row, Col, Button, Select, message } from "antd";
 import { SearchOutlined, PlusOutlined } from "@ant-design/icons";
-import { getArticleLst } from "@/api/modules/article";
+import { getArticleLst, getArticleLabelLst, createClasses } from "@/api/modules/article";
 import "./index.less";
 import { formatTime } from "@/utils/time";
 import PublishArticleModal from "./components/PublishArticleModal";
+import ArticleLabelModal from "./components/ArticleLabelModal";
+import { getLabelLst } from "@/api/modules/label";
 const ArticleList = () => {
 	// 按钮权限
 	const [dataSource, setDataSource] = useState<Array<any>>([]);
 	const [rowData, setRowData] = useState({});
+	const [rowId, setRowId] = useState(null);
+	const [rowLabel, setRowLabel] = useState([]);
+	const [articleLabelList, setArticleLabelList] = useState([]);
 	const [query, setQuery] = useState<any>({
 		idBlogClasses: null,
 		stateArticle: null,
@@ -18,6 +23,7 @@ const ArticleList = () => {
 		pageSize: 20000
 	});
 	const publishRef = useRef(null);
+	const articleLabelRef = useRef(null);
 	// const [pagination, setPagination] = useState({
 	// 	current: 1,
 	// 	pageSize: 20
@@ -34,6 +40,7 @@ const ArticleList = () => {
 	// };
 	useEffect(() => {
 		getList();
+		getLabels();
 	}, []);
 	const columns: any[] = [
 		// {
@@ -155,9 +162,14 @@ const ArticleList = () => {
 			align: "center",
 			render: (record: any) => {
 				return (
-					<Button type={"link"} onClick={() => handleOpen("edit", record)}>
-						编辑
-					</Button>
+					<>
+						<Button type={"link"} onClick={() => handleOpen("edit", record)}>
+							编辑文章
+						</Button>
+						<Button type={"link"} onClick={() => handleLabel(record)}>
+							编辑标签
+						</Button>
+					</>
 				);
 			}
 		}
@@ -169,15 +181,42 @@ const ArticleList = () => {
 			setDataSource(data);
 		}
 	};
-	const publishDone = (state: boolean) => {
-		state && getList();
-	};
 	const handleOpen = (state: string, data?: any) => {
 		if (state === "edit") {
 			setRowData({ ...data });
 		}
 		// @ts-ignore
 		publishRef.current!.showModal({ isModalVisible: true });
+	};
+	const handleLabel = async (row: any) => {
+		const { code, data } = await getArticleLabelLst({ id: row.id });
+		// @ts-ignore
+		if (code === 2000) {
+			// @ts-ignore
+			articleLabelRef.current!.showModal({ isModalVisible: true });
+			// @ts-ignore
+			setRowLabel(data);
+			setRowId(row.id);
+		}
+	};
+	const getLabels = async () => {
+		const { code, data, tip } = await getLabelLst({
+			pageIndex: 1,
+			pageSize: 20000
+		});
+		// @ts-ignore
+		if (code === 2000) {
+			// @ts-ignore
+			let labelList: { label: any; value: any }[] = [];
+			// @ts-ignore
+			data.map((item: any) => {
+				labelList.push({ label: item.labelName, value: item.id });
+			});
+			// @ts-ignore
+			setArticleLabelList(labelList);
+		} else {
+			message.error(tip);
+		}
 	};
 	return (
 		<div className="card content-box">
@@ -286,10 +325,18 @@ const ArticleList = () => {
 			></Table>
 			<PublishArticleModal
 				innerRef={publishRef}
-				onPublish={publishDone}
+				onPublish={getList}
 				setRowData={rowData}
 				onCancel={() => setRowData({})}
 			></PublishArticleModal>
+			<ArticleLabelModal
+				innerRef={articleLabelRef}
+				onPublish={getList}
+				setRowData={rowLabel}
+				setId={rowId}
+				onCancel={() => setRowLabel([])}
+				labelList={articleLabelList}
+			></ArticleLabelModal>
 		</div>
 	);
 };
