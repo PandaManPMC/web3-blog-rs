@@ -1,5 +1,5 @@
 import { useState, useImperativeHandle } from "react";
-import { Modal } from "antd";
+import { Modal, Typography } from "antd";
 // @ts-ignore
 import MarkdownIt from "markdown-it";
 const ContentModal = (props: any) => {

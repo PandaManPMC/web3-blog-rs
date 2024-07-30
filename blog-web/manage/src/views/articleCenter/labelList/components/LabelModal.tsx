@@ -1,5 +1,5 @@
 import { useState, useImperativeHandle } from "react";
-import { Modal, Input, message } from "antd";
+import { Modal, Input, message, Typography } from "antd";
 import { createLabel } from "@/api/modules/label";
 
 const LabelModal = (props: any) => {
@@ -49,6 +49,7 @@ const LabelModal = (props: any) => {
 				keyboard={false}
 				maskClosable={false}
 			>
+				<Typography.Title level={5}>类型顺序</Typography.Title>
 				<Input
 					size="large"
 					placeholder="请输入标签名称"
@@ -57,10 +58,12 @@ const LabelModal = (props: any) => {
 						setLabel({ ...label, labelName: e.target.value.trim() });
 					}}
 				/>
+				<Typography.Title level={5} style={{ marginTop: "10px" }}>
+					类型顺序
+				</Typography.Title>
 				<Input
 					size="large"
 					placeholder="请输入标签顺序"
-					style={{ marginTop: "10px" }}
 					value={label.sequence}
 					onChange={e => {
 						setLabel({ ...label, sequence: Number(e.target.value.trim()) });

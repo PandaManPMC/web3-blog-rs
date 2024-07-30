@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Table, Input, Row, Col, Button, Select, message } from "antd";
-import { SearchOutlined, PlusOutlined } from "@ant-design/icons";
+import { SearchOutlined, PlusOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { getArticleLst, getArticleLabelLst } from "@/api/modules/article";
 import "./index.less";
 import { formatTime } from "@/utils/time";
@@ -286,7 +286,12 @@ const ArticleList = () => {
 					</Row>
 					<Row justify="space-between">
 						<Col>
+							<Button type="primary" icon={<SearchOutlined />} onClick={getList}>
+								搜索
+							</Button>
 							<Button
+								style={{ marginLeft: "15px" }}
+								icon={<CloseCircleOutlined />}
 								onClick={() =>
 									setQuery({
 										idBlogClasses: null,
@@ -299,9 +304,6 @@ const ArticleList = () => {
 								}
 							>
 								重置
-							</Button>
-							<Button style={{ marginLeft: "15px" }} type="primary" icon={<SearchOutlined />} onClick={getList}>
-								搜索
 							</Button>
 						</Col>
 						<Col>

@@ -3,10 +3,11 @@ import { useState, useImperativeHandle, useEffect } from "react";
 import MarkdownIt from "markdown-it";
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
-import { Modal, Input, Select, message } from "antd";
+import { Modal, Input, Select, message, Typography } from "antd";
 import { articPublish, changeArticle } from "@/api/modules/article";
 
 const PublishArticleModal = (props: any) => {
+	console.log(props);
 	const mdParser = new MarkdownIt(/* Markdown-it options */);
 	const [editState, setEditState] = useState(false);
 	const [isModalVisible, setIsModalVisible] = useState(false);
@@ -28,7 +29,7 @@ const PublishArticleModal = (props: any) => {
 		} else {
 			setEditState(false);
 		}
-	}, []);
+	}, [props.setRowData]);
 	const showModal = (params: any) => {
 		if (params.isModalVisible) {
 			setIsModalVisible(true);
@@ -110,6 +111,7 @@ const PublishArticleModal = (props: any) => {
 				maskClosable={false}
 				width={"100%"}
 			>
+				<Typography.Title level={5}>文章类型</Typography.Title>
 				<Input
 					size="large"
 					placeholder="请输入文章类型"
@@ -118,19 +120,24 @@ const PublishArticleModal = (props: any) => {
 						setPublish({ ...publish, idBlogClasses: Number(e.target.value.trim()) });
 					}}
 				/>
+				<Typography.Title level={5} style={{ marginTop: "10px" }}>
+					文章标题
+				</Typography.Title>
 				<Input
 					size="large"
 					placeholder="请输入文章标题"
-					style={{ marginTop: "10px" }}
 					value={publish.titleArticle}
 					onChange={e => {
 						setPublish({ ...publish, titleArticle: String(e.target.value.trim()) });
 					}}
 				/>
+				<Typography.Title level={5} style={{ marginTop: "10px" }}>
+					文章可见性
+				</Typography.Title>
 				<Select
 					size="large"
 					value={publish.statePrivate}
-					style={{ width: "100%", marginTop: "10px" }}
+					style={{ width: "100%" }}
 					options={[
 						{ value: 1, label: "私有" },
 						{ value: 2, label: "公开" }
@@ -140,10 +147,13 @@ const PublishArticleModal = (props: any) => {
 						setPublish({ ...publish, statePrivate: e });
 					}}
 				/>
+				<Typography.Title level={5} style={{ marginTop: "10px" }}>
+					发布状态
+				</Typography.Title>
 				<Select
 					size="large"
 					value={publish.statePublish}
-					style={{ width: "100%", marginTop: "10px" }}
+					style={{ width: "100%" }}
 					options={[
 						{ value: 1, label: "未发布" },
 						{ value: 2, label: "已发布" }
@@ -153,18 +163,23 @@ const PublishArticleModal = (props: any) => {
 						setPublish({ ...publish, statePublish: e });
 					}}
 				/>
+				<Typography.Title level={5} style={{ marginTop: "10px" }}>
+					文章顺序
+				</Typography.Title>
 				<Input
 					size="large"
 					placeholder="请输入文章顺序"
-					style={{ marginTop: "10px" }}
 					value={publish.sequence}
 					onChange={e => {
 						setPublish({ ...publish, sequence: Number(e.target.value.trim()) });
 					}}
 				/>
+				<Typography.Title level={5} style={{ marginTop: "10px" }}>
+					文章内容
+				</Typography.Title>
 				<MdEditor
 					value={publish.content}
-					style={{ height: "500px", marginTop: "10px" }}
+					style={{ height: "500px" }}
 					renderHTML={text => mdParser.render(text)}
 					onChange={handleEditorChange}
 				/>

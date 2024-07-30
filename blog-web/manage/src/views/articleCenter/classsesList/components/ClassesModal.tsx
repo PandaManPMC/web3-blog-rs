@@ -1,5 +1,5 @@
 import { useState, useImperativeHandle } from "react";
-import { Modal, Input, message } from "antd";
+import { Modal, Input, message, Typography } from "antd";
 import { createClasses } from "@/api/modules/article";
 
 const ClassesModal = (props: any) => {
@@ -49,6 +49,7 @@ const ClassesModal = (props: any) => {
 				keyboard={false}
 				maskClosable={false}
 			>
+				<Typography.Title level={5}>类型名称</Typography.Title>
 				<Input
 					size="large"
 					placeholder="请输入类型名称"
@@ -57,10 +58,12 @@ const ClassesModal = (props: any) => {
 						setClasses({ ...classes, classesName: e.target.value.trim() });
 					}}
 				/>
+				<Typography.Title level={5} style={{ marginTop: "10px" }}>
+					类型顺序
+				</Typography.Title>
 				<Input
 					size="large"
 					placeholder="请输入类型顺序"
-					style={{ marginTop: "10px" }}
 					value={classes.sequence}
 					onChange={e => {
 						setClasses({ ...classes, sequence: Number(e.target.value.trim()) });
