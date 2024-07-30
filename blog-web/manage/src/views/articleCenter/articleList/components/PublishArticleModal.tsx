@@ -28,7 +28,7 @@ const PublishArticleModal = (props: any) => {
 		} else {
 			setEditState(false);
 		}
-	}, [props.setRowData]);
+	}, []);
 	const showModal = (params: any) => {
 		if (params.isModalVisible) {
 			setIsModalVisible(true);

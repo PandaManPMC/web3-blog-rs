@@ -14,6 +14,11 @@ export const loginApi = (params: Login.ReqLoginForm) => {
 	return http.post<Login.ResLogin>(`/admin/login`, params, { headers: { noLoading: true } }); // 控制当前请求不显示 loading
 };
 
+// * 修改密码
+export const changePwd = (params: any) => {
+	return http.post(`/admin/changePwd`, params);
+};
+
 // * 获取按钮权限
 export const getAuthorButtons = () => {
 	return http.get<Login.ResAuthButtons>(`/auth/buttons`);

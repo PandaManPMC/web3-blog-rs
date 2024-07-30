@@ -46,12 +46,6 @@ const ArticleList = () => {
 		getLabels();
 	}, []);
 	const columns: any[] = [
-		// {
-		// 	title: "ID",
-		// 	dataIndex: "id",
-		// 	key: "id",
-		// 	align: "center"
-		// },
 		{
 			title: "作者",
 			dataIndex: "idBlogAuthor",

@@ -19,7 +19,7 @@ const ArticleLabelModal = (props: any) => {
 			setArticleLabelId([...props.setRowData]);
 		}
 		setArticleLabelList(props.labelList);
-	}, [props.setRowData]);
+	}, []);
 	const showModal = (params: any) => {
 		if (params.isModalVisible) {
 			setIsModalVisible(true);
