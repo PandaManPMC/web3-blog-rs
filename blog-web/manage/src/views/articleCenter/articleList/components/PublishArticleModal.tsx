@@ -1,16 +1,17 @@
-import { useState, useImperativeHandle, useEffect } from "react";
+import React, { useState, useImperativeHandle, useEffect } from "react";
 // @ts-ignore
 import MarkdownIt from "markdown-it";
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
 import { Modal, Input, Select, message, Typography } from "antd";
-import { articPublish, changeArticle } from "@/api/modules/article";
+import { articPublish, changeArticle, getClassesLst } from "@/api/modules/article";
 
 const PublishArticleModal = (props: any) => {
 	console.log(props);
 	const mdParser = new MarkdownIt(/* Markdown-it options */);
 	const [editState, setEditState] = useState(false);
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [articleClassesLst, setArticleClassesLst] = useState([]);
 	const [publish, setPublish] = useState<any>({
 		idBlogClasses: null,
 		titleArticle: null,
@@ -29,6 +30,7 @@ const PublishArticleModal = (props: any) => {
 		} else {
 			setEditState(false);
 		}
+		getClassesLstSelect();
 	}, [props.setRowData]);
 	const showModal = (params: any) => {
 		if (params.isModalVisible) {
@@ -93,6 +95,26 @@ const PublishArticleModal = (props: any) => {
 			sequence: null
 		});
 	};
+	const getClassesLstSelect = async () => {
+		const { code, data, tip } = await getClassesLst({
+			pageIndex: 1,
+			pageSize: 20000,
+			state: 1
+		});
+		// @ts-ignore
+		if (code === 2000) {
+			// @ts-ignore
+			let lst: { label: any; value: any }[] = [];
+			// @ts-ignore
+			data.map((item: any) => {
+				lst.push({ label: item.classesName, value: item.id });
+			});
+			// @ts-ignore
+			setArticleClassesLst(lst);
+		} else {
+			message.error(tip);
+		}
+	};
 	// Finish!
 	// @ts-ignore
 	function handleEditorChange({ text }) {
@@ -112,12 +134,22 @@ const PublishArticleModal = (props: any) => {
 				width={"100%"}
 			>
 				<Typography.Title level={5}>文章类型</Typography.Title>
-				<Input
+				{/*<Input*/}
+				{/*	size="large"*/}
+				{/*	placeholder="请输入文章类型"*/}
+				{/*	value={publish.idBlogClasses}*/}
+				{/*	onChange={e => {*/}
+				{/*		setPublish({ ...publish, idBlogClasses: Number(e.target.value.trim()) });*/}
+				{/*	}}*/}
+				{/*/>*/}
+				<Select
 					size="large"
-					placeholder="请输入文章类型"
 					value={publish.idBlogClasses}
+					style={{ width: "100%" }}
+					options={[...articleClassesLst]}
+					placeholder="请选择文章类型"
 					onChange={e => {
-						setPublish({ ...publish, idBlogClasses: Number(e.target.value.trim()) });
+						setPublish({ ...publish, idBlogClasses: e });
 					}}
 				/>
 				<Typography.Title level={5} style={{ marginTop: "10px" }}>

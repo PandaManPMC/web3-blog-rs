@@ -45,7 +45,10 @@ async fn login(
 ) -> Json<common::net::rsp::Rsp<bean::admin::LoginOut>> {
     let _ = LOCK.lock().await;
 
-    // if "" != payload.captcha_token {}
+    if "" == payload.captcha_token {
+        return Json(common::net::rsp::Rsp::<bean::admin::LoginOut>::fail("请先进行人机验证".to_string()));
+    }
+
     let c_res = common::cache::member_rds::get_user_captcha_token(payload.captcha_token.clone()).await;
     if c_res.is_err() {
         tracing::warn!("{:?}", c_res);

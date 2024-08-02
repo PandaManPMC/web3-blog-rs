@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Table, Input, Row, Col, Button, Select, message } from "antd";
 import { SearchOutlined, PlusOutlined, CloseCircleOutlined } from "@ant-design/icons";
-import { getArticleLst, getArticleLabelLst } from "@/api/modules/article";
+import { getArticleLst, getArticleLabelLst, getClassesLst } from "@/api/modules/article";
 import "./index.less";
 import { formatTime } from "@/utils/time";
 import PublishArticleModal from "./components/PublishArticleModal";
@@ -16,6 +16,7 @@ const ArticleList = () => {
 	const [rowId, setRowId] = useState(null);
 	const [rowLabel, setRowLabel] = useState([]);
 	const [articleLabelList, setArticleLabelList] = useState([]);
+	const [articleClassesLst, setArticleClassesLst] = useState([]);
 	const [query, setQuery] = useState<any>({
 		idBlogClasses: null,
 		stateArticle: null,
@@ -44,19 +45,29 @@ const ArticleList = () => {
 	useEffect(() => {
 		getList();
 		getLabels();
+		getClassesLstSelect();
 	}, []);
 	const columns: any[] = [
-		{
-			title: "作者",
-			dataIndex: "idBlogAuthor",
-			key: "idBlogAuthor",
-			align: "center"
-		},
+		// {
+		// 	title: "作者",
+		// 	dataIndex: "idBlogAuthor",
+		// 	key: "idBlogAuthor",
+		// 	align: "center"
+		// },
 		{
 			title: "文章类型",
 			dataIndex: "idBlogClasses",
 			key: "idBlogClasses",
-			align: "center"
+			align: "center",
+			render: (idBlogClasses: number) => {
+				console.log(idBlogClasses);
+				for (const cls of articleClassesLst) {
+					console.log(cls);
+					if (idBlogClasses == cls.value) {
+						return <span>{cls.label}</span>;
+					}
+				}
+			}
 		},
 		{
 			title: "文章状态",
@@ -218,6 +229,25 @@ const ArticleList = () => {
 			message.error(tip);
 		}
 	};
+	const getClassesLstSelect = async () => {
+		const { code, data, tip } = await getClassesLst({
+			pageIndex: 1,
+			pageSize: 20000
+		});
+		// @ts-ignore
+		if (code === 2000) {
+			// @ts-ignore
+			let lst: { label: any; value: any }[] = [];
+			// @ts-ignore
+			data.map((item: any) => {
+				lst.push({ label: item.classesName, value: item.id });
+			});
+			// @ts-ignore
+			setArticleClassesLst(lst);
+		} else {
+			message.error(tip);
+		}
+	};
 	const handleOpenContent = (row: any) => {
 		setContentData(row.content);
 		// @ts-ignore
@@ -228,13 +258,25 @@ const ArticleList = () => {
 			<div className="date">
 				<Input.Group size="large">
 					<Row justify="space-between" style={{ marginBottom: "16px" }}>
-						<Col span={6}>
-							<Input
+						{/*<Col span={6}>*/}
+						{/*	<Input*/}
+						{/*		size="large"*/}
+						{/*		placeholder="请输入文章类型"*/}
+						{/*		value={query.idBlogClasses}*/}
+						{/*		onChange={e => {*/}
+						{/*			setQuery({ ...query, idBlogClasses: e.target.value.trim() });*/}
+						{/*		}}*/}
+						{/*	/>*/}
+						{/*</Col>*/}
+						<Col span={5}>
+							<Select
 								size="large"
-								placeholder="请输入文章类型"
 								value={query.idBlogClasses}
+								style={{ width: "100%" }}
+								options={[...articleClassesLst]}
+								placeholder="请选择文章类型"
 								onChange={e => {
-									setQuery({ ...query, idBlogClasses: e.target.value.trim() });
+									setQuery({ ...query, idBlogClasses: e });
 								}}
 							/>
 						</Col>
