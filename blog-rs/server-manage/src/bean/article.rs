@@ -161,3 +161,12 @@ pub struct GetLabelLstIn {
     pub page_size: i64,
 
 }
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
+pub struct GetArticleSequenceOut {
+    #[serde(rename = "sequenceMax")]
+    pub sequence_max: u32,
+
+    #[serde(rename = "sequenceMin")]
+    pub sequence_min: u32,
+}

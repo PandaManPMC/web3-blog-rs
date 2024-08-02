@@ -425,3 +425,46 @@ async fn get_article_label_lst(
     let rsp = common::net::rsp::Rsp::ok(vec);
     Json(rsp)
 }
+
+/// get_article_sequence 获取当前库中文章排序最小和最大
+async fn get_article_sequence(
+) -> Json<common::net::rsp::Rsp<bean::article::GetArticleSequenceOut>> {
+    let mut params:HashMap<String, sql::Params> = HashMap::new();
+    let page_index = sql::Condition::PageIndex(1);
+    let page_size = sql::Condition::PageSize(1);
+    let desc = sql::Condition::OrderByField("sequence".to_string());
+    let order = sql::Condition::OrderByAESOrDESC(2);
+
+    let mut bc = [page_index, page_size, desc, order ];
+
+    let result = base::service::blog_article_sve::query_list(&params, &bc).await;
+    if result.is_err() {
+        tracing::warn!("{:?}", result);
+        return Json(common::net::rsp::Rsp::<bean::article::GetArticleSequenceOut>::err_de())
+    }
+
+    let order_aes = sql::Condition::OrderByAESOrDESC(1);
+    bc[3] = order_aes;
+
+    let lst = result.unwrap();
+
+    let mut sequence_max:u32 = 0;
+    if 0 != lst.len() {
+        sequence_max = lst[0].sequence;
+    }
+
+    let result2 = base::service::blog_article_sve::query_list(&params, &bc).await;
+    if result2.is_err() {
+        tracing::warn!("{:?}", result2);
+        return Json(common::net::rsp::Rsp::<bean::article::GetArticleSequenceOut>::err_de())
+    }
+    let lst2 = result2.unwrap();
+    let mut sequence_min:u32 = 0;
+    if 0 != lst2.len() {
+        sequence_min = lst[0].sequence;
+    }
+
+    let out = bean::article::GetArticleSequenceOut{ sequence_max, sequence_min, };
+
+    Json(common::net::rsp::Rsp::ok(out))
+}
