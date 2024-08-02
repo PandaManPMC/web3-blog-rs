@@ -4,6 +4,7 @@
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "vite",
+		"local": "vite --mode .env.local",
 		"build:dev": "tsc && vite build --mode development",
 		"build:prod": "tsc && vite build --mode production",
 		"lint:eslint": "eslint --fix --ext .js,.ts,.tsx ./src",
