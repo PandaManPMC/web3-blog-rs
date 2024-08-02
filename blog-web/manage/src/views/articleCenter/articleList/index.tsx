@@ -48,22 +48,22 @@ const ArticleList = () => {
 		getClassesLstSelect();
 	}, []);
 	const columns: any[] = [
-		// {
-		// 	title: "作者",
-		// 	dataIndex: "idBlogAuthor",
-		// 	key: "idBlogAuthor",
-		// 	align: "center"
-		// },
+		{
+			title: "编号",
+			dataIndex: "id",
+			key: "id",
+			align: "center"
+		},
 		{
 			title: "文章类型",
 			dataIndex: "idBlogClasses",
 			key: "idBlogClasses",
 			align: "center",
 			render: (idBlogClasses: number) => {
-				console.log(idBlogClasses);
 				for (const cls of articleClassesLst) {
-					console.log(cls);
+					// @ts-ignore
 					if (idBlogClasses == cls.value) {
+						// @ts-ignore
 						return <span>{cls.label}</span>;
 					}
 				}
