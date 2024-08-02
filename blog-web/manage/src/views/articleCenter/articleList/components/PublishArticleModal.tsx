@@ -3,7 +3,7 @@ import React, { useState, useImperativeHandle, useEffect } from "react";
 import MarkdownIt from "markdown-it";
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
-import { Modal, Input, Select, message, Typography } from "antd";
+import { Modal, Input, Select, message, Typography, Row, Col } from "antd";
 import { articPublish, changeArticle, getClassesLst } from "@/api/modules/article";
 
 const PublishArticleModal = (props: any) => {
@@ -133,25 +133,6 @@ const PublishArticleModal = (props: any) => {
 				maskClosable={false}
 				width={"100%"}
 			>
-				<Typography.Title level={5}>文章类型</Typography.Title>
-				{/*<Input*/}
-				{/*	size="large"*/}
-				{/*	placeholder="请输入文章类型"*/}
-				{/*	value={publish.idBlogClasses}*/}
-				{/*	onChange={e => {*/}
-				{/*		setPublish({ ...publish, idBlogClasses: Number(e.target.value.trim()) });*/}
-				{/*	}}*/}
-				{/*/>*/}
-				<Select
-					size="large"
-					value={publish.idBlogClasses}
-					style={{ width: "100%" }}
-					options={[...articleClassesLst]}
-					placeholder="请选择文章类型"
-					onChange={e => {
-						setPublish({ ...publish, idBlogClasses: e });
-					}}
-				/>
 				<Typography.Title level={5} style={{ marginTop: "10px" }}>
 					文章标题
 				</Typography.Title>
@@ -163,49 +144,70 @@ const PublishArticleModal = (props: any) => {
 						setPublish({ ...publish, titleArticle: String(e.target.value.trim()) });
 					}}
 				/>
-				<Typography.Title level={5} style={{ marginTop: "10px" }}>
-					文章可见性
-				</Typography.Title>
-				<Select
-					size="large"
-					value={publish.statePrivate}
-					style={{ width: "100%" }}
-					options={[
-						{ value: 1, label: "私有" },
-						{ value: 2, label: "公开" }
-					]}
-					placeholder="请选择文章可见性"
-					onChange={e => {
-						setPublish({ ...publish, statePrivate: e });
-					}}
-				/>
-				<Typography.Title level={5} style={{ marginTop: "10px" }}>
-					发布状态
-				</Typography.Title>
-				<Select
-					size="large"
-					value={publish.statePublish}
-					style={{ width: "100%" }}
-					options={[
-						{ value: 1, label: "未发布" },
-						{ value: 2, label: "已发布" }
-					]}
-					placeholder="请选择发布状态"
-					onChange={e => {
-						setPublish({ ...publish, statePublish: e });
-					}}
-				/>
-				<Typography.Title level={5} style={{ marginTop: "10px" }}>
-					文章顺序
-				</Typography.Title>
-				<Input
-					size="large"
-					placeholder="请输入文章顺序"
-					value={publish.sequence}
-					onChange={e => {
-						setPublish({ ...publish, sequence: Number(e.target.value.trim()) });
-					}}
-				/>
+				<Row justify="space-between" style={{ marginBottom: "16px" }}>
+					<Col span={5}>
+						<Typography.Title level={5}>文章类型</Typography.Title>
+						<Select
+							size="large"
+							value={publish.idBlogClasses}
+							style={{ width: "100%" }}
+							options={[...articleClassesLst]}
+							placeholder="请选择文章类型"
+							onChange={e => {
+								setPublish({ ...publish, idBlogClasses: e });
+							}}
+						/>
+					</Col>
+					<Col span={5}>
+						<Typography.Title level={5} style={{ marginTop: "10px" }}>
+							文章可见性
+						</Typography.Title>
+						<Select
+							size="large"
+							value={publish.statePrivate}
+							style={{ width: "100%" }}
+							options={[
+								{ value: 1, label: "私有" },
+								{ value: 2, label: "公开" }
+							]}
+							placeholder="请选择文章可见性"
+							onChange={e => {
+								setPublish({ ...publish, statePrivate: e });
+							}}
+						/>
+					</Col>
+					<Col span={5}>
+						<Typography.Title level={5} style={{ marginTop: "10px" }}>
+							发布状态
+						</Typography.Title>
+						<Select
+							size="large"
+							value={publish.statePublish}
+							style={{ width: "100%" }}
+							options={[
+								{ value: 1, label: "未发布" },
+								{ value: 2, label: "已发布" }
+							]}
+							placeholder="请选择发布状态"
+							onChange={e => {
+								setPublish({ ...publish, statePublish: e });
+							}}
+						/>
+					</Col>
+					<Col span={5}>
+						<Typography.Title level={5} style={{ marginTop: "10px" }}>
+							文章顺序
+						</Typography.Title>
+						<Input
+							size="large"
+							placeholder="请输入文章顺序"
+							value={publish.sequence}
+							onChange={e => {
+								setPublish({ ...publish, sequence: Number(e.target.value.trim()) });
+							}}
+						/>
+					</Col>
+				</Row>
 				<Typography.Title level={5} style={{ marginTop: "10px" }}>
 					文章内容
 				</Typography.Title>
