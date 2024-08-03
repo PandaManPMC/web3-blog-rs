@@ -4,9 +4,7 @@ import { SearchOutlined, PlusOutlined, CloseCircleOutlined } from "@ant-design/i
 import { getArticleLst, getArticleLabelLst, getClassesLst } from "@/api/modules/article";
 import "./index.less";
 import { formatTime } from "@/utils/time";
-import PublishArticleModal from "./components/PublishArticleModal";
 import ArticleLabelModal from "./components/ArticleLabelModal";
-import ContentModal from "./components/ContentModal";
 import { getLabelLst } from "@/api/modules/label";
 import { Link } from "react-router-dom";
 const ArticleList = () => {
@@ -27,7 +25,6 @@ const ArticleList = () => {
 	});
 	const publishRef = useRef(null);
 	const articleLabelRef = useRef(null);
-	const contentRef = useRef(null);
 	useEffect(() => {
 		getList();
 		getLabels();
@@ -161,12 +158,12 @@ const ArticleList = () => {
 						<Link to={`/articleManage/articleContent`} state={{ data: record }}>
 							详情
 						</Link>
-						<Button type={"link"} onClick={() => handleOpen("edit", record)}>
-							编辑文章
-						</Button>
 						<Button type={"link"} onClick={() => handleLabel(record)}>
-							编辑标签
+							标签
 						</Button>
+						<Link to={`/articleManage/articleEdit`} state={{ data: record }}>
+							编辑
+						</Link>
 					</>
 				);
 			}
@@ -341,12 +338,6 @@ const ArticleList = () => {
 				// pagination={pagination}
 				// onChange={handleTableChange}
 			></Table>
-			<PublishArticleModal
-				innerRef={publishRef}
-				onPublish={getList}
-				setRowData={rowData}
-				onCancel={() => setRowData({})}
-			></PublishArticleModal>
 			<ArticleLabelModal
 				innerRef={articleLabelRef}
 				onPublish={getList}
