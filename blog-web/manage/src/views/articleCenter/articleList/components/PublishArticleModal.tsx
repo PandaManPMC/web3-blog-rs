@@ -8,7 +8,11 @@ import { articPublish, changeArticle, getArticleSequence, getClassesLst } from "
 
 const PublishArticleModal = (props: any) => {
 	console.log(props);
-	const mdParser = new MarkdownIt(/* Markdown-it options */);
+	const mdParser = new MarkdownIt({
+		html: true,
+		linkify: true,
+		typographer: true
+	});
 	const [editState, setEditState] = useState(false);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [articleClassesLst, setArticleClassesLst] = useState([]);

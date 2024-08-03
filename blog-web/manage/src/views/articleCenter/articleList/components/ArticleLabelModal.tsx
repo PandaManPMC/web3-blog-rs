@@ -1,5 +1,5 @@
-import { useState, useImperativeHandle, useEffect } from "react";
-import { Modal, message, Select, Checkbox, Row, Col } from "antd";
+import React, { useState, useImperativeHandle, useEffect } from "react";
+import { Modal, message, Select, Checkbox, Row, Col, Button } from "antd";
 import { changeArticleLabel } from "@/api/modules/article";
 import { getLabelLst } from "@/api/modules/label";
 const ArticleLabelModal = (props: any) => {
@@ -129,9 +129,14 @@ const ArticleLabelModal = (props: any) => {
 				title={"文章标签"}
 				visible={isModalVisible}
 				onOk={handleOk}
-				onCancel={handleCancel}
+				// onCancel={handleCancel}
 				keyboard={false}
 				maskClosable={false}
+				footer={[
+					<Button key="submit" type="primary" onClick={handleOk}>
+						确定
+					</Button>
+				]}
 			>
 				<CheckboxGroup options={articleLabelList} value={articleLabelId} onChange={handleChange} />
 			</Modal>
