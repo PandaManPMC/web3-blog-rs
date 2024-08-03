@@ -36,3 +36,8 @@ export const getArticleLabelLst = async (params: any) => {
 export const changeArticleLabel = async (params: any) => {
 	return http.post(`/article/changeArticleLabel`, params);
 };
+
+// * 获取当前库中文章排序最小和最大
+export const getArticleSequence = async (params: any) => {
+	return http.get(`/article/getArticleSequence`, params);
+};

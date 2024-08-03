@@ -37,6 +37,7 @@ pub fn init_router(mut router: Router) -> Router {
     router = router.route("/a770x/article/getLabelLst", get(get_label_lst));
 
     router = router.route("/a770x/article/getArticleLabelLst", get(get_article_label_lst));
+    router = router.route("/a770x/article/getArticleSequence", get(get_article_sequence));
 
     return router;
 }
@@ -461,7 +462,7 @@ async fn get_article_sequence(
     let lst2 = result2.unwrap();
     let mut sequence_min:u32 = 0;
     if 0 != lst2.len() {
-        sequence_min = lst[0].sequence;
+        sequence_min = lst2[0].sequence;
     }
 
     let out = bean::article::GetArticleSequenceOut{ sequence_max, sequence_min, };

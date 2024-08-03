@@ -4,7 +4,7 @@ import MarkdownIt from "markdown-it";
 import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
 import { Modal, Input, Select, message, Typography, Row, Col } from "antd";
-import { articPublish, changeArticle, getClassesLst } from "@/api/modules/article";
+import { articPublish, changeArticle, getArticleSequence, getClassesLst } from "@/api/modules/article";
 
 const PublishArticleModal = (props: any) => {
 	console.log(props);
@@ -12,6 +12,10 @@ const PublishArticleModal = (props: any) => {
 	const [editState, setEditState] = useState(false);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [articleClassesLst, setArticleClassesLst] = useState([]);
+	const [articleSequence, setArticleSequence] = useState({
+		sequenceMin: 0,
+		sequenceMax: 0
+	});
 	const [publish, setPublish] = useState<any>({
 		idBlogClasses: null,
 		titleArticle: null,
@@ -31,6 +35,7 @@ const PublishArticleModal = (props: any) => {
 			setEditState(false);
 		}
 		getClassesLstSelect();
+		getArticleSequenceData();
 	}, [props.setRowData]);
 	const showModal = (params: any) => {
 		if (params.isModalVisible) {
@@ -111,6 +116,16 @@ const PublishArticleModal = (props: any) => {
 			});
 			// @ts-ignore
 			setArticleClassesLst(lst);
+		} else {
+			message.error(tip);
+		}
+	};
+	const getArticleSequenceData = async () => {
+		const { code, data, tip } = await getArticleSequence({});
+		// @ts-ignore
+		if (code === 2000) {
+			// @ts-ignore
+			setArticleSequence(data);
 		} else {
 			message.error(tip);
 		}
@@ -196,7 +211,7 @@ const PublishArticleModal = (props: any) => {
 					</Col>
 					<Col span={5}>
 						<Typography.Title level={5} style={{ marginTop: "10px" }}>
-							文章顺序
+							文章顺序：{articleSequence.sequenceMin} - {articleSequence.sequenceMax}
 						</Typography.Title>
 						<Input
 							size="large"
