@@ -2,10 +2,29 @@ import { useState, useImperativeHandle } from "react";
 import { Modal, Typography } from "antd";
 // @ts-ignore
 import MarkdownIt from "markdown-it";
+import markdownItAnchor from "markdown-it-anchor";
+import { figure } from "@mdit/plugin-figure";
+// @ts-ignore
+import markdownItTOC from "markdown-it-toc-done-right";
 const ContentModal = (props: any) => {
-	const mdParser = new MarkdownIt();
+	// let string = require("string");
+	// function legacySlugify(s: any) {
+	// 	return string(s).slugify().toString();
+	// }
+	const mdParser = new MarkdownIt({
+		html: false,
+		typographer: true
+	});
+	mdParser.use(markdownItAnchor, { permalink: true });
+	mdParser.use(markdownItTOC, {
+		containerClass: "toc",
+		containerId: "toc",
+		listType: "ul",
+		listClass: "cataloglistClass",
+		linkClass: "cataloglinkClass"
+	});
+	mdParser.use(figure);
 	const htmlContent = mdParser.render(props.setContent);
-
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	useImperativeHandle(props.innerRef, () => ({
 		showModal

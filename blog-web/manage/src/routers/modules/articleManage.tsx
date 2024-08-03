@@ -43,17 +43,17 @@ const proTableRouter: Array<RouteObject> = [
 					key: "labelList",
 					icon: "AppstoreOutlined"
 				}
+			},
+			{
+				path: "/articleManage/articleContent",
+				element: lazyLoad(React.lazy(() => import("@/views/articleCenter/articleList/articleContent"))),
+				meta: {
+					requiresAuth: true,
+					title: "文章内容",
+					key: "articleContent",
+					icon: "AppstoreOutlined"
+				}
 			}
-			// {
-			// 	path: "/articleManage/articleLabel",
-			// 	element: lazyLoad(React.lazy(() => import("@/views/articleCenter/articleLabel/index"))),
-			// 	meta: {
-			// 		requiresAuth: true,
-			// 		title: "文章关联标签列表",
-			// 		key: "articleLabel",
-			// 		icon: "AppstoreOutlined"
-			// 	}
-			// }
 		]
 	}
 ];

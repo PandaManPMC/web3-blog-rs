@@ -8,11 +8,11 @@ import PublishArticleModal from "./components/PublishArticleModal";
 import ArticleLabelModal from "./components/ArticleLabelModal";
 import ContentModal from "./components/ContentModal";
 import { getLabelLst } from "@/api/modules/label";
+import { Link } from "react-router-dom";
 const ArticleList = () => {
 	// 按钮权限
 	const [dataSource, setDataSource] = useState<Array<any>>([]);
 	const [rowData, setRowData] = useState({});
-	const [contentData, setContentData] = useState("");
 	const [rowId, setRowId] = useState(null);
 	const [rowLabel, setRowLabel] = useState([]);
 	const [articleLabelList, setArticleLabelList] = useState([]);
@@ -28,20 +28,6 @@ const ArticleList = () => {
 	const publishRef = useRef(null);
 	const articleLabelRef = useRef(null);
 	const contentRef = useRef(null);
-	// const [pagination, setPagination] = useState({
-	// 	current: 1,
-	// 	pageSize: 20
-	// });
-	// const handleTableChange = (pagination: SetStateAction<{ current: number; pageSize: number }>) => {
-	// 	setPagination(pagination);
-	// 	setQuery({
-	// 		// @ts-ignore
-	// 		pageIndex: pagination.current,
-	// 		// @ts-ignore
-	// 		pageSize: pagination.pageSize
-	// 	});
-	// 	getList();
-	// };
 	useEffect(() => {
 		getList();
 		getLabels();
@@ -169,11 +155,12 @@ const ArticleList = () => {
 			key: "edit",
 			align: "center",
 			render: (record: any) => {
+				// @ts-ignore
 				return (
 					<>
-						<Button type={"link"} onClick={() => handleOpenContent(record)}>
-							查看内容
-						</Button>
+						<Link to={`/articleManage/articleContent`} state={{ data: record }}>
+							详情
+						</Link>
 						<Button type={"link"} onClick={() => handleOpen("edit", record)}>
 							编辑文章
 						</Button>
@@ -248,26 +235,11 @@ const ArticleList = () => {
 			message.error(tip);
 		}
 	};
-	const handleOpenContent = (row: any) => {
-		setContentData(row.content);
-		// @ts-ignore
-		contentRef.current!.showModal({ isModalVisible: true });
-	};
 	return (
 		<div className="card content-box">
 			<div className="date">
 				<Input.Group size="large">
 					<Row justify="space-between" style={{ marginBottom: "16px" }}>
-						{/*<Col span={6}>*/}
-						{/*	<Input*/}
-						{/*		size="large"*/}
-						{/*		placeholder="请输入文章类型"*/}
-						{/*		value={query.idBlogClasses}*/}
-						{/*		onChange={e => {*/}
-						{/*			setQuery({ ...query, idBlogClasses: e.target.value.trim() });*/}
-						{/*		}}*/}
-						{/*	/>*/}
-						{/*</Col>*/}
 						<Col span={5}>
 							<Select
 								size="large"
@@ -383,7 +355,6 @@ const ArticleList = () => {
 				onCancel={() => setRowLabel([])}
 				labelList={articleLabelList}
 			></ArticleLabelModal>
-			<ContentModal innerRef={contentRef} setContent={contentData} onCancel={() => setContentData("")}></ContentModal>
 		</div>
 	);
 };

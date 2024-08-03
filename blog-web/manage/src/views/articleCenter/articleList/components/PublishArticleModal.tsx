@@ -5,6 +5,10 @@ import MdEditor from "react-markdown-editor-lite";
 import "react-markdown-editor-lite/lib/index.css";
 import { Modal, Input, Select, message, Typography, Row, Col } from "antd";
 import { articPublish, changeArticle, getArticleSequence, getClassesLst } from "@/api/modules/article";
+import markdownItAnchor from "markdown-it-anchor";
+import { figure } from "@mdit/plugin-figure";
+// @ts-ignore
+import markdownItTOC from "markdown-it-toc-done-right";
 
 const PublishArticleModal = (props: any) => {
 	console.log(props);
@@ -13,6 +17,15 @@ const PublishArticleModal = (props: any) => {
 		linkify: true,
 		typographer: true
 	});
+	mdParser.use(markdownItAnchor);
+	mdParser.use(markdownItTOC, {
+		containerClass: "toc",
+		containerId: "toc",
+		listType: "ul",
+		listClass: "cataloglistClass",
+		linkClass: "cataloglinkClass"
+	});
+	mdParser.use(figure);
 	const [editState, setEditState] = useState(false);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [articleClassesLst, setArticleClassesLst] = useState([]);
