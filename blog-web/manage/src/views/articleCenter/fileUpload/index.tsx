@@ -8,7 +8,7 @@ const FileUpload = () => {
 	const [urlLst, setUrlLst] = useState("");
 	const props = {
 		name: "file",
-		action: "api/common/fileUpload",
+		action: "a770x/common/fileUpload",
 		headers: {
 			"x-user-token": token
 		},
