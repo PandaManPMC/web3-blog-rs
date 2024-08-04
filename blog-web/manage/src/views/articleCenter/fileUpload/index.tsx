@@ -2,6 +2,7 @@ import { Upload, Button, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { store } from "@/redux";
 import { useState } from "react";
+import * as url from "node:url";
 const FileUpload = () => {
 	const token: string = store.getState().global.token;
 	const [urlLst, setUrlLst] = useState("");
@@ -36,6 +37,9 @@ const FileUpload = () => {
 				<Button icon={<UploadOutlined />}>Click to Upload</Button>
 			</Upload>
 			<div>{urlLst}</div>
+			<div>
+				<img src={urlLst} alt="" />
+			</div>
 		</div>
 	);
 };
