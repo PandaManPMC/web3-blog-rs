@@ -63,6 +63,16 @@ const proTableRouter: Array<RouteObject> = [
 					key: "articleEdit",
 					icon: "AppstoreOutlined"
 				}
+			},
+			{
+				path: "/articleManage/fileUpload",
+				element: lazyLoad(React.lazy(() => import("@/views/articleCenter/fileUpload"))),
+				meta: {
+					requiresAuth: true,
+					title: "文件上传",
+					key: "fileUpload",
+					icon: "AppstoreOutlined"
+				}
 			}
 		]
 	}

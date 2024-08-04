@@ -1,7 +1,7 @@
 [basics]
 env = "dev"
 port = 51080
-file_http="http://192.168.30.12:80/uploads"
+file_http="http://192.168.0.120/uploads"
 file_path= "E:\\b\\files\\uploads"
 
 #file_http="http://testblog.wearelucky2025.top/a769x"
