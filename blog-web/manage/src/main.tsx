@@ -8,6 +8,7 @@ import "virtual:svg-icons-register";
 import { PersistGate } from "redux-persist/integration/react";
 import { Provider } from "react-redux";
 import { store, persistor } from "@/redux";
+// @ts-ignore
 import App from "@/App";
 
 //react 18 创建（会导致 antd 菜单折叠时闪烁，等待官方修复）

@@ -1,7 +1,7 @@
 import { Upload, Button, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { store } from "@/redux";
-import { useState } from "react";
+import React, { useState } from "react";
 import * as url from "node:url";
 const FileUpload = () => {
 	const token: string = store.getState().global.token;
@@ -12,7 +12,14 @@ const FileUpload = () => {
 		headers: {
 			"x-user-token": token
 		},
-		onChange(info: { file: { status: string; name: any }; fileList: any }) {
+		onChange(info: {
+			file: {
+				response: { code: Number; tip: ""; data: { fileUrl: "" } };
+				status: string;
+				name: any;
+			};
+			fileList: any;
+		}) {
 			console.log("onChange");
 			if (info.file.status !== "uploading") {
 				console.log(info.file, info.fileList);
@@ -33,6 +40,7 @@ const FileUpload = () => {
 	};
 	return (
 		<div style={{ margin: "20px" }}>
+			{/*@ts-ignore*/}
 			<Upload {...props}>
 				<Button icon={<UploadOutlined />}>Click to Upload</Button>
 			</Upload>
