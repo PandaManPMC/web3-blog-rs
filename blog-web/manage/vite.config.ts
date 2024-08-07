@@ -48,7 +48,7 @@ export default defineConfig((mode: ConfigEnv): UserConfig => {
 			// 代理跨域（mock 不需要配置，这里只是个事列）
 			proxy: {
 				"/api": {
-					// target: "http://testblog.wearelucky2025.top/a770x",
+					//target: "http://testblog.wearelucky2025.top/a770x",
 					target: viteEnv.VITE_PROXY_URL,
 
 					changeOrigin: true,

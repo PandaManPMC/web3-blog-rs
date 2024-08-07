@@ -76,6 +76,7 @@ const proTableRouter: Array<RouteObject> = [
 			}
 		]
 	},
+
 	{
 		element: <LayoutIndex />,
 		meta: {

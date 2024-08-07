@@ -188,6 +188,9 @@ const ArticleList = () => {
 						<Button type={"link"} onClick={() => handleLabel(record)}>
 							编辑标签
 						</Button>
+						<Link to={`/articleManage/articleEdit`} state={{ data: record }}>
+							编辑
+						</Link>
 					</>
 				);
 			}

@@ -10,6 +10,7 @@ import { figure } from "@mdit/plugin-figure";
 // @ts-ignore
 import markdownItTOC from "markdown-it-toc-done-right";
 import { useLocation } from "react-router-dom";
+import { fileUpload } from "@/api/modules/common";
 
 const ArticleEdit = () => {
 	const location = useLocation();
@@ -129,6 +130,16 @@ const ArticleEdit = () => {
 	function handleEditorChange({ text }) {
 		setPublish({ ...publish, content: text });
 	}
+	const handleImageUpload = async (file: File, callback: (arg0: any) => void) => {
+		const imageUrl: any = await fileUpload(file);
+		if (imageUrl) {
+			// @ts-ignore
+			callback(imageUrl.data.fileUrl);
+		} else {
+			message.error(imageUrl.tip);
+		}
+	};
+
 	return (
 		<>
 			<Typography.Title level={5} style={{ marginTop: "10px" }}>
@@ -148,7 +159,7 @@ const ArticleEdit = () => {
 					<Select
 						size="large"
 						value={publish.idBlogClasses}
-						style={{ width: "100%" }}
+						style={{ width: "100%", marginTop: "10px" }}
 						options={[...articleClassesLst]}
 						placeholder="请选择文章类型"
 						onChange={e => {
@@ -215,6 +226,7 @@ const ArticleEdit = () => {
 				style={{ height: "500px" }}
 				renderHTML={text => mdParser.render(text)}
 				onChange={handleEditorChange}
+				onImageUpload={handleImageUpload}
 			/>
 			<Button key="submit" type="primary" onClick={handleOk}>
 				发布|保存
