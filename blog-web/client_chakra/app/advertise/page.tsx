@@ -27,7 +27,7 @@ const Advertise = () => {
             <VStack spacing={4}>
                 <ClickableCard
                     imageSrc="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2vAhoyOagozq-H6S1Qbp9a0vVJsmm4zlyqQ&s"
-                    text="OKX 交易所注册，赠送礼包"
+                    text="OKX 交易所注册，赠送新手礼包"
                     link="https://cnouyi.studio/join/9386831"
                 />
                 <ClickableCard

@@ -1,52 +1,87 @@
-import React from 'react';
+'use client'
+
+import React, { useEffect, useState } from 'react';
 import TextList from "@/app/common/TextList";
-import { useToast } from '@chakra-ui/react';
 import TagList from "@/app/common/TagList";
 import ImageCard from "@/app/common/ImageCard ";
+import {get, useGetWrap} from "@/tool/http";
+import {useErrToast, useInfoToast} from "@/tool/ui";
 
 const handleItemClick = (item: any) => {
     console.log(`Clicked on: ${JSON.stringify(item)}`);
 };
-
+var counter = 0;
 const Menu = () => {
-    const items = [
-        {name: 'Golang 开发', id: 1, count: 20},
-        {name: 'Rust 开发', id: 2, count: 240},
-        {name: 'Java 开发', id: 6, count: 230},
-        {name: 'Web 开发', id: 11, count: 220},
-        {name: '区块链 开发', id: 12, count: 210},
-    ];
+    const errToast = useErrToast();
+    const infoToast = useInfoToast();
+    const getWrap = useGetWrap();
 
-    const toast = useToast();
-    const tags = [
-        {name: 'Rust'},
-        {name: 'Golang'},
-        {name: 'Ethereum'},
-        {name: 'Bitcoin'},
-    ];
+    const [classesLst, setClassesLst] = useState([]);
+    const [labLst, setLabLst] = useState([]);
+    counter++;
+    console.log("menu" + counter);
+
+    useEffect(() => {
+        console.log("useEffect");
+        getClassesLst();
+        getLabLst();
+    }, []);
 
     const handleTagClick = (tag: any) => {
-        toast({
-            title: `Clicked on: ${JSON.stringify(tag)}`,
-            status: 'info',
-            duration: 3000,
-            isClosable: true,
-        });
         console.log(`Clicked on: ${JSON.stringify(tag)}`);
+        infoToast(`Clicked on: ${JSON.stringify(tag)}`);
     };
+
+    const getClassesLst = async () => {
+        let data,error;
+        try {
+            data = await get('/article/classes');
+        } catch (err) {
+            error = err;
+        }
+        console.log(data);
+        if (error) {
+            console.log(error);
+            errToast(`http error`, JSON.stringify(error));
+            return;
+        }
+
+        if (2000 != data.code) {
+            errToast(`http ${data.code}`, data.tip);
+            return;
+        }
+
+        setClassesLst(data.data);
+    }
+
+    const getLabLst = async () => {
+        let data;
+        try {
+            data = await getWrap('/article/labels');
+        } catch (err) {
+            return;
+        }
+        console.log(data);
+
+        if (2000 != data.code) {
+            return;
+        }
+
+        setLabLst(data.data);
+    }
 
     return (
         <div>
             <ImageCard
                 imageSrc="https://avatars.githubusercontent.com/u/95899886?v=4"
                 title="PMC"
-                description="擅长 Golang、Java、Rust、Solidity，偶尔也玩 React，主要从事区块链相关开发。"
+                description="擅长 Golang、Java、Rust、Solidity，偶尔也玩 React，主要从事区块链行业。"
             />
-            <TextList title="笔记本" items={items} onItemClick={handleItemClick} renderItem={(item: any) => {
-                return item.name + '(' + item.count +')';
+            <TextList title="笔记本" items={classesLst} onItemClick={handleItemClick} renderItem={(item: any) => {
+                return item.classesName;
             }}/>
-            <TagList title="标签" tags={tags} onTagClick={handleTagClick} renderItem={(tag: any) => {
-                return tag.name + '';
+            <TagList title="标签" tags={labLst} onTagClick={handleTagClick} renderItem={(tag: any) => {
+                return tag.labelName;
             }}/>
         </div>
     );
