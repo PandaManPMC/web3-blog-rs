@@ -6,6 +6,7 @@ use log::debug;
 use base::model::blog_classes::BlogClassesModel;
 use crate::{bean, service, utils};
 use std::collections::HashMap;
+use std::string;
 use base::model::blog_label::BlogLabelModel;
 use base::model::blog_view::BlogViewModel;
 use crate::ctrl::PREIFIX;
@@ -57,14 +58,15 @@ async fn get_article_list(
 
     let mut list: Vec<bean::article::BlogArticleOut> = vec![];
 
+    // 查询作者
+    let pn = service::blog::find_author_by_id(1).await;
+    if pn.is_err() {
+        tracing::warn!("{:?}", pn);
+        return Json(common::net::rsp::Rsp::<Vec<bean::article::BlogArticleOut>>::err_de())
+    }
+    let pem_name = pn.unwrap();
+
     for article in lst {
-        // 查询作者
-        let pn = service::blog::find_author_by_id(article.id_blog_author).await;
-        if pn.is_err() {
-            tracing::warn!("{:?}", pn);
-            return Json(common::net::rsp::Rsp::<Vec<bean::article::BlogArticleOut>>::err_de())
-        }
-        let pem_name = pn.unwrap();
         // 查询关联标签
         let mut params1:HashMap<String, sql::Params> = HashMap::new();
         params1.insert(String::from("id_blog_article"), sql::Params::UInteger64(article.id_blog_classes));
@@ -104,7 +106,7 @@ async fn get_article_list(
             view_count: article.view_count,
             time_publish: article.time_publish,
             sequence: article.sequence,
-            pem_name,
+            pem_name: pem_name.clone(),
             labels,
         };
         list.push(target);

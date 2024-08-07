@@ -84,11 +84,9 @@ async fn init_rds(){
 /// init_router 初始化路由
 fn init_router(mut router: Router) -> Router {
     router = router.route("/", get(root));
-    // router = ctrl::test::init_router(router);
-
+    router = ctrl::article::init_router(router);
     router = router.layer(middleware::from_fn(common::net::interceptor::error_handling));
-    // router = router.layer(middleware::from_fn(ctrl::interceptor::app));
-    router = router.layer(DefaultBodyLimit::max(100 * 1024 * 1024));
+    router = router.layer(DefaultBodyLimit::max(1 * 1024 * 1024));
     return router;
 }
 

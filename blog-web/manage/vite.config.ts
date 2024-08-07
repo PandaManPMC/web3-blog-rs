@@ -7,11 +7,15 @@ import { createHtmlPlugin } from "vite-plugin-html";
 import viteCompression from "vite-plugin-compression";
 import eslintPlugin from "vite-plugin-eslint";
 import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
+import * as process from "node:process";
 
 // @see: https://vitejs.dev/config/
 export default defineConfig((mode: ConfigEnv): UserConfig => {
+	console.log("defineConfig:" + JSON.stringify(mode));
 	const env = loadEnv(mode.mode, process.cwd());
+	console.log(env);
 	const viteEnv = wrapperEnv(env);
+	console.log(viteEnv);
 
 	// @ts-ignore
 	return {
@@ -44,7 +48,9 @@ export default defineConfig((mode: ConfigEnv): UserConfig => {
 			// 代理跨域（mock 不需要配置，这里只是个事列）
 			proxy: {
 				"/api": {
-					target: "http://testblog.wearelucky2025.top/a770x",
+					// target: "http://testblog.wearelucky2025.top/a770x",
+					target: viteEnv.VITE_PROXY_URL,
+
 					changeOrigin: true,
 					rewrite: path => path.replace(/^\/api/, "")
 				}
