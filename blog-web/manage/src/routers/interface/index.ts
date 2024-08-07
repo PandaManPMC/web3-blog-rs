@@ -4,6 +4,7 @@ export interface MetaProps {
 	title: string;
 	key?: string;
 	icon?: string;
+	hidden?: boolean;
 }
 
 export interface RouteObject {

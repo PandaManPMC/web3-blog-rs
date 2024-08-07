@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Table, Input, Row, Col, Button, Select, message } from "antd";
+import { Table, Input, Row, Col, Button, Select, message, Spin } from "antd";
 import { SearchOutlined, PlusOutlined, CloseCircleOutlined } from "@ant-design/icons";
-import { getArticleLst, getArticleLabelLst } from "@/api/modules/article";
+import { getArticleLst, getArticleLabelLst, getClassesLst } from "@/api/modules/article";
 import "./index.less";
 import { formatTime } from "@/utils/time";
 import PublishArticleModal from "./components/PublishArticleModal";
 import ArticleLabelModal from "./components/ArticleLabelModal";
-import ContentModal from "./components/ContentModal";
 import { getLabelLst } from "@/api/modules/label";
+import { Link, useNavigate } from "react-router-dom";
 const ArticleList = () => {
 	// 按钮权限
 	const [dataSource, setDataSource] = useState<Array<any>>([]);
@@ -16,6 +16,7 @@ const ArticleList = () => {
 	const [rowId, setRowId] = useState(null);
 	const [rowLabel, setRowLabel] = useState([]);
 	const [articleLabelList, setArticleLabelList] = useState([]);
+	const [classesList, setClassesList] = useState([]);
 	const [query, setQuery] = useState<any>({
 		idBlogClasses: null,
 		stateArticle: null,
@@ -27,6 +28,7 @@ const ArticleList = () => {
 	const publishRef = useRef(null);
 	const articleLabelRef = useRef(null);
 	const contentRef = useRef(null);
+	const navigate = useNavigate();
 	// const [pagination, setPagination] = useState({
 	// 	current: 1,
 	// 	pageSize: 20
@@ -42,6 +44,7 @@ const ArticleList = () => {
 	// 	getList();
 	// };
 	useEffect(() => {
+		getClasses();
 		getList();
 		getLabels();
 	}, []);
@@ -53,10 +56,25 @@ const ArticleList = () => {
 			align: "center"
 		},
 		{
+			title: "文章标题",
+			dataIndex: "titleArticle",
+			key: "titleArticle",
+			align: "center"
+		},
+		{
 			title: "文章类型",
 			dataIndex: "idBlogClasses",
 			key: "idBlogClasses",
-			align: "center"
+			align: "center",
+			render: (idBlogClasses: number) => {
+				// @ts-ignore
+				if (classesList.find(local => local.value === idBlogClasses)) {
+					// @ts-ignore
+					return <span>{classesList.find(local => local.value === idBlogClasses).label}</span>;
+				} else {
+					return "";
+				}
+			}
 		},
 		{
 			title: "文章状态",
@@ -97,12 +115,7 @@ const ArticleList = () => {
 				}
 			}
 		},
-		{
-			title: "文章标题",
-			dataIndex: "titleArticle",
-			key: "titleArticle",
-			align: "center"
-		},
+
 		{
 			title: "点赞数量",
 			dataIndex: "likeCount",
@@ -160,9 +173,15 @@ const ArticleList = () => {
 			render: (record: any) => {
 				return (
 					<>
-						<Button type={"link"} onClick={() => handleOpenContent(record)}>
-							查看内容
+						<Button
+							type={"link"}
+							onClick={() => navigate("/articleView/index", { state: { content: record.content, title: record.titleArticle } })}
+						>
+							预览文章
 						</Button>
+						{/*<Button type={"link"} onClick={() => window.open("/articleView/index", "_blank")}>*/}
+						{/*	预览文章*/}
+						{/*</Button>*/}
 						<Button type={"link"} onClick={() => handleOpen("edit", record)}>
 							编辑文章
 						</Button>
@@ -179,24 +198,6 @@ const ArticleList = () => {
 		if (data) {
 			// @ts-ignore
 			setDataSource(data);
-		}
-	};
-	const handleOpen = (state: string, data?: any) => {
-		if (state === "edit") {
-			setRowData({ ...data });
-		}
-		// @ts-ignore
-		publishRef.current!.showModal({ isModalVisible: true });
-	};
-	const handleLabel = async (row: any) => {
-		const { code, data } = await getArticleLabelLst({ id: row.id });
-		// @ts-ignore
-		if (code === 2000) {
-			// @ts-ignore
-			articleLabelRef.current!.showModal({ isModalVisible: true });
-			// @ts-ignore
-			setRowLabel(data);
-			setRowId(row.id);
 		}
 	};
 	const getLabels = async () => {
@@ -218,6 +219,39 @@ const ArticleList = () => {
 			message.error(tip);
 		}
 	};
+	const getClasses = async () => {
+		const { data } = await getClassesLst({
+			pageIndex: 1,
+			pageSize: 20000
+		});
+		let classesListTmp: { label: any; value: any }[] = [];
+		if (data) {
+			// @ts-ignore
+			data.map((item: any) => {
+				classesListTmp.push({ label: item.classesName, value: item.id });
+			});
+			// @ts-ignore
+			setClassesList(classesListTmp);
+		}
+	};
+	const handleOpen = (state: string, data?: any) => {
+		if (state === "edit") {
+			setRowData({ ...data });
+		}
+		// @ts-ignore
+		publishRef.current!.showModal({ isModalVisible: true });
+	};
+	const handleLabel = async (row: any) => {
+		const { code, data } = await getArticleLabelLst({ id: row.id });
+		// @ts-ignore
+		if (code === 2000) {
+			// @ts-ignore
+			articleLabelRef.current!.showModal({ isModalVisible: true });
+			// @ts-ignore
+			setRowLabel(data);
+			setRowId(row.id);
+		}
+	};
 	const handleOpenContent = (row: any) => {
 		setContentData(row.content);
 		// @ts-ignore
@@ -228,13 +262,15 @@ const ArticleList = () => {
 			<div className="date">
 				<Input.Group size="large">
 					<Row justify="space-between" style={{ marginBottom: "16px" }}>
-						<Col span={6}>
-							<Input
+						<Col span={5}>
+							<Select
 								size="large"
-								placeholder="请输入文章类型"
+								style={{ width: "100%" }}
 								value={query.idBlogClasses}
+								options={[...classesList]}
+								placeholder="请输入文章类型"
 								onChange={e => {
-									setQuery({ ...query, idBlogClasses: e.target.value.trim() });
+									setQuery({ ...query, idBlogClasses: e });
 								}}
 							/>
 						</Col>
@@ -331,6 +367,7 @@ const ArticleList = () => {
 				innerRef={publishRef}
 				onPublish={getList}
 				setRowData={rowData}
+				setClasses={classesList}
 				onCancel={() => setRowData({})}
 			></PublishArticleModal>
 			<ArticleLabelModal
@@ -341,7 +378,6 @@ const ArticleList = () => {
 				onCancel={() => setRowLabel([])}
 				labelList={articleLabelList}
 			></ArticleLabelModal>
-			<ContentModal innerRef={contentRef} setContent={contentData} onCancel={() => setContentData("")}></ContentModal>
 		</div>
 	);
 };

@@ -73,34 +73,36 @@ const LayoutMenu = (props: any) => {
 		try {
 			let data: Menu.MenuOptions[] = [];
 			routerArray.map(item => {
-				if (item.children?.length === 1) {
-					const temp = {
-						icon: item.meta?.icon,
-						title: item.meta?.title,
-						sort: item.sort,
-						path: item.path + "/index"
-					};
-					// @ts-ignore
-					data.push(temp);
-				} else {
-					const list: { icon: string | undefined; title: string | undefined; path: string | undefined }[] = [];
-					item.children?.map(cItem => {
-						list.push({
-							icon: cItem.meta?.icon,
-							title: cItem.meta?.title,
-							path: cItem.path
+				if (!item.meta?.hidden) {
+					if (item.children?.length === 1) {
+						const temp = {
+							icon: item.meta?.icon,
+							title: item.meta?.title,
+							sort: item.sort,
+							path: item.path + "/index"
+						};
+						// @ts-ignore
+						data.push(temp);
+					} else {
+						const list: { icon: string | undefined; title: string | undefined; path: string | undefined }[] = [];
+						item.children?.map(cItem => {
+							list.push({
+								icon: cItem.meta?.icon,
+								title: cItem.meta?.title,
+								path: cItem.path
+							});
 						});
-					});
-					const temp = {
-						icon: item.meta?.icon,
-						title: item.meta?.title,
-						path: item.path,
-						sort: item.sort,
-						children: list
-					};
-					// @ts-ignore
-					//加菜单权限
-					data.push(temp);
+						const temp = {
+							icon: item.meta?.icon,
+							title: item.meta?.title,
+							path: item.path,
+							sort: item.sort,
+							children: list
+						};
+						// @ts-ignore
+						//加菜单权限
+						data.push(temp);
+					}
 				}
 			});
 			data = data.sort((a, b) => a.sort - b.sort);

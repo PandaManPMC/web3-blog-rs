@@ -46,7 +46,6 @@ export const rootRouter: RouteObject[] = [
 ];
 
 const Router = () => {
-	// @ts-ignore
 	const routes = useRoutes(rootRouter);
 	return routes;
 };

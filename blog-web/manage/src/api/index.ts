@@ -33,6 +33,12 @@ class RequestHttp {
 		 */
 		this.service.interceptors.request.use(
 			(config: AxiosRequestConfig) => {
+				if (config.url === "/common/fileUpload") {
+					config.headers = {
+						...config.headers,
+						"Content-Type": "multipart/form-data"
+					};
+				}
 				NProgress.start();
 				// * 将当前请求添加到 pending 中
 				axiosCanceler.addPending(config);

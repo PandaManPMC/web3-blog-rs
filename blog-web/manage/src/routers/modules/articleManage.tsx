@@ -55,6 +55,28 @@ const proTableRouter: Array<RouteObject> = [
 			// 	}
 			// }
 		]
+	},
+	{
+		element: <LayoutIndex />,
+		meta: {
+			title: "文章中心",
+			icon: "FileTextOutlined",
+			hidden: true
+		},
+		path: "/articleView",
+		sort: 2,
+		children: [
+			{
+				path: "/articleView/index",
+				element: lazyLoad(React.lazy(() => import("@/views/articleCenter/articleView/index"))),
+				meta: {
+					requiresAuth: false,
+					title: "文章预览",
+					key: "articleList",
+					icon: "AppstoreOutlined"
+				}
+			}
+		]
 	}
 ];
 

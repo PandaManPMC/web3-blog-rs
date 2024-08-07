@@ -13,7 +13,6 @@ export const loginApi = (params: Login.ReqLoginForm) => {
 	return http.post<Login.ResLogin>(`/admin/login`, {}, { params }); // post 请求携带 query 参数  ==>  ?username=admin&password=123456
 	return http.post<Login.ResLogin>(`/admin/login`, params, { headers: { noLoading: true } }); // 控制当前请求不显示 loading
 };
-
 // * 修改密码
 export const changePwd = (params: any) => {
 	return http.post(`/admin/changePwd`, params);

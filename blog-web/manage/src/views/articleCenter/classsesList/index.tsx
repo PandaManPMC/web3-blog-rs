@@ -26,12 +26,12 @@ const ArticleList = () => {
 		getList();
 	}, []);
 	const columns: any[] = [
-		// {
-		// 	title: "ID",
-		// 	dataIndex: "id",
-		// 	key: "id",
-		// 	align: "center"
-		// },
+		{
+			title: "ID",
+			dataIndex: "id",
+			key: "id",
+			align: "center"
+		},
 		{
 			title: "类型名称",
 			dataIndex: "classesName",
