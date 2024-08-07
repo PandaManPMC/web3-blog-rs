@@ -155,11 +155,13 @@ const ArticleEdit = () => {
 			/>
 			<Row justify="space-between" style={{ marginBottom: "16px" }}>
 				<Col span={5}>
-					<Typography.Title level={5}>文章类型</Typography.Title>
+					<Typography.Title level={5} style={{ marginTop: "10px" }}>
+						文章类型
+					</Typography.Title>
 					<Select
 						size="large"
 						value={publish.idBlogClasses}
-						style={{ width: "100%", marginTop: "10px" }}
+						style={{ width: "100%" }}
 						options={[...articleClassesLst]}
 						placeholder="请选择文章类型"
 						onChange={e => {

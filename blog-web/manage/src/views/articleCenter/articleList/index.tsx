@@ -182,9 +182,9 @@ const ArticleList = () => {
 						{/*<Button type={"link"} onClick={() => window.open("/articleView/index", "_blank")}>*/}
 						{/*	预览文章*/}
 						{/*</Button>*/}
-						<Button type={"link"} onClick={() => handleOpen("edit", record)}>
-							编辑文章
-						</Button>
+						{/*<Button type={"link"} onClick={() => handleOpen("edit", record)}>*/}
+						{/*	编辑文章*/}
+						{/*</Button>*/}
 						<Button type={"link"} onClick={() => handleLabel(record)}>
 							编辑标签
 						</Button>
