@@ -124,7 +124,7 @@ async fn get_classes_list() -> Json<common::net::rsp::Rsp<Vec<BlogClassesModel>>
     // thing状态:1@可见;2@不可见
     params.insert(String::from("state"), sql::Params::UInteger8(1));
 
-    let [page_index, page_size] = utils::limit_min();
+    let [page_index, page_size] = utils::limit_max();
     let desc = sql::Condition::OrderByField("sequence".to_string());
     let bc = [page_index, page_size, desc];
 
@@ -145,7 +145,7 @@ async fn get_label_list() -> Json<common::net::rsp::Rsp<Vec<BlogLabelModel>>> {
     // thing状态:1@可见;2@不可见
     params.insert(String::from("state"), sql::Params::UInteger8(1));
 
-    let [page_index, page_size] = utils::limit_min();
+    let [page_index, page_size] = utils::limit_max();
     let desc = sql::Condition::OrderByField("sequence".to_string());
     let bc = [page_index, page_size, desc];
 
