@@ -11,6 +11,8 @@ const inter = Inter({ subsets: ["latin"] });
 import React from "react";
 import Advertise from "./advertise/page";
 import Menu from  "./menu/page";
+import ScrollToTopButton from "@/app/common/ScrollToTopButton";
+
 // 自定义主题
 const theme = extendTheme({
   colors: {
@@ -47,7 +49,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <html lang="en">
+      <html lang="zh">
       <head>
         <title>Next Template</title>
         <meta name="viewport" content="initial-scale=1, width=device-width"/>
@@ -81,6 +83,7 @@ export default function RootLayout({
             </div>
           </main>
           <LargeWithNewsletter></LargeWithNewsletter>
+          <ScrollToTopButton />
         </ChakraProvider>
       </GlobalStateProvider>
       </body>
