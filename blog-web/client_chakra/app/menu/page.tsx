@@ -17,7 +17,10 @@ const Menu = () => {
     const getWrap = useGetWrap();
 
     const [classesLst, setClassesLst] = useState([]);
+    const [classesLstLoading, setClassesLstLoading] = useState(true);
     const [labLst, setLabLst] = useState([]);
+    const [labLstLoading, setLabLstLoading] = useState(true);
+
     counter++;
     console.log("menu" + counter);
 
@@ -38,6 +41,8 @@ const Menu = () => {
             data = await get('/article/classes');
         } catch (err) {
             error = err;
+        } finally {
+            setClassesLstLoading(false);
         }
         console.log(data);
         if (error) {
@@ -60,6 +65,8 @@ const Menu = () => {
             data = await getWrap('/article/labels');
         } catch (err) {
             return;
+        }finally {
+            setLabLstLoading(false);
         }
         console.log(data);
 
@@ -77,10 +84,10 @@ const Menu = () => {
                 title="PMC"
                 description="擅长 Golang、Java、Rust、Solidity，偶尔也玩 React，主要从事区块链行业。"
             />
-            <TextList title="笔记本" items={classesLst} onItemClick={handleItemClick} renderItem={(item: any) => {
+            <TextList title="笔记本" items={classesLst} isLoading={classesLstLoading} onItemClick={handleItemClick} renderItem={(item: any) => {
                 return item.classesName;
             }}/>
-            <TagList title="标签" tags={labLst} onTagClick={handleTagClick} renderItem={(tag: any) => {
+            <TagList title="标签" tags={labLst} isLoading={labLstLoading} onTagClick={handleTagClick} renderItem={(tag: any) => {
                 return tag.labelName;
             }}/>
         </div>

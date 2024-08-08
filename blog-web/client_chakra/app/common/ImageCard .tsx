@@ -1,9 +1,10 @@
+"use client"
 import React from 'react';
-import { Box, Image, Text } from '@chakra-ui/react';
+import { Box, Image, Text, Avatar } from '@chakra-ui/react';
 
 const ImageCard = ({ imageSrc, title, description }: { imageSrc: string, title: string, description: string }) => {
     return (
-        <Box p={5} borderWidth="1px" borderRadius="lg" overflow="hidden">
+        <Box p={5} overflow="hidden">
             <Box float="left" mr={4} mb={2}>
                 <Image
                     src={imageSrc}

@@ -1,8 +1,9 @@
+"use client"
 import React, { useState } from 'react';
-import { Box, Heading, Wrap, WrapItem } from '@chakra-ui/react';
+import {Box, Button, Heading, Wrap, WrapItem} from '@chakra-ui/react';
 import TextList from "@/app/common/TextList";
 
-const TagList = ({ title, tags, onTagClick, renderItem }: {title: any, tags: any, onTagClick: any, renderItem: any}) => {
+const TagList = ({ title, tags, isLoading, onTagClick, renderItem }: {title: any, tags: any, isLoading: boolean, onTagClick: any, renderItem: any}) => {
     const [selectedTag, setSelectedTag] = useState(null);
 
     const handleClick = (tag: any, index: any) => {
@@ -36,6 +37,17 @@ const TagList = ({ title, tags, onTagClick, renderItem }: {title: any, tags: any
                         {renderItem ? renderItem(tag) : tag}
                     </WrapItem>
                 ))}
+                {isLoading ? (
+                    <Button
+                        isLoading={isLoading}
+                        loadingText='加载中'
+                        colorScheme='gray.300'
+                        variant='outline'
+                        spinnerPlacement='end'
+                    >
+                        Loading
+                    </Button>
+                ) : null}
             </Wrap>
         </Box>
     );

@@ -11,18 +11,18 @@ import {
     VisuallyHidden,
     Input,
     IconButton,
-    useColorModeValue,
+    useColorModeValue, Avatar,
 } from '@chakra-ui/react'
 import React, { ReactNode } from 'react'
 import {FaGithub, FaTwitter} from 'react-icons/fa'
 import { BiMailSend } from 'react-icons/bi'
-
+import "../globals.css";
 const Logo = (props: any) => {
     return (
         <>
             <Flex justify="space-between" align="center" p={4}>
                 <Box>
-                    <img src="https://avatars.githubusercontent.com/u/95899886?s=48&v=4" alt="Logo" width="50" />
+                    <Avatar size='lg' name='Logo' src='https://avatars.githubusercontent.com/u/95899886?s=48&v=4' />{' '}
                 </Box>
                 <Box>
                     <Text fontSize="lg">PandaManCoin</Text>

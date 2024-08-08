@@ -1,6 +1,6 @@
 import {useErrToast} from "@/tool/ui";
 
-export const get = async (uri: string, { headers = {}, params = {}, timeout = 30000 } = {})=> {
+export const get = async (uri: string, { headers = {}, params = {}, timeout = 60000 } = {})=> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
     const baseURI = process.env.NEXT_PUBLIC_API_URL;

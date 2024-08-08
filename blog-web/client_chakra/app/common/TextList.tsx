@@ -1,7 +1,8 @@
+"use client"
 import React, { useState } from 'react';
-import { Box, Heading, List, ListItem } from '@chakra-ui/react';
+import {Box, Button, Heading, List, ListItem} from '@chakra-ui/react';
 
-const TextList = ({ title, items, onItemClick, renderItem }: {title: string, items: any, onItemClick: any, renderItem: any}) => {
+const TextList = ({ title, items, isLoading, onItemClick, renderItem }: {title: string, items: any, isLoading: boolean, onItemClick: any, renderItem: any}) => {
     const [selectedItem, setSelectedItem] = useState(null);
     const handleClick = (item: any, index: React.SetStateAction<null>) => {
         if (index == selectedItem) {
@@ -28,6 +29,17 @@ const TextList = ({ title, items, onItemClick, renderItem }: {title: string, ite
                         key={index}
                         onClick={() => handleClick(item, index)}>{renderItem ? renderItem(item) : item}</ListItem>
                 ))}
+                {isLoading ? (
+                    <Button
+                        isLoading={isLoading}
+                        loadingText='加载中'
+                        colorScheme='gray.300'
+                        variant='outline'
+                        spinnerPlacement='end'
+                    >
+                        加载中
+                    </Button>
+                ) : null}
             </List>
         </Box>
     );
