@@ -13,7 +13,7 @@ userpwd="12345678"
 penname="老泥鳅-PMC"
 
 [mysql_db1]
-host = "92.118.228.90"
+host = "41.216.181.27"
 port = 53306
 dbname = "test_web3_rs_blog"
 username = "test_blog_u"
