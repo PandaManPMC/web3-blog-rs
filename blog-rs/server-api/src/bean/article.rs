@@ -41,12 +41,6 @@ pub struct BlogArticleOut {
     /// search文章编号 【max:20】
     #[serde(rename = "id")]
     pub id: u64,
-    /// 创建时间 【max:20】
-    #[serde(rename = "createdAt")]
-    pub created_at: u64,
-    /// 最后更新 【max:20】
-    #[serde(rename = "updatedAt")]
-    pub updated_at: u64,
     /// 文章类型 【max:20】
     #[serde(rename = "idBlogClasses")]
     pub id_blog_classes: u64,

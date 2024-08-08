@@ -41,7 +41,7 @@ pub fn query_list(tx: &mut Transaction, condition_params: &HashMap<String, sql::
     if "" == order_by_sql_field {
         order_by_sql_field = "id".to_string();
     }
-    query_sql = format!(" {} ORDER BY {} {}", query_sql, order_by_sql_field, order_by_sql_type);
+    query_sql = format!(" {} GROUP BY article.id ORDER BY {} {}", query_sql, order_by_sql_field, order_by_sql_type);
     query_sql = format!("{} LIMIT {},{}", query_sql, (page_index-1) * page_size, page_size);
 
     debug!("blog_article_dao::query_list::query_sql={}", query_sql);

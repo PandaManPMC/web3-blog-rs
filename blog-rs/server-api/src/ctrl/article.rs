@@ -86,8 +86,6 @@ async fn get_article_list(
 
         let target = bean::article::BlogArticleOut{
             id: article.id,
-            created_at: article.created_at,
-            updated_at: article.updated_at,
             id_blog_classes: article.id_blog_classes,
             title_article: article.title_article,
             state_article: article.state_article,
