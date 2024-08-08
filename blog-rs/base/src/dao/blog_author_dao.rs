@@ -1,7 +1,7 @@
 ///	blogAuthorDao
 ///	标准 DAO - 作者 - blog_author
 ///	author: AT
-///	since: 2024-06-09 15:31:16
+///	since: 2024-08-08 15:59:52
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 
 use log::{debug, warn};
@@ -29,7 +29,7 @@ pub fn query_list(tx: &mut Transaction, condition_params: &HashMap<String, sql::
         }
 
         if !sql::pot_params_condition_by_enum(&mut params, val) {
-            warn!("test_user_dao::query_list::pot_params_condition - {} 参数装入失败", key)
+            warn!("b_d::blog_author_dao::query_list::pot_params_condition - {} 参数装入失败", key)
         }
     }
 
@@ -70,7 +70,7 @@ pub fn query_count(conn: &mut r2d2::PooledConnection<MySqlConnectionManager>, co
         }
 
         if !sql::pot_params_condition_by_enum(&mut params, val) {
-            warn!("test_user_dao::query_count::pot_params_condition - {} 参数装入失败", key)
+            warn!("b_d::blog_author_dao::query_count::pot_params_condition - {} 参数装入失败", key)
         }
     }
 

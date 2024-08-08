@@ -63,12 +63,27 @@ async fn publish(
         }
     }
 
+    let mut sequence:u32 = payload.sequence;
+    if 0 == sequence {
+        match base::service::blog_article_sve::find_by_sequence(payload.sequence.clone()).await {
+            Ok(a) => {
+                if a.is_some() {
+                    sequence = sequence+1;
+                }
+            }
+            Err(e) => {
+                tracing::warn!("{:?}", e);
+                return Json(common::net::rsp::Rsp::<u64>::err_de())
+            }
+        }
+    }
+
     let now = plier::time::unix_second();
     let mut article = BlogArticleModel::new(tool::req::get_user_id(&headers),
                           payload.id_blog_classes,
                           payload.title_article, 1,
                           payload.state_publish, payload.state_private,
-                          payload.content, 0,0,0, now, payload.sequence);
+                          payload.content, 0,0,0, now, sequence);
 
     let res = base::service::blog_article_sve::add(&mut article).await;
     if res.is_err() {

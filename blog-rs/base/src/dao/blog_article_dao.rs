@@ -1,7 +1,7 @@
 ///	blogArticleDao
 ///	标准 DAO - 文章 - blog_article
 ///	author: AT
-///	since: 2024-06-09 15:31:16
+///	since: 2024-08-08 15:59:52
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 
 use log::{debug, warn};
@@ -29,7 +29,7 @@ pub fn query_list(tx: &mut Transaction, condition_params: &HashMap<String, sql::
         }
 
         if !sql::pot_params_condition_by_enum(&mut params, val) {
-            warn!("test_user_dao::query_list::pot_params_condition - {} 参数装入失败", key)
+            warn!("b_d::blog_article_dao::query_list::pot_params_condition - {} 参数装入失败", key)
         }
     }
 
@@ -70,7 +70,7 @@ pub fn query_count(conn: &mut r2d2::PooledConnection<MySqlConnectionManager>, co
         }
 
         if !sql::pot_params_condition_by_enum(&mut params, val) {
-            warn!("test_user_dao::query_count::pot_params_condition - {} 参数装入失败", key)
+            warn!("b_d::blog_article_dao::query_count::pot_params_condition - {} 参数装入失败", key)
         }
     }
 
@@ -185,6 +185,32 @@ pub fn find_by_title_article(tx: &mut Transaction, title_article: String) -> Res
     );
     if result.is_err() {
         warn!("b_d::blog_article_dao::title_article 失败！ res={:?}", result);
+        return match result {
+            Err(e) => {
+                Err(e.to_string().into())
+            },
+            Ok(_) => {
+                unimplemented!()
+            },
+        };
+    }
+
+    let mut lst = result.unwrap();
+    if 0 == lst.len() {
+        return Ok(None);
+    }
+
+    let one:Option<BlogArticleModel> = lst.pop();
+    return Ok(one);
+}
+
+pub fn find_by_sequence(tx: &mut Transaction, sequence: u32) -> Result<Option<BlogArticleModel>, String> {
+    let query_sql = format!("SELECT {} FROM {} WHERE sequence = ? ORDER BY id DESC LIMIT 0,1", blog_article::get_field_sql(""), blog_article::TABLE_NAME);
+    let result = tx.exec_map(
+        query_sql, (sequence,),|row: Row| blog_article::pot(row, 0)
+    );
+    if result.is_err() {
+        warn!("b_d::blog_article_dao::sequence 失败！ res={:?}", result);
         return match result {
             Err(e) => {
                 Err(e.to_string().into())

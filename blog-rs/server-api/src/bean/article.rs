@@ -5,9 +5,12 @@ pub struct GetArticleList {
 
     /// 文章类型 【max:20】
     #[serde(rename = "idBlogClasses")]
+    #[serde(default)]
     pub id_blog_classes: u64,
+
     /// 文章标签 【max:20】
     #[serde(rename = "idBlogLabel")]
+    #[serde(default)]
     pub id_blog_label: u64,
 
     #[serde(rename = "pageIndex")]

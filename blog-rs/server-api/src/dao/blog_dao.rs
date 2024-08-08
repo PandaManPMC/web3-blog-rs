@@ -7,8 +7,9 @@ use base::model::blog_article;
 use base::model::blog_article::BlogArticleModel;
 
 pub fn query_list(tx: &mut Transaction, condition_params: &HashMap<String, sql::Params>, condition: &[sql:: Condition]) -> Result<Vec<BlogArticleModel>, String> {
-    let mut query_sql = format!("SELECT {} FROM {}", blog_article::get_field_sql(""), blog_article::TABLE_NAME);
-    query_sql = format!("{} LEFT JOIN blog_article_label AS bal ON {}.id = bal.id_blog_article", query_sql, blog_article::TABLE_NAME);
+    let article = "article";
+    let mut query_sql = format!("SELECT {} FROM {} as {}", blog_article::get_field_sql(article), blog_article::TABLE_NAME, article);
+    query_sql = format!("{} LEFT JOIN blog_article_label AS bal ON {}.id = bal.id_blog_article", query_sql, article);
     let mut params: Vec<Value> = vec![];
 
     let (mut where_sql,page_index,page_size,mut order_by_sql_field,order_by_sql_type) = sql::pot_base_condition(&mut params, &condition);
@@ -19,13 +20,13 @@ pub fn query_list(tx: &mut Transaction, condition_params: &HashMap<String, sql::
             if "id_blog_label" == i_key {
                 where_sql = format!(" {} AND bal.{} {} ?", where_sql, i_key, operator)
             } else {
-                where_sql = format!(" {} AND {} {} ?", where_sql, i_key, operator)
+                where_sql = format!(" {} AND article.{} {} ?", where_sql, i_key, operator)
             }
         } else {
             if "id_blog_label" == i_key {
                 where_sql = format!(" {} bal.{} ?", i_key, operator)
             } else {
-                where_sql = format!(" {} {} ?", i_key, operator)
+                where_sql = format!(" article.{} {} ?", i_key, operator)
             }
         }
 

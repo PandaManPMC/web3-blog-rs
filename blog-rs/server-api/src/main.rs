@@ -22,6 +22,7 @@ mod service;
 mod bean;
 mod utils;
 mod dao;
+mod app;
 
 #[tokio::main]
 async fn main() {
@@ -46,6 +47,7 @@ async fn main() {
 
         init_mysql().await;
         init_rds().await;
+        init_data().await;
 
         let mut app = Router::new();
         app = init_router(app);
@@ -56,6 +58,28 @@ async fn main() {
         axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>()).await.unwrap();
     }
 
+}
+
+async fn init_data(){
+    init_author().await;
+    service::blog::cache_label().await;
+}
+
+async fn init_author() {
+    let d_au = base::service::blog_author_sve::find_by_id(1).await;
+    if d_au.is_err() {
+        error!("find author error by id = {:?}", 1);
+        return;
+    }
+
+    let u = d_au.unwrap();
+
+    if u.is_none() {
+        error!("author 不存在");
+        return;
+    }
+
+    service::initialize_blog_author(u.unwrap());
 }
 
 async fn init_rds(){
@@ -136,7 +160,6 @@ async fn init_schedule() {
             service::blog::cache_label().await;
         });
     }).unwrap()).await.unwrap();
-
 
     // 开始调度
     sched.start().await.unwrap();

@@ -41,7 +41,6 @@ async fn get_article_list(
     // thing发布状态:1@未发布;2@已发布
     params.insert(String::from("state_publish"), sql::Params::UInteger8(2));
 
-
     let page_index = sql::Condition::PageIndex(query.page_index);
     let page_size = sql::Condition::PageSize(query.page_size);
     let desc = sql::Condition::OrderByField("sequence".to_string());
@@ -58,20 +57,14 @@ async fn get_article_list(
 
     let mut list: Vec<bean::article::BlogArticleOut> = vec![];
 
-    // 查询作者
-    let pn = service::blog::find_author_by_id(1).await;
-    if pn.is_err() {
-        tracing::warn!("{:?}", pn);
-        return Json(common::net::rsp::Rsp::<Vec<bean::article::BlogArticleOut>>::err_de())
-    }
-    let pem_name = pn.unwrap();
+    let pem_name = service::get_author_pen_name().await;
 
     for article in lst {
         // 查询关联标签
         let mut params1:HashMap<String, sql::Params> = HashMap::new();
         params1.insert(String::from("id_blog_article"), sql::Params::UInteger64(article.id_blog_classes));
         params1.insert(String::from("state"), sql::Params::UInteger8(1));
-        let res = base::service::blog_article_label_sve::query_list(&params, &utils::limit_max()).await;
+        let res = base::service::blog_article_label_sve::query_list(&params1, &utils::limit_max()).await;
         if res.is_err() {
             tracing::warn!("{:?}", res);
             return Json(common::net::rsp::Rsp::<Vec<bean::article::BlogArticleOut>>::err_de())

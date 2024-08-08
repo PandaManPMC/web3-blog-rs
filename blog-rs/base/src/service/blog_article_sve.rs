@@ -1,7 +1,7 @@
 ///	blogArticleService
 ///	标准 service - 文章 - blog_article
 ///	author: AT
-///	since: 2024-06-09 15:31:16
+///	since: 2024-08-08 15:34:43
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 
 use mysql::{Result};
@@ -76,6 +76,14 @@ pub async fn find_by_id_blog_classes(id_blog_classes: u64) -> Result<Option<Blog
 pub async fn find_by_title_article(title_article: String) -> Result<Option<BlogArticleModel>, String> {
     let mut call = | tx:&mut Transaction |  -> Result<Option<BlogArticleModel>, String>  {
         return blog_article_dao::find_by_title_article(tx, title_article.clone());
+    };
+    return i_mysql::start_tx(&service::get_data_source_key().await, &mut call).await;
+}
+
+
+pub async fn find_by_sequence(sequence: u32) -> Result<Option<BlogArticleModel>, String> {
+    let mut call = | tx:&mut Transaction |  -> Result<Option<BlogArticleModel>, String>  {
+        return blog_article_dao::find_by_sequence(tx, sequence);
     };
     return i_mysql::start_tx(&service::get_data_source_key().await, &mut call).await;
 }
