@@ -6,6 +6,8 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::{OnceCell, RwLock};
 use base::model::blog_author::BlogAuthorModel;
+use base::model::blog_classes::BlogClassesModel;
+use base::model::blog_label::BlogLabelModel;
 
 lazy_static::lazy_static! {
     /// DATA_SOURCE_KEY 数据源 key
@@ -13,8 +15,11 @@ lazy_static::lazy_static! {
         String::from("mysql1")
     }));
 
-    /// 缓存标签, id -> label_name
-    static ref LABEL_LIST: RwLock<HashMap<u64, String>> = RwLock::new(HashMap::new());
+    /// 缓存标签, id -> BlogClassesModel
+    pub static ref CLASSES_LIST: RwLock<HashMap<u64, BlogClassesModel>> = RwLock::new(HashMap::new());
+
+    /// 缓存标签, id -> BlogLabelModel
+    pub static ref LABEL_LIST: RwLock<HashMap<u64, BlogLabelModel>> = RwLock::new(HashMap::new());
 }
 
 /// 缓存作者

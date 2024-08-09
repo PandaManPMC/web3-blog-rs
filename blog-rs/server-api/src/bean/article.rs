@@ -81,3 +81,29 @@ pub struct BlogArticleOut {
     #[serde(rename = "labels")]
     pub labels: Vec<String>,
 }
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
+pub struct BlogLabelOut {
+    /// search文章标签编号 【max:20】
+    #[serde(rename = "id")]
+    pub id: u64,
+    /// search标签名称 【max:20】
+    #[serde(rename = "labelName")]
+    pub label_name: String,
+    /// 顺序 【max:10】
+    #[serde(rename = "sequence")]
+    pub sequence: u32,
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
+pub struct BlogClassesOut {
+    /// search文章类型编号 【max:20】
+    #[serde(rename = "id")]
+    pub id: u64,
+    /// search类型名称 【max:20】
+    #[serde(rename = "classesName")]
+    pub classes_name: String,
+    /// 顺序 【max:10】
+    #[serde(rename = "sequence")]
+    pub sequence: u32,
+}

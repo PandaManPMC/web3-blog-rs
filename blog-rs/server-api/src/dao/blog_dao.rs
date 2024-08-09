@@ -24,7 +24,7 @@ pub fn query_list(tx: &mut Transaction, condition_params: &HashMap<String, sql::
             }
         } else {
             if "id_blog_label" == i_key {
-                where_sql = format!(" {} bal.{} ?", i_key, operator)
+                where_sql = format!(" bal.{} {} ?", i_key, operator)
             } else {
                 where_sql = format!(" article.{} {} ?", i_key, operator)
             }

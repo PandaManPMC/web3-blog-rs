@@ -48,6 +48,7 @@ async fn main() {
         init_mysql().await;
         init_rds().await;
         init_data().await;
+        init_schedule().await;
 
         let mut app = Router::new();
         app = init_router(app);
@@ -62,6 +63,7 @@ async fn main() {
 
 async fn init_data(){
     init_author().await;
+    service::blog::cache_classes().await;
     service::blog::cache_label().await;
 }
 
@@ -147,23 +149,27 @@ async fn init_schedule() {
     let sched = JobScheduler::new().await.unwrap();
 
     // 每十分钟执行一次, 缓存作者
-    sched.add(Job::new("0 0/10 * * * ?", |_, _| {
+    sched.add(Job::new("0 0/3 * * * ?", |_, _| {
         let _ = Box::pin(async {
             service::blog::cache_author().await;
         });
     }).unwrap()).await.unwrap();
 
-
     // 缓存标签
-    sched.add(Job::new("0 0/10 * * * ?",  |_, _| {
+    sched.add(Job::new("0 0/3 * * * ?",  |_, _| {
         let _ = Box::pin(async {
             service::blog::cache_label().await;
+        });
+    }).unwrap()).await.unwrap();
+
+    // 缓存笔记本
+    sched.add(Job::new("0 0/3 * * * ?",  |_, _| {
+        let _ = Box::pin(async {
+            service::blog::cache_classes().await;
         });
     }).unwrap()).await.unwrap();
 
     // 开始调度
     sched.start().await.unwrap();
 
-    // 让主任务运行一段时间以观察调度效果
-    tokio::time::sleep(Duration::from_secs(60)).await;
 }
