@@ -3,18 +3,37 @@
 import React from 'react';
 import { Box, Heading, Text, Tag, HStack, VStack, Avatar, Flex, Icon } from '@chakra-ui/react';
 import { FiBookmark } from 'react-icons/fi';
-
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import {convertTimestampToYYYYMMDD} from "@/tool/util";
 const ArticleCard = ({data, onClick}: {data: any, onClick: any}) => {
 
     return (
-        <Box borderWidth="1px" borderRadius="md" p={4} mb={4} boxShadow="sm" onClick={onClick}>
+        <Box
+            borderWidth="1px"
+            borderRadius="md"
+            p={4}
+            mb={4}
+            boxShadow="sm"
+            maxHeight="300px"
+            onClick={onClick}>
             <Heading as="h2" size="md" isTruncated>
                 {data.titleArticle}
             </Heading>
-
-            <Text noOfLines={3} mt={2}>
-                {data.content}
-            </Text>
+            <Box
+                mt={2}
+                overflow="hidden"
+                display="-webkit-box"
+                maxHeight="150px"
+                css={{
+                    WebkitLineClamp: '3',
+                    WebkitBoxOrient: 'vertical',
+                }}
+            >
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {data.content.replace(/\[TOC\]/g, '')}
+                </ReactMarkdown>
+            </Box>
 
             <HStack spacing={2} mt={4} wrap="wrap">
                 {data.labels.map((tag: string, index: number) => (
@@ -29,7 +48,7 @@ const ArticleCard = ({data, onClick}: {data: any, onClick: any}) => {
                     <Avatar src={data.avatar} size="sm" />
                     <VStack align="start" spacing={0}>
                         <Text>{data.pemName}</Text>
-                        <Text>{data.timePublish}</Text>
+                        <Text>{convertTimestampToYYYYMMDD(data.timePublish)}</Text>
                     </VStack>
                 </HStack>
                 <HStack spacing={4}>

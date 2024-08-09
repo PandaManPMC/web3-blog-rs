@@ -1,16 +1,14 @@
 "use client"
 
 import React, {useEffect, useState} from 'react';
-import Image from "next/image";
-import Link from 'next/link';
 import ArticleCard from "@/app/common/ArticleCard";
 import { Box, Button } from '@chakra-ui/react';
 import {useGetWrap} from "@/tool/http";
 
 let pageIndex = 1;
-const pageSize = 5;
+const pageSize = 3;
 
-const Home = () => {
+const Home = ({selectedQuery}: {selectedQuery: {idBlogLabel: number, idBlogClasses: number}}) => {
     const envName = process.env.ENV_NAME;
     console.log(envName);
     const getWrap = useGetWrap();
@@ -20,16 +18,46 @@ const Home = () => {
     const [noMore, setNoMore] = useState(false);
 
     useEffect(() => {
+        console.log(66555)
         pageIndex = 1;
         getArticlesLst(pageIndex);
     }, []);
 
+    useEffect(() => {
+        console.log("useEffect page.tsx selectedQuery=", selectedQuery)
+
+        if (undefined == selectedQuery) {
+            return;
+        }
+        if (0 >= selectedQuery.idBlogLabel && 0 >= selectedQuery.idBlogClasses) {
+            return;
+        }
+
+        pageIndex = 1;
+        setNoMore(false);
+        setArticlesLstLoading(true);
+        setArticlesLst([]);
+        getArticlesLst(pageIndex);
+    }, [selectedQuery]);
+
     const getArticlesLst = async (pageIndex_: number) => {
         console.log(pageIndex_);
+        let param = {pageIndex: pageIndex_, pageSize: pageSize};
+
+        if (selectedQuery) {
+            if (0 < selectedQuery.idBlogLabel) {
+                // @ts-ignore
+                param["idBlogLabel"] = selectedQuery.idBlogLabel;
+            }
+            if (0 < selectedQuery.idBlogClasses) {
+                // @ts-ignore
+                param["idBlogClasses"] = selectedQuery.idBlogClasses;
+            }
+        }
 
         let data;
         try {
-            data = await getWrap('/article/list', {params: {pageIndex: pageIndex_, pageSize: pageSize}});
+            data = await getWrap('/article/list', {params: param});
         } catch (err) {
             return;
         }finally {
@@ -47,8 +75,13 @@ const Home = () => {
             return;
         }
 
-        // @ts-ignore
-        setArticlesLst([...articlesLst, ...data.data]);
+        if (1 == pageIndex_) {
+            // @ts-ignore
+            setArticlesLst([...data.data]);
+        }else{
+            // @ts-ignore
+            setArticlesLst([...articlesLst, ...data.data]);
+        }
     }
 
     const loadMoreArticles = () => {
@@ -59,30 +92,29 @@ const Home = () => {
     };
 
     const handleArticleClick = (article: any) => {
-        console.log(1223);
         console.log(article);
     }
 
     return (
-        <Box minHeight="100vh" maxWidth="100vh" display="flex" flexDirection="column">
-            <Box p={4}>
-                {articlesLst.map((article, index) => (
-                    <ArticleCard key={index} data={article} onClick={() => handleArticleClick(article)}/>
-                ))}
-                {noMore ? (
-                    <Box display="flex" justifyContent="center" mt={4}>
-                        没有更多
-                    </Box>
-                ) : (
-                    <Box display="flex" justifyContent="center" mt={4}>
-                        <Button onClick={loadMoreArticles} isLoading={articlesLstLoading} loadingText="加载中" colorScheme="gray" >
-                            加载更多
-                        </Button>
-                    </Box>
-                )}
-            </Box>
-        </Box>
-    );
+      <Box minHeight="100vh" maxWidth="100vh" display="flex" flexDirection="column">
+          <Box p={4}>
+              {articlesLst.map((article, index) => (
+                  <ArticleCard key={index} data={article} onClick={() => handleArticleClick(article)}/>
+              ))}
+              {noMore ? (
+                  <Box display="flex" justifyContent="center" mt={4}>
+                          没有更多
+                  </Box>
+              ) : (
+                  <Box display="flex" justifyContent="center" mt={4}>
+                      <Button onClick={loadMoreArticles} isLoading={articlesLstLoading} loadingText="加载中" colorScheme="gray" >
+                          加载更多
+                      </Button>
+                  </Box>
+              )}
+          </Box>
+      </Box>
+  );
 }
 
 export default Home;

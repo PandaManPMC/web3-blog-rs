@@ -7,13 +7,11 @@ import ImageCard from "@/app/common/ImageCard ";
 import {get, useGetWrap} from "@/tool/http";
 import {useErrToast, useInfoToast} from "@/tool/ui";
 
-const handleItemClick = (item: any) => {
-    console.log(`Clicked on: ${JSON.stringify(item)}`);
-};
-var counter = 0;
-const Menu = () => {
+let selectedQuery = {idBlogLabel: 0, idBlogClasses: 0};
+let counter = 0;
+
+const Menu = ({onMenuSelectedQuery}: {onMenuSelectedQuery: any}) => {
     const errToast = useErrToast();
-    const infoToast = useInfoToast();
     const getWrap = useGetWrap();
 
     const [classesLst, setClassesLst] = useState([]);
@@ -30,9 +28,24 @@ const Menu = () => {
         getLabLst();
     }, []);
 
+    const handleItemClick = (item: any) => {
+        // console.log(`Clicked on: ${JSON.stringify(item)}`);
+        if (selectedQuery.idBlogClasses == item.id){
+            selectedQuery.idBlogClasses = 0;
+        }else{
+            selectedQuery.idBlogClasses = item.id;
+        }
+        onMenuSelectedQuery(selectedQuery);
+    };
+
     const handleTagClick = (tag: any) => {
-        console.log(`Clicked on: ${JSON.stringify(tag)}`);
-        infoToast(`Clicked on: ${JSON.stringify(tag)}`);
+        // console.log(`Clicked on: ${JSON.stringify(tag)}`);
+        if (selectedQuery.idBlogLabel == tag.id){
+            selectedQuery.idBlogLabel = 0;
+        }else{
+            selectedQuery.idBlogLabel = tag.id;
+        }
+        onMenuSelectedQuery(selectedQuery);
     };
 
     const getClassesLst = async () => {
