@@ -13,6 +13,7 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
+use std::sync::Arc;
 use plier::rds;
 use axum::extract::DefaultBodyLimit;
 use tokio_cron_scheduler::{JobScheduler, Job};
@@ -24,7 +25,7 @@ mod utils;
 mod dao;
 mod app;
 
-#[tokio::main]
+#[tokio::main(flavor = "multi_thread", worker_threads = 4)]
 async fn main() {
     let p = plier::files::get_current_dir_str();
     println!("{:?}", p);
@@ -149,37 +150,43 @@ async unsafe fn init_mysql() {
 }
 
 async fn init_schedule() {
-    let sched = JobScheduler::new().await.unwrap();
+    let mut sched = JobScheduler::new().await.unwrap();
 
-    // 每十分钟执行一次, 缓存作者
-    sched.add(Job::new("0 0/3 * * * ?", |_, _| {
-        let _ = Box::pin(async {
-            service::blog::cache_author().await;
-        });
-    }).unwrap()).await.unwrap();
+    // 缓存作者
+    sched.add(
+        Job::new_async("0 1/3 * * * *", |uuid, mut l| {
+            Box::pin(async move {
+                service::blog::cache_author().await;
+            })
+        }).unwrap()
+    ).await.unwrap();
 
     // 缓存标签
-    sched.add(Job::new("0 0/3 * * * ?",  |_, _| {
-        let _ = Box::pin(async {
-            service::blog::cache_label().await;
-        });
-    }).unwrap()).await.unwrap();
+    sched.add(
+        Job::new_async("0 1/3 * * * *", |uuid, mut l| {
+            Box::pin(async move {
+                service::blog::cache_label().await;
+            })
+        }).unwrap()
+    ).await.unwrap();
 
     // 缓存笔记本
-    sched.add(Job::new("0 0/3 * * * ?",  |_, _| {
-        let _ = Box::pin(async {
-            service::blog::cache_classes().await;
-        });
-    }).unwrap()).await.unwrap();
+    sched.add(
+        Job::new_async("0 1/3 * * * *", |uuid, mut l| {
+            Box::pin(async move {
+                service::blog::cache_classes().await;
+            })
+        }).unwrap()
+    ).await.unwrap();
 
     // 缓存广告
-    sched.add(Job::new("0 0/3 * * * ?",  |_, _| {
-        let _ = Box::pin(async {
-            service::advertise::cache_advertise().await;
-        });
-    }).unwrap()).await.unwrap();
+    sched.add(
+        Job::new_async("0 1/3 * * * *", |uuid, mut l| {
+            Box::pin(async move {
+                service::advertise::cache_advertise().await;
+            })
+        }).unwrap()
+    ).await.unwrap();
 
-    // 开始调度
     sched.start().await.unwrap();
-
 }
