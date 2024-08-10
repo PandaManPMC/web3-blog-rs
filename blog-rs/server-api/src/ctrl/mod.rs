@@ -3,3 +3,4 @@
  pub mod interceptor;
 
 pub mod article;
+pub mod author;

@@ -132,7 +132,8 @@ async unsafe fn init_author() {
     let username = configs::get_str("author", "username");
     let user_pwd = configs::get_str("author", "userpwd");
     let pen_name = configs::get_str("author", "penname");
-
+    let profile = configs::get_str("author", "profile");
+    let introduce = configs::get_str("author", "introduce");
 
     let d_au = base::service::blog_author_sve::find_by_user_name(username.clone()).await;
     if d_au.is_err() {
@@ -148,9 +149,7 @@ async unsafe fn init_author() {
     }
 
     // 不存在作者，创建
-    let mut author = base::model::blog_author::BlogAuthorModel::new(
-        pen_name, username,
-        plier::md::sha256(user_pwd), "".to_string());
+    let mut author = base::model::blog_author::BlogAuthorModel::new(pen_name, username, plier::md::sha256(user_pwd), "".to_string(), profile, introduce);
 
     let res = base::service::blog_author_sve::add(&mut author).await;
     if res.is_err() {
