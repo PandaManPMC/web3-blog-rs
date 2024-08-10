@@ -59,7 +59,7 @@ async fn get_article_list(
 
     let mut list: Vec<bean::article::BlogArticleOut> = vec![];
 
-    let pem_name = service::get_author_pen_name().await;
+    let (pem_name,profile) = service::get_author_info().await;
 
     for article in lst {
         // 查询关联标签
@@ -97,6 +97,7 @@ async fn get_article_list(
             time_publish: article.time_publish,
             sequence: article.sequence,
             pem_name: pem_name.clone(),
+            profile: profile.clone(),
             labels,
         };
         list.push(target);

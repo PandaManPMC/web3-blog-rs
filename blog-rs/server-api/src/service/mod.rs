@@ -29,9 +29,9 @@ pub fn initialize_blog_author(author: BlogAuthorModel) {
     BLOG_AUTHOR.set(RwLock::new(author)).expect("initialize_blog_author error");
 }
 
-pub async fn get_author_pen_name() -> String {
+pub async fn get_author_info() -> (String,String) {
     let author = BLOG_AUTHOR.get().expect("BLOG_AUTHOR should be initialized").read().await;
-    return author.pen_name.clone();
+    return (author.pen_name.clone(), author.profile.clone());
 }
 
 pub async fn set_blog_author(author_new: BlogAuthorModel) {

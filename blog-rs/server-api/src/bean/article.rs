@@ -77,6 +77,8 @@ pub struct BlogArticleOut {
     /// 作者pem名
     #[serde(rename = "pemName")]
     pub pem_name: String,
+    #[serde(rename = "profile")]
+    pub profile: String,
     /// 标签
     #[serde(rename = "labels")]
     pub labels: Vec<String>,
