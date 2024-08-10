@@ -5,6 +5,8 @@ pub mod blog_label_sve;
 pub mod blog_view_sve;
 pub mod blog_article_label_sve;
 
+pub mod advertise_info_sve;
+
 use tokio::sync::RwLock;
 use tokio::sync::OnceCell;
 use std::sync::Arc;

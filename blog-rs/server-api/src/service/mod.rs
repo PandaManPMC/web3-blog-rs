@@ -1,5 +1,7 @@
 
 pub mod blog;
+pub mod advertise;
+
 use std::collections::HashMap;
 
 
@@ -8,6 +10,7 @@ use tokio::sync::{OnceCell, RwLock};
 use base::model::blog_author::BlogAuthorModel;
 use base::model::blog_classes::BlogClassesModel;
 use base::model::blog_label::BlogLabelModel;
+use base::model::advertise_info::AdvertiseInfoModel;
 
 lazy_static::lazy_static! {
     /// DATA_SOURCE_KEY 数据源 key
@@ -20,6 +23,9 @@ lazy_static::lazy_static! {
 
     /// 缓存标签, id -> BlogLabelModel
     pub static ref LABEL_LIST: RwLock<HashMap<u64, BlogLabelModel>> = RwLock::new(HashMap::new());
+
+    /// 缓存广告, id -> AdvertiseInfoModel
+    pub static ref ADVERTISE_LIST: RwLock<HashMap<u64, AdvertiseInfoModel>> = RwLock::new(HashMap::new());
 }
 
 /// 缓存作者

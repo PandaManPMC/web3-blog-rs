@@ -11,4 +11,7 @@ pub struct AuthorOut {
     /// 介绍 【max:255】
     #[serde(rename = "introduce")]
     pub introduce: String,
+    /// mk_页脚 【max:65535】
+    #[serde(rename = "mkFooter")]
+    pub mk_footer: String,
 }

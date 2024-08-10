@@ -65,6 +65,7 @@ async fn init_data(){
     init_author().await;
     service::blog::cache_classes().await;
     service::blog::cache_label().await;
+    service::advertise::cache_advertise().await;
 }
 
 async fn init_author() {
@@ -112,6 +113,7 @@ fn init_router(mut router: Router) -> Router {
     router = router.route("/", get(root));
     router = ctrl::article::init_router(router);
     router = ctrl::author::init_router(router);
+    router = ctrl::advertise::init_router(router);
     router = router.layer(middleware::from_fn(common::net::interceptor::error_handling));
     router = router.layer(middleware::from_fn(ctrl::interceptor::app));
     router = router.layer(DefaultBodyLimit::max(1 * 1024 * 1024));
@@ -167,6 +169,13 @@ async fn init_schedule() {
     sched.add(Job::new("0 0/3 * * * ?",  |_, _| {
         let _ = Box::pin(async {
             service::blog::cache_classes().await;
+        });
+    }).unwrap()).await.unwrap();
+
+    // 缓存广告
+    sched.add(Job::new("0 0/3 * * * ?",  |_, _| {
+        let _ = Box::pin(async {
+            service::advertise::cache_advertise().await;
         });
     }).unwrap()).await.unwrap();
 

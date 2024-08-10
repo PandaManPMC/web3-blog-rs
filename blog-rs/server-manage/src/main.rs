@@ -149,7 +149,14 @@ async unsafe fn init_author() {
     }
 
     // 不存在作者，创建
-    let mut author = base::model::blog_author::BlogAuthorModel::new(pen_name, username, plier::md::sha256(user_pwd), "".to_string(), profile, introduce);
+    let mut author = base::model::blog_author::BlogAuthorModel::new(
+        pen_name,
+        username,
+        plier::md::sha256(user_pwd),
+        "".to_string(),
+        profile,
+        introduce,
+        "".to_string());
 
     let res = base::service::blog_author_sve::add(&mut author).await;
     if res.is_err() {

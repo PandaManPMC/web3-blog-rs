@@ -8,13 +8,13 @@ use std::fmt;
 use serde::de::Unexpected;
 
 pub const TABLE_NAME:&str = "blog_author";
-pub const FIELDS:[&str;9] = ["id","created_at","updated_at","pen_name","user_name","user_pwd","google_auth_secret","profile","introduce"];
+pub const FIELDS:[&str;10] = ["id","created_at","updated_at","pen_name","user_name","user_pwd","google_auth_secret","profile","introduce","mk_footer"];
 pub const ALIAS:&str = "blogAuthor";
 
 ///	BlogAuthorModel 作者
 ///	table - blog_author
 ///	author: AT
-///	since: 2024-08-10 13:20:34
+///	since: 2024-08-10 14:11:36
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogAuthorModel {
@@ -45,16 +45,19 @@ pub struct BlogAuthorModel {
 	/// 介绍 【max:255】 
 	#[serde(rename = "introduce")]
 	pub introduce: String,
+	/// mk_页脚 【max:65535】 
+	#[serde(rename = "mkFooter")]
+	pub mk_footer: String,
 }
 
 impl BlogAuthorModel {
 
-    pub fn new(pen_name: String, user_name: String, user_pwd: String, google_auth_secret: String, profile: String, introduce: String) -> BlogAuthorModel {
-        BlogAuthorModel{id:0, created_at: 0, updated_at: 0, pen_name, user_name, user_pwd, google_auth_secret, profile, introduce}
+    pub fn new(pen_name: String, user_name: String, user_pwd: String, google_auth_secret: String, profile: String, introduce: String, mk_footer: String) -> BlogAuthorModel {
+        BlogAuthorModel{id:0, created_at: 0, updated_at: 0, pen_name, user_name, user_pwd, google_auth_secret, profile, introduce, mk_footer}
     }
 
-    pub fn new_full(id: u64, created_at: u64, updated_at: u64, pen_name: String, user_name: String, user_pwd: String, google_auth_secret: String, profile: String, introduce: String) -> BlogAuthorModel {
-        BlogAuthorModel{id, created_at, updated_at, pen_name, user_name, user_pwd, google_auth_secret, profile, introduce}
+    pub fn new_full(id: u64, created_at: u64, updated_at: u64, pen_name: String, user_name: String, user_pwd: String, google_auth_secret: String, profile: String, introduce: String, mk_footer: String) -> BlogAuthorModel {
+        BlogAuthorModel{id, created_at, updated_at, pen_name, user_name, user_pwd, google_auth_secret, profile, introduce, mk_footer}
     }
 
     fn set_pk(&mut self, pk: u64) {
@@ -88,12 +91,12 @@ pub fn get_field_sql(alias: &str) -> String {
 
 /// pot 罐子 -> 把 mysql-row 按指定偏移 offset 装入结构体
 pub fn pot(row: Row, offset: usize) -> BlogAuthorModel {
-	return BlogAuthorModel::new_full(row.get(offset+0).unwrap(),row.get(offset+1).unwrap(),row.get(offset+2).unwrap(),row.get(offset+3).unwrap(),row.get(offset+4).unwrap(),row.get(offset+5).unwrap(),row.get(offset+6).unwrap(),row.get(offset+7).unwrap(),row.get(offset+8).unwrap());
+	return BlogAuthorModel::new_full(row.get(offset+0).unwrap(),row.get(offset+1).unwrap(),row.get(offset+2).unwrap(),row.get(offset+3).unwrap(),row.get(offset+4).unwrap(),row.get(offset+5).unwrap(),row.get(offset+6).unwrap(),row.get(offset+7).unwrap(),row.get(offset+8).unwrap(),row.get(offset+9).unwrap());
 }
 
 ///	BlogAuthorJSONOut 作者
 ///	author: AT
-///	since: 2024-08-10 13:20:34
+///	since: 2024-08-10 14:11:36
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogAuthorJSONOut {
@@ -124,11 +127,14 @@ pub struct BlogAuthorJSONOut {
 	/// 介绍 【max:255】 
 	#[serde(rename = "introduce")]
 	pub introduce: String,
+	/// mk_页脚 【max:65535】 
+	#[serde(rename = "mkFooter")]
+	pub mk_footer: String,
 }
 
 ///	BlogAuthorJSONIn 作者
 ///	author: AT
-///	since: 2024-08-10 13:20:34
+///	since: 2024-08-10 14:11:36
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogAuthorJSONIn {
@@ -153,6 +159,9 @@ pub struct BlogAuthorJSONIn {
 	/// 介绍 【max:255】
 	#[serde(rename = "introduce", deserialize_with = "check_length_introduce")]
 	pub introduce: String,
+	/// mk_页脚 【max:65535】
+	#[serde(rename = "mkFooter", deserialize_with = "check_length_mk_footer")]
+	pub mk_footer: String,
 }
 
 plier::create_serde_string_length_checker!(check_length_pen_name, 0, 20);
@@ -161,6 +170,7 @@ plier::create_serde_string_length_checker!(check_length_user_pwd, 0, 64);
 plier::create_serde_string_length_checker!(check_length_google_auth_secret, 0, 256);
 plier::create_serde_string_length_checker!(check_length_profile, 0, 255);
 plier::create_serde_string_length_checker!(check_length_introduce, 0, 255);
+plier::create_serde_string_length_checker!(check_length_mk_footer, 0, 65535);
 
 impl BaseModel for BlogAuthorModel {
 
@@ -217,6 +227,7 @@ impl BaseModel for BlogAuthorModel {
 			"google_auth_secret" => self.google_auth_secret.to_string(),
 			"profile" => self.profile.to_string(),
 			"introduce" => self.introduce.to_string(),
+			"mk_footer" => self.mk_footer.to_string(),
         }, columns, keys);
     }
 
@@ -239,6 +250,7 @@ impl BaseModel for BlogAuthorModel {
 			"google_auth_secret" => self.google_auth_secret.to_string(),
 			"profile" => self.profile.to_string(),
 			"introduce" => self.introduce.to_string(),
+			"mk_footer" => self.mk_footer.to_string(),
             "id" => self.id,
         }, columns, String::from(format!("{}=:{}",  FIELDS[0], FIELDS[0])))
     }
