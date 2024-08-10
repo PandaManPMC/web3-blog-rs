@@ -18,13 +18,12 @@ const Home = ({selectedQuery}: {selectedQuery: any}) => {
     const [noMore, setNoMore] = useState(false);
 
     useEffect(() => {
-        console.log(66555)
         pageIndex = 1;
         getArticlesLst(pageIndex);
     }, []);
 
     useEffect(() => {
-        console.log("useEffect page.tsx selectedQuery=", selectedQuery)
+        // console.log("useEffect Advertise.tsx selectedQuery=", selectedQuery)
 
         if (undefined == selectedQuery) {
             return;
@@ -41,7 +40,7 @@ const Home = ({selectedQuery}: {selectedQuery: any}) => {
     }, [selectedQuery]);
 
     const getArticlesLst = async (pageIndex_: number) => {
-        console.log(pageIndex_);
+        // console.log(pageIndex_);
         let param = {pageIndex: pageIndex_, pageSize: pageSize};
 
         if (selectedQuery) {
@@ -68,7 +67,7 @@ const Home = ({selectedQuery}: {selectedQuery: any}) => {
         if (2000 != data.code) {
             return;
         }
-        console.log("data.len="+ data.data.length + ",articlesLst.len=" + articlesLst.length);
+        // console.log("data.len="+ data.data.length + ",articlesLst.len=" + articlesLst.length);
 
         if (0 == data.data.length){
             setNoMore(true);
@@ -96,7 +95,7 @@ const Home = ({selectedQuery}: {selectedQuery: any}) => {
     }
 
     return (
-        <Box minHeight="100vh" maxWidth="100vh" display="flex" flexDirection="column">
+        <Box minHeight="100vh" maxWidth="100%" display="flex" flexDirection="column">
             <Box p={4}>
                 {articlesLst.map((article, index) => (
                     <ArticleCard key={index} data={article} onClick={() => handleArticleClick(article)}/>

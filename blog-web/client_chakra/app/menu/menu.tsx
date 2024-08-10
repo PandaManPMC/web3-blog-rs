@@ -6,6 +6,8 @@ import TagList from "@/app/common/TagList";
 import ImageCard from "@/app/common/ImageCard ";
 import {get, useGetWrap} from "@/tool/http";
 import {useErrToast, useInfoToast} from "@/tool/ui";
+import {useSelector} from "react-redux";
+import {RootState} from "@/storage/store";
 
 let selectedQuery = {idBlogLabel: 0, idBlogClasses: 0};
 let counter = 0;
@@ -13,6 +15,7 @@ let counter = 0;
 const Menu = ({onMenuSelectedQuery}: {onMenuSelectedQuery: any}) => {
     const errToast = useErrToast();
     const getWrap = useGetWrap();
+    const author = useSelector((state: RootState) => state.author);
 
     const [classesLst, setClassesLst] = useState([]);
     const [classesLstLoading, setClassesLstLoading] = useState(true);
@@ -57,7 +60,6 @@ const Menu = ({onMenuSelectedQuery}: {onMenuSelectedQuery: any}) => {
         } finally {
             setClassesLstLoading(false);
         }
-        console.log(data);
         if (error) {
             console.log(error);
             errToast(`http error`, JSON.stringify(error));
@@ -81,7 +83,6 @@ const Menu = ({onMenuSelectedQuery}: {onMenuSelectedQuery: any}) => {
         }finally {
             setLabLstLoading(false);
         }
-        console.log(data);
 
         if (2000 != data.code) {
             return;
@@ -93,9 +94,12 @@ const Menu = ({onMenuSelectedQuery}: {onMenuSelectedQuery: any}) => {
     return (
         <div>
             <ImageCard
-                imageSrc="https://avatars.githubusercontent.com/u/95899886?v=4"
-                title="PMC"
-                description="擅长 Golang、Java、Rust、Solidity，偶尔也玩 React，主要从事区块链行业。"
+                // @ts-ignore
+                imageSrc={author.profile}
+                // @ts-ignore
+                title={author.penName}
+                // @ts-ignore
+                description={author.introduce}
             />
             <TextList title="笔记本" items={classesLst} isLoading={classesLstLoading} onItemClick={handleItemClick} renderItem={(item: any) => {
                 return item.classesName;
