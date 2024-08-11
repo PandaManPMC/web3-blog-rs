@@ -10,6 +10,7 @@ userpwd="12345678"
 penname="老泥鳅"
 profile="https://avatars.githubusercontent.com/u/95899886?v=4"
 introduce="web3 blog rust，服务端：rust，合约：solidity，区块链：BNB Chain"
+contactMail="pandamancoin@gmail.com"
 
 [mysql_db1]
 host = "41.216.181.27"

@@ -17,5 +17,6 @@ async fn get_info() -> Json<common::net::rsp::Rsp<AuthorOut>> {
         profile: author.profile.clone(),
         introduce: author.introduce.clone(),
         mk_footer: author.mk_footer.clone(),
+        contact_mail: author.contact_mail.clone(),
     }))
 }

@@ -134,6 +134,7 @@ async unsafe fn init_author() {
     let pen_name = configs::get_str("author", "penname");
     let profile = configs::get_str("author", "profile");
     let introduce = configs::get_str("author", "introduce");
+    let contact_mail = configs::get_str("author", "contactMail");
 
     let d_au = base::service::blog_author_sve::find_by_user_name(username.clone()).await;
     if d_au.is_err() {
@@ -156,7 +157,8 @@ async unsafe fn init_author() {
         "".to_string(),
         profile,
         introduce,
-        "".to_string());
+        "".to_string(),
+        contact_mail);
 
     let res = base::service::blog_author_sve::add(&mut author).await;
     if res.is_err() {

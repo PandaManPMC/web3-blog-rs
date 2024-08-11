@@ -14,4 +14,7 @@ pub struct AuthorOut {
     /// mk_页脚 【max:65535】
     #[serde(rename = "mkFooter")]
     pub mk_footer: String,
+    /// 联系邮箱 【max:55】
+    #[serde(rename = "contactMail")]
+    pub contact_mail: String,
 }
