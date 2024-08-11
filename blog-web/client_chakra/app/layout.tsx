@@ -76,7 +76,6 @@ export default function RootLayout({
                                   </Box>
                                   <Box gridArea="center" bg="white" p={4} borderRadius="md" shadow="md" maxWidth="100%" width="100%">
                                       {children}
-                                      {/*<HomePage selectedQuery={selectedQuery}></HomePage>*/}
                                   </Box>
                                   <Box gridArea="right" bg="gray.100" p={4} borderRadius="md">
                                       <Menu></Menu>
@@ -85,8 +84,7 @@ export default function RootLayout({
                           </div>
                           <div className="desktop-display-none">
                               <Box gridArea="center" bg="white" p={4} borderRadius="md" shadow="md" >
-                                  {/*{children}*/}
-                                  {/*<HomePage selectedQuery={selectedQuery}></HomePage>*/}
+                                  {children}
                               </Box>
                           </div>
                       </main>

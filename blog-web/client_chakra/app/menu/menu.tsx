@@ -8,6 +8,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState, setArticleTOCState, setSelectedQueryState} from "@/storage/store";
 import { usePathname } from 'next/navigation';
 import 'github-markdown-css/github-markdown.css';
+import './menu.css'
 
 let selectedQuery = {idBlogLabel: 0, idBlogClasses: 0};
 
@@ -53,6 +54,29 @@ const Menu = () => {
         dispatch(setSelectedQueryState(selectedQuery));
     };
 
+    const [isFixed, setIsFixed] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollPosition = window.scrollY;
+            const tocElement = document.getElementById('toc-container');
+            if (tocElement) {
+                const tocTop = tocElement.offsetTop;
+                if (scrollPosition > tocTop) {
+                    setIsFixed(true);
+                } else {
+                    setIsFixed(false);
+                }
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
+
     return (
         <div>
             <ImageCard
@@ -74,7 +98,23 @@ const Menu = () => {
                 </>
             ): null}
             {isArticlePage ? (
-                <div className="markdown-body" style={{backgroundColor: 'transparent'}}>
+                // <div className="markdown-body" style={{backgroundColor: 'transparent'}}>
+                //     <h2 style={{textAlign: 'center'}}>目录</h2>
+                //     <ul>
+                //         {toc.map((item, index) => (
+                //             <li key={index} style={{marginLeft: (item.level - 1) * 20}}>
+                //                 <a href={`#${item.slug}`} onClick={handleTocClick(item.slug)}>
+                //                     {item.text}
+                //                 </a>
+                //             </li>
+                //         ))}
+                //     </ul>
+                // </div>
+                <div
+                    id="toc-container"
+                    className={`markdown-body ${isFixed ? 'fixed-toc' : ''}`}
+                    style={{backgroundColor: 'transparent'}}
+                >
                     <h2 style={{textAlign: 'center'}}>目录</h2>
                     <ul>
                         {toc.map((item, index) => (

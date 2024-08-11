@@ -1,0 +1,33 @@
+.markdown-body {
+    /*width: 200px; !* 容器宽度 *!*/
+    padding: 10px;
+    transition: all 0.3s ease; /* 平滑过渡效果 */
+}
+
+.fixed-toc {
+    position: fixed;
+    top: 50px; /* 固定在顶部的位置 */
+    /*right: 10px; !* 固定在左侧的位置 *!*/
+    height: 80vh; /* 高度为视口高度的 80%，可调整 */
+    overflow-y: auto; /* 内容可以垂直滚动 */
+    background-color: rgba(255, 255, 255, 0.9); /* 背景色略带透明 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 可选：添加阴影 */
+}
+
+ul {
+    list-style-type: none; /* 去掉列表项符号 */
+    padding-left: 0;
+}
+
+li {
+    margin-bottom: 10px;
+}
+
+a {
+    text-decoration: none;
+    color: #0070f3; /* 链接颜色 */
+}
+
+a:hover {
+    text-decoration: underline; /* 悬停时显示下划线 */
+}

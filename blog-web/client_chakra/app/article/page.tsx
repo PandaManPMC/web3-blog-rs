@@ -1,6 +1,6 @@
 "use client";
 
-import {Box, Image, Text, Button, Container, Heading} from '@chakra-ui/react';
+import {Box, Image, Flex, Text, Button, Container, Heading} from '@chakra-ui/react';
 import {useGetWrap} from "@/tool/http";
 import { useSearchParams  } from 'next/navigation';
 import {convertTimestampToYYYYMMDD} from "@/tool/util";
@@ -18,6 +18,7 @@ import { dracula } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 const ArticlePage = () => {
     const dispatch = useDispatch<AppDispatch>();
+    const author = useSelector((state: RootState) => state.author);
 
     const SelectId = useSelector((state: RootState) => state.ArticleTOCStateSliceReducer).SelectId;
     useEffect(() => {
@@ -102,70 +103,84 @@ const ArticlePage = () => {
                         <Heading as="h1" size="xl" mb={4}>
                             {article.titleArticle}
                         </Heading>
+                        <Flex alignItems="center" marginBottom={1}>
+                            <Box>
+                                <Image
+                                    src={"" + author.profile}
+                                    alt="作者头像"
+                                    boxSize="35px"
+                                    borderRadius="full"
+                                    objectFit="cover"
+                                />
+                            </Box>
+                            <Text ml={3} fontSize="lg" color="gray.700">
+                                {author.penName}
+                            </Text>
+                        </Flex>
                         <Text fontSize="sm" color="gray.500" mb={6}>
-                            {article.pemName} 更新于 {convertTimestampToYYYYMMDD(article.timePublish)} 阅读数 {article.watchCount}
+                             更新于 {convertTimestampToYYYYMMDD(article.timePublish)} 阅读数 {article.watchCount}
                         </Text>
 
-                            <main style={{flex: '3'}}>
-                                <div className="markdown-body">
-                                    <ReactMarkdown
-                                        remarkPlugins={[remarkGfm]}
-                                        components={{
+                        <main style={{flex: '3'}}>
+                            <div className="markdown-body">
+                                <ReactMarkdown
+                                    remarkPlugins={[remarkGfm]}
+                                    components={{
+                                        // @ts-ignore
+                                        code({node, inline, className, children, ...props}) {
+                                            const match = /language-(\w+)/.exec(className || '');
+                                            return !inline && match ? (
+                                                <SyntaxHighlighter language={match[1]} style={dracula} PreTag="div">
+                                                    {String(children).replace(/\n$/, '')}
+                                                </SyntaxHighlighter>
+                                            ) : (
+                                                <code className={className} {...props}>
+                                                    {children}
+                                                </code>
+                                            );
+                                        },
+                                        h1: ({children}) => {
                                             // @ts-ignore
-                                            code({node, inline, className, children, ...props}) {
-                                                const match = /language-(\w+)/.exec(className || '');
-                                                return !inline && match ? (
-                                                    <SyntaxHighlighter language={match[1]} style={dracula} PreTag="div">
-                                                        {String(children).replace(/\n$/, '')}
-                                                    </SyntaxHighlighter>
-                                                ) : (
-                                                    <code className={className} {...props}>
-                                                        {children}
-                                                    </code>
-                                                );
-                                            },
-                                            h1: ({children}) => {
-                                                // @ts-ignore
-                                                const text = children.toString();
-                                                const slug = "TOC" + text;
-                                                return <h1 id={slug}>{children}</h1>;
-                                            },
-                                            h2: ({children}) => {
-                                                // @ts-ignore
-                                                const text = children.toString();
-                                                const slug = "TOC" + text;
-                                                return <h2 id={slug}>{children}</h2>;
-                                            },
-                                            h3: ({children}) => {
-                                                // @ts-ignore
-                                                const text = children.toString();
-                                                const slug = "TOC" + text;
-                                                return <h3 id={slug}>{children}</h3>;
-                                            },
-                                            h4: ({children}) => {
-                                                // @ts-ignore
-                                                const text = children.toString();
-                                                const slug = "TOC" + text;
-                                                return <h4 id={slug}>{children}</h4>;
-                                            },
-                                            h5: ({children}) => {
-                                                // @ts-ignore
-                                                const text = children.toString();
-                                                const slug = "TOC" + text;
-                                                return <h5 id={slug}>{children}</h5>;
-                                            },
-                                            h6: ({children}) => {
-                                                // @ts-ignore
-                                                const text = children.toString();
-                                                const slug = "TOC" + text;
-                                                return <h6 id={slug}>{children}</h6>;
-                                            },
-                                        }}
-                                    >
-                                        {article.content + article.mkFooter}
-                                    </ReactMarkdown>
-                                </div>
-                            </main>
+                                            const text = children.toString();
+                                            const slug = "TOC" + text;
+                                            return <h1 id={slug}>{children}</h1>;
+                                        },
+                                        h2: ({children}) => {
+                                            // @ts-ignore
+                                            const text = children.toString();
+                                            const slug = "TOC" + text;
+                                            return <h2 id={slug}>{children}</h2>;
+                                        },
+                                        h3: ({children}) => {
+                                            // @ts-ignore
+                                            const text = children.toString();
+                                            const slug = "TOC" + text;
+                                            return <h3 id={slug}>{children}</h3>;
+                                        },
+                                        h4: ({children}) => {
+                                            // @ts-ignore
+                                            const text = children.toString();
+                                            const slug = "TOC" + text;
+                                            return <h4 id={slug}>{children}</h4>;
+                                        },
+                                        h5: ({children}) => {
+                                            // @ts-ignore
+                                            const text = children.toString();
+                                            const slug = "TOC" + text;
+                                            return <h5 id={slug}>{children}</h5>;
+                                        },
+                                        h6: ({children}) => {
+                                            // @ts-ignore
+                                            const text = children.toString();
+                                            const slug = "TOC" + text;
+                                            return <h6 id={slug}>{children}</h6>;
+                                        },
+                                    }}
+                                >
+                                    {article.content + article.mkFooter}
+                                </ReactMarkdown>
+                            </div>
+                        </main>
 
                     </Container>
                 </>
