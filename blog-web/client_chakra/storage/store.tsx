@@ -1,39 +1,38 @@
 // store.ts
-import { configureStore, createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-interface AuthorState {
-    penName: String,
-    profile: String,
-    introduce: String,
-    mkFooter: String,
-}
-
-const initialState: AuthorState = {
-    penName: "",
-    profile: "",
-    introduce: "",
-    mkFooter: "",
-};
-
-const authorStateSlice = createSlice({
-    name: 'Author',
-    initialState,
-    reducers: {
-        setAuthorState: (state, action: PayloadAction<AuthorState>) => {
-            state.penName = action.payload.penName;
-            state.profile = action.payload.profile;
-            state.introduce = action.payload.introduce;
-            state.mkFooter = action.payload.mkFooter;
-        },
-    },
-});
+import { configureStore } from '@reduxjs/toolkit';
+import {selectedQueryStateSlice} from "@/storage/SelectedQuery";
+import {authorStateSlice} from "@/storage/AuthorState";
+import {ClassesLstStateSlice} from "@/storage/ClassesLst";
+import {LabelLstStateSlice} from "@/storage/LabelLst";
+import {AdvertisesLstStateSlice} from "@/storage/AdvertisesLst";
+import {ArticleTOCStateSlice} from "@/storage/ArticleTOC";
 
 export const { setAuthorState } = authorStateSlice.actions;
 const authorReducer = authorStateSlice.reducer;
 
+export const { setSelectedQueryState } = selectedQueryStateSlice.actions;
+const selectedQueryReducer = selectedQueryStateSlice.reducer;
+
+export const { setClassesLstState } = ClassesLstStateSlice.actions;
+const ClassesLstStateSliceReducer = ClassesLstStateSlice.reducer;
+
+export const { setLabelLstState } = LabelLstStateSlice.actions;
+const LabelLstStateSliceReducer = LabelLstStateSlice.reducer;
+
+export const { setAdvertisesLstState } = AdvertisesLstStateSlice.actions;
+const AdvertisesLstStateSliceReducer = AdvertisesLstStateSlice.reducer;
+
+export const { setArticleTOCState } = ArticleTOCStateSlice.actions;
+const ArticleTOCStateSliceReducer = ArticleTOCStateSlice.reducer;
+
 export const store = configureStore({
     reducer: {
         author: authorReducer,
+        selectedQuery: selectedQueryReducer,
+        ClassesLstStateSliceReducer: ClassesLstStateSliceReducer,
+        LabelLstStateSliceReducer: LabelLstStateSliceReducer,
+        AdvertisesLstStateSliceReducer: AdvertisesLstStateSliceReducer,
+        ArticleTOCStateSliceReducer: ArticleTOCStateSliceReducer,
     },
 });
 

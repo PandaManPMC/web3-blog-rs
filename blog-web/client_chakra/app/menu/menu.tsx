@@ -4,32 +4,34 @@ import React, { useEffect, useState } from 'react';
 import TextList from "@/app/common/TextList";
 import TagList from "@/app/common/TagList";
 import ImageCard from "@/app/common/ImageCard ";
-import {get, useGetWrap} from "@/tool/http";
-import {useErrToast, useInfoToast} from "@/tool/ui";
-import {useSelector} from "react-redux";
-import {RootState} from "@/storage/store";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState, setArticleTOCState, setSelectedQueryState} from "@/storage/store";
+import { usePathname } from 'next/navigation';
+import 'github-markdown-css/github-markdown.css';
 
 let selectedQuery = {idBlogLabel: 0, idBlogClasses: 0};
-let counter = 0;
 
-const Menu = ({onMenuSelectedQuery}: {onMenuSelectedQuery: any}) => {
-    const errToast = useErrToast();
-    const getWrap = useGetWrap();
+const Menu = () => {
     const author = useSelector((state: RootState) => state.author);
+    const dispatch = useDispatch<AppDispatch>();
 
-    const [classesLst, setClassesLst] = useState([]);
-    const [classesLstLoading, setClassesLstLoading] = useState(true);
-    const [labLst, setLabLst] = useState([]);
-    const [labLstLoading, setLabLstLoading] = useState(true);
+    const cla = useSelector((state: RootState) => state.ClassesLstStateSliceReducer);
+    let classesLstLoading = cla.isLoading;
+    let classesLst = cla.data;
 
-    counter++;
-    console.log("menu" + counter);
+    const lab = useSelector((state: RootState) => state.LabelLstStateSliceReducer);
+    let labLstLoading = lab.isLoading;
+    let labLst = lab.data;
 
-    useEffect(() => {
-        console.log("useEffect");
-        getClassesLst();
-        getLabLst();
-    }, []);
+    const isHomePage = usePathname() == "/";
+    const isArticlePage = usePathname() == "/article/";
+
+    const toc = useSelector((state: RootState) => state.ArticleTOCStateSliceReducer).TOC;
+
+    const handleTocClick = (slug: any) => (event: any) => {
+        dispatch(setArticleTOCState({TOC: [], SelectId: slug}));
+        event.preventDefault();
+    };
 
     const handleItemClick = (item: any) => {
         // console.log(`Clicked on: ${JSON.stringify(item)}`);
@@ -38,7 +40,7 @@ const Menu = ({onMenuSelectedQuery}: {onMenuSelectedQuery: any}) => {
         }else{
             selectedQuery.idBlogClasses = item.id;
         }
-        onMenuSelectedQuery(selectedQuery);
+        dispatch(setSelectedQueryState(selectedQuery));
     };
 
     const handleTagClick = (tag: any) => {
@@ -48,48 +50,8 @@ const Menu = ({onMenuSelectedQuery}: {onMenuSelectedQuery: any}) => {
         }else{
             selectedQuery.idBlogLabel = tag.id;
         }
-        onMenuSelectedQuery(selectedQuery);
+        dispatch(setSelectedQueryState(selectedQuery));
     };
-
-    const getClassesLst = async () => {
-        let data,error;
-        try {
-            data = await get('/article/classes');
-        } catch (err) {
-            error = err;
-        } finally {
-            setClassesLstLoading(false);
-        }
-        if (error) {
-            console.log(error);
-            errToast(`http error`, JSON.stringify(error));
-            return;
-        }
-
-        if (2000 != data.code) {
-            errToast(`http ${data.code}`, data.tip);
-            return;
-        }
-
-        setClassesLst(data.data);
-    }
-
-    const getLabLst = async () => {
-        let data;
-        try {
-            data = await getWrap('/article/labels');
-        } catch (err) {
-            return;
-        }finally {
-            setLabLstLoading(false);
-        }
-
-        if (2000 != data.code) {
-            return;
-        }
-
-        setLabLst(data.data);
-    }
 
     return (
         <div>
@@ -101,12 +63,30 @@ const Menu = ({onMenuSelectedQuery}: {onMenuSelectedQuery: any}) => {
                 // @ts-ignore
                 description={author.introduce}
             />
-            <TextList title="笔记本" items={classesLst} isLoading={classesLstLoading} onItemClick={handleItemClick} renderItem={(item: any) => {
-                return item.classesName;
-            }}/>
-            <TagList title="标签" tags={labLst} isLoading={labLstLoading} onTagClick={handleTagClick} renderItem={(tag: any) => {
-                return tag.labelName;
-            }}/>
+            {isHomePage ? (
+                <>
+                    <TextList title="笔记本" items={classesLst} isLoading={classesLstLoading} onItemClick={handleItemClick} renderItem={(item: any) => {
+                        return item.classesName;
+                    }}/>
+                    <TagList title="标签" tags={labLst} isLoading={labLstLoading} onTagClick={handleTagClick} renderItem={(tag: any) => {
+                        return tag.labelName;
+                    }}/>
+                </>
+            ): null}
+            {isArticlePage ? (
+                <div className="markdown-body" style={{backgroundColor: 'transparent'}}>
+                    <h2 style={{textAlign: 'center'}}>目录</h2>
+                    <ul>
+                        {toc.map((item, index) => (
+                            <li key={index} style={{marginLeft: (item.level - 1) * 20}}>
+                                <a href={`#${item.slug}`} onClick={handleTocClick(item.slug)}>
+                                    {item.text}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            ) : null}
         </div>
     );
 };

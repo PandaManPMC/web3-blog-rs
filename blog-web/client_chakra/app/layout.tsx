@@ -12,11 +12,10 @@ const inter = Inter({ subsets: ["latin"] });
 import Advertise from "./advertise/Advertise";
 import Menu from "./menu/menu";
 import ScrollToTopButton from "@/app/common/ScrollToTopButton";
-import Home from "@/app/home/home";
-import { Provider, useSelector, useDispatch } from 'react-redux';
-import { store, RootState, AppDispatch, setAuthorState } from '@/storage/store';
-import {useGetWrap} from "@/tool/http";
+import { Provider } from 'react-redux';
+import { store } from '@/storage/store';
 import InitData from "@/app/common/InitData";
+
 // 自定义主题
 const theme = extendTheme({
     colors: {
@@ -52,14 +51,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-    const [selectedQuery, setSelectedQuery] = useState({idBlogLabel: -1, idBlogClasses: -1});
-
-    const handleMenuSelectedQuery = (item: {idBlogLabel: number, idBlogClasses: number}) => {
-        setSelectedQuery({...selectedQuery, idBlogLabel: item.idBlogLabel, idBlogClasses: item.idBlogClasses});
-        console.log(item);
-        console.log("setSelectedQuery layout.tsx");
-    };
-
     return (
       <html lang="zh">
       <head>
@@ -84,18 +75,18 @@ export default function RootLayout({
                                       <Advertise></Advertise>
                                   </Box>
                                   <Box gridArea="center" bg="white" p={4} borderRadius="md" shadow="md" maxWidth="100%" width="100%">
-                                      {/*{children}*/}
-                                      <Home selectedQuery={selectedQuery}></Home>
+                                      {children}
+                                      {/*<HomePage selectedQuery={selectedQuery}></HomePage>*/}
                                   </Box>
                                   <Box gridArea="right" bg="gray.100" p={4} borderRadius="md">
-                                      <Menu onMenuSelectedQuery={handleMenuSelectedQuery}></Menu>
+                                      <Menu></Menu>
                                   </Box>
                               </Grid>
                           </div>
                           <div className="desktop-display-none">
                               <Box gridArea="center" bg="white" p={4} borderRadius="md" shadow="md" >
                                   {/*{children}*/}
-                                  <Home selectedQuery={selectedQuery}></Home>
+                                  {/*<HomePage selectedQuery={selectedQuery}></HomePage>*/}
                               </Box>
                           </div>
                       </main>

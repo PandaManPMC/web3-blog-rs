@@ -1,9 +1,8 @@
 'use client'
 
-import React, {useEffect, useState} from 'react';
 import {Box, Image, Text, LinkBox, LinkOverlay, VStack, Button} from '@chakra-ui/react';
-import {useGetWrap} from "@/tool/http";
-import ArticleCard from "@/app/common/ArticleCard";
+import {useSelector} from "react-redux";
+import {RootState} from "@/storage/store";
 
 const ClickableCard = ({ imageSrc, text, link }: { imageSrc: string, text: string, link: string }) => {
     return (
@@ -24,34 +23,9 @@ const ClickableCard = ({ imageSrc, text, link }: { imageSrc: string, text: strin
 };
 
 const Advertise = () => {
-    const getWrap = useGetWrap();
-
-    const [advertiseLst, setAdvertisesLst] = useState([]);
-    const [advertiseLstLoading, setAdvertiseLstLoading] = useState(true);
-
-    useEffect(() => {
-        getAdvertisesLst();
-    }, []);
-
-    const getAdvertisesLst = async () => {
-
-        let data;
-        try {
-            data = await getWrap('/advertise/list');
-        } catch (err) {
-            return;
-        }finally {
-            setAdvertiseLstLoading(false);
-        }
-        console.log(data);
-
-        if (2000 != data.code) {
-            return;
-        }
-
-        // @ts-ignore
-        setAdvertisesLst([...data.data]);
-    }
+    const advertise = useSelector((state: RootState) => state.AdvertisesLstStateSliceReducer);
+    let advertiseLstLoading = advertise.isLoading;
+    let advertiseLst = advertise.data;
 
     return (
         <Box p={5}>
