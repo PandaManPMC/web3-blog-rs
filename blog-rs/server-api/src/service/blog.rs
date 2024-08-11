@@ -27,7 +27,10 @@ pub async fn cache_author() {
         return;
     }
 
-    crate::service::set_blog_author(u.unwrap()).await;
+    let au = u.unwrap();
+    tracing::info!("cache_author {:?}={:?}", au.pen_name, au.mk_footer);
+
+    crate::service::set_blog_author(au).await;
 }
 
 /// 缓存笔记本

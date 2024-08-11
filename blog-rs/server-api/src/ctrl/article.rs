@@ -13,11 +13,73 @@ use crate::bean::article::{BlogClassesOut, BlogLabelOut};
 use crate::ctrl::PREIFIX;
 
 pub fn init_router(mut router: Router) -> Router {
+    router = router.route(&format!("{}{}", PREIFIX, "/article/read"), get(read));
     router = router.route(&format!("{}{}", PREIFIX, "/article/list"), get(get_article_list));
     router = router.route(&format!("{}{}", PREIFIX, "/article/classes"), get(get_classes_list));
     router = router.route(&format!("{}{}", PREIFIX, "/article/comments"), get(get_article_comments));
     router = router.route(&format!("{}{}", PREIFIX, "/article/labels"), get(get_label_list));
     return router;
+}
+
+/// read 读取博客
+async fn read(
+    query: Query<bean::article::ReadIn>,
+) -> Json<common::net::rsp::Rsp<bean::article::ReadOut>> {
+    let result = base::service::blog_article_sve::find_by_id(query.id).await;
+    if result.is_err() {
+        tracing::warn!("{:?}", result);
+        return Json(common::net::rsp::Rsp::<bean::article::ReadOut>::err_de())
+    }
+
+    let res = result.unwrap();
+    if res.is_none() {
+        return Json(common::net::rsp::Rsp::fail("文章不存在".to_string()))
+    }
+    let article = res.unwrap();
+    if 1 != article.state_article || 2 != article.state_publish || 2 != article.state_private {
+        return Json(common::net::rsp::Rsp::fail("文章不存在".to_string()))
+    }
+
+    // 查询关联标签
+    let mut params1:HashMap<String, sql::Params> = HashMap::new();
+    params1.insert(String::from("id_blog_article"), sql::Params::UInteger64(article.id));
+    params1.insert(String::from("state"), sql::Params::UInteger8(1));
+    let res = base::service::blog_article_label_sve::query_list(&params1, &utils::limit_max()).await;
+    if res.is_err() {
+        tracing::warn!("{:?}", res);
+        return Json(common::net::rsp::Rsp::<bean::article::ReadOut>::err_de())
+    }
+
+    let lst1 = res.unwrap();
+    let mut labels = vec![];
+    for articleLabel in lst1 {
+        let label = service::blog::find_label_by_id(articleLabel.id_blog_label).await;
+        if !label.is_err() {
+            let label_name = label.unwrap();
+            labels.push(label_name);
+        }
+    }
+
+    let author = service::BLOG_AUTHOR.get().expect("BLOG_AUTHOR should be initialized").read().await;
+
+    let res = bean::article::ReadOut{
+        id: article.id,
+        id_blog_classes: article.id_blog_classes,
+        title_article: article.title_article,
+        content: article.content,
+        like_count: article.like_count,
+        watch_count: article.watch_count,
+        view_count: article.view_count,
+        time_publish: article.time_publish,
+        sequence: article.sequence,
+        pem_name: author.pen_name.clone(),
+        profile: author.profile.clone(),
+        introduce: author.introduce.clone(),
+        mk_footer: author.mk_footer.clone(),
+        labels: labels,
+    };
+
+    return Json(common::net::rsp::Rsp::ok(res));
 }
 
 /// article_list 获取博客列表
@@ -87,9 +149,6 @@ async fn get_article_list(
             id: article.id,
             id_blog_classes: article.id_blog_classes,
             title_article: article.title_article,
-            state_article: article.state_article,
-            state_publish: article.state_publish,
-            state_private: article.state_private,
             content: article.content,
             like_count: article.like_count,
             watch_count: article.watch_count,
