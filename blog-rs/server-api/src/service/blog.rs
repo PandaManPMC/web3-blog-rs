@@ -95,3 +95,9 @@ pub async fn query_list(params: &HashMap<String, sql::Params>, condition: &[sql:
     return i_mysql::start_tx(&service::get_data_source_key().await, &mut call).await;
 }
 
+pub async fn update_watch_count(id: u64, watch_count: u32) -> mysql::Result<(), String> {
+    let mut call = | tx:&mut Transaction |  -> mysql::Result<(), String>  {
+        return dao::blog_dao::update_watch_count(tx, id, watch_count);
+    };
+    return i_mysql::start_tx(&service::get_data_source_key().await, &mut call).await;
+}

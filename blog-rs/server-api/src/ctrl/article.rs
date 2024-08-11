@@ -40,6 +40,13 @@ async fn read(
         return Json(common::net::rsp::Rsp::fail("文章不存在".to_string()))
     }
 
+    {
+        let r = service::blog::update_watch_count(article.id, article.watch_count+1).await;
+        if r.is_err() {
+            tracing::warn!("update_watch_count {:?}", r);
+        }
+    }
+
     // 查询关联标签
     let mut params1:HashMap<String, sql::Params> = HashMap::new();
     params1.insert(String::from("id_blog_article"), sql::Params::UInteger64(article.id));

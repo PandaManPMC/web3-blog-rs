@@ -5,6 +5,7 @@ use r2d2_mysql::mysql::{Row, Transaction, Value};
 use r2d2_mysql::mysql::prelude::Queryable;
 use base::model::blog_article;
 use base::model::blog_article::BlogArticleModel;
+use std::time::{SystemTime};
 
 pub fn query_list(tx: &mut Transaction, condition_params: &HashMap<String, sql::Params>, condition: &[sql:: Condition]) -> Result<Vec<BlogArticleModel>, String> {
     let article = "article";
@@ -55,4 +56,25 @@ pub fn query_list(tx: &mut Transaction, condition_params: &HashMap<String, sql::
     }
 
     return Ok(result.unwrap());
+}
+
+/// update_watch_count 更新观看数量
+pub fn update_watch_count(tx: &mut Transaction, id: u64, watch_count: u32) -> Result<() , String> {
+    let now = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_secs();
+
+    let stmt = "UPDATE blog_article SET watch_count=? WHERE id = ?";
+    debug!("blog_dao::update_watch_count sql={}", stmt);
+    let stmt = tx.prep(stmt)
+        .unwrap();
+
+    let mut params: Vec<Value> = vec![];
+    params.push(watch_count.into());
+    params.push(id.into());
+    let result = tx.exec_drop(stmt.clone(), params);
+    if result.is_err() {
+        warn!("blog_dao::update_watch_count 失败！ res={:?} sql={:?}", result, stmt);
+        return Err(result.err().unwrap().to_string());
+    }
+
+    return Ok(());
 }
