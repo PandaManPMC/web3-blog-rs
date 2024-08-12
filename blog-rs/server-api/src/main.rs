@@ -102,6 +102,7 @@ async fn init_rds(){
 
         let rds = res_rds.unwrap();
 
+        common::cache::common_rds::initialize_global_object(rds.clone()).await;
         common::cache::member_rds::initialize_global_object(rds).await;
 
         let res = common::cache::member_rds::get_user_by_token("abc".to_string()).await;

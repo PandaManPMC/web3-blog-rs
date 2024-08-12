@@ -6,7 +6,7 @@ use log::debug;
 use base::model::blog_classes::BlogClassesModel;
 use crate::{bean, service, utils};
 use std::collections::HashMap;
-use std::string;
+use std::{result, string};
 use base::model::blog_label::BlogLabelModel;
 use base::model::blog_view::BlogViewModel;
 use crate::bean::article::{BlogClassesOut, BlogLabelOut};
@@ -29,6 +29,7 @@ pub fn init_router(mut router: Router) -> Router {
     router = router.route(&format!("{}{}", PREIFIX, "/article/labels"), get(get_label_list));
     router = router.route(&format!("{}{}", PREIFIX, "/article/views"), get(get_view_list));
     router = router.route(&format!("{}{}", PREIFIX, "/article/createView"), post(create_view));
+    router = router.route(&format!("{}{}", PREIFIX, "/article/getViewTicket"), get(get_view_ticket));
 
     return router;
 }
@@ -280,6 +281,20 @@ async fn get_view_list(
     Json(rsp)
 }
 
+/// get_view_ticket 获取评论票据
+async fn get_view_ticket(
+    query: Query<bean::article::GetViewTicketIn>,
+) -> Json<common::net::rsp::Rsp<bean::article::GetViewTicketOut>> {
+    let uid = plier::uid::uid_v4();
+    let result = common::cache::common_rds::set_string(uid.clone(), query.address.clone()).await;
+    if result.is_err() {
+        tracing::warn!("{:?}", result);
+        return Json(common::net::rsp::Rsp::<bean::article::GetViewTicketOut>::err_de())
+    }
+
+    return Json(common::net::rsp::Rsp::<bean::article::GetViewTicketOut>::ok(bean::article::GetViewTicketOut{ ticket: uid }));
+}
+
 /// create_view 创建评论
 async fn create_view (
     headers: HeaderMap,
@@ -291,6 +306,17 @@ async fn create_view (
     debug!("{:?}", payload);
 
     let _ = LOCK.lock().await;
+
+    let get_addr = common::cache::common_rds::get_string(payload.ticket.clone()).await;
+    if get_addr.is_err() {
+        tracing::warn!("{:?}", get_addr);
+        return Json(common::net::rsp::Rsp::<bean::article::BlogViewOut>::err_de())
+    }
+
+    let address = get_addr.unwrap();
+    if "" == address {
+        return Json(common::net::rsp::Rsp::<bean::article::BlogViewOut>::fail("票据不存在".to_string()));
+    }
 
     let result = base::service::blog_article_sve::find_by_id(payload.id_blog).await;
     if result.is_err() {
@@ -313,7 +339,7 @@ async fn create_view (
         payload.coin_symbol,
         "0.1".to_string(),
     1,
-        "0x11111".to_string(),
+        address,
         "0.1".to_string(),
         real_ip,
         payload.ticket);

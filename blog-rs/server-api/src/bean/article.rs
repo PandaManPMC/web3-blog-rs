@@ -191,6 +191,20 @@ pub struct BlogViewOut {
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
+pub struct GetViewTicketIn {
+    /// search地址 【max:155】
+    #[serde(rename = "address")]
+    pub address: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
+pub struct GetViewTicketOut {
+    /// 票据 【max:64】
+    #[serde(rename = "ticket")]
+    pub ticket: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct CreateViewIn {
     /// 文章编号 【max:20】
     #[serde(rename = "idBlog")]
