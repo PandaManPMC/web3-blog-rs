@@ -15,6 +15,7 @@ import ScrollToTopButton from "@/app/common/ScrollToTopButton";
 import { Provider } from 'react-redux';
 import { store } from '@/storage/store';
 import InitData from "@/app/common/InitData";
+import {MetaMaskProvider} from "@metamask/sdk-react"
 
 // 自定义主题
 const theme = extendTheme({
@@ -61,6 +62,17 @@ export default function RootLayout({
       <Provider store={store}>
           <GlobalStateProvider>
               <ChakraProvider theme={theme}>
+                  <MetaMaskProvider
+                      debug={true}
+                      sdkOptions={{
+                          dappMetadata: {
+                              name: process.env.WEBSITE_NAME,
+                              // @ts-ignore
+                              url: process.env.WEBSITE_URL,
+                          },
+                          infuraAPIKey: process.env.INFURA_API_KEY,
+                      }}
+                  >
                   <InitData></InitData>
                       <main>
                           <div className="mobile-display-none">
@@ -90,6 +102,7 @@ export default function RootLayout({
                       </main>
                       <LargeWithNewsletter></LargeWithNewsletter>
                   <ScrollToTopButton />
+                  </MetaMaskProvider>
               </ChakraProvider>
           </GlobalStateProvider>
       </Provider>

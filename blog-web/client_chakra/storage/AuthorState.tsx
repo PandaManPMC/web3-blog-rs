@@ -2,10 +2,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface AuthorState {
-    penName: String,
-    profile: String,
-    introduce: String,
-    mkFooter: String,
+    penName: string,
+    profile: string,
+    introduce: string,
+    mkFooter: string,
+    contactMail: string,
 }
 
 const initialState: AuthorState = {
@@ -13,6 +14,7 @@ const initialState: AuthorState = {
     profile: "",
     introduce: "",
     mkFooter: "",
+    contactMail: "",
 };
 
 export const  authorStateSlice = createSlice({
@@ -24,6 +26,7 @@ export const  authorStateSlice = createSlice({
             state.profile = action.payload.profile;
             state.introduce = action.payload.introduce;
             state.mkFooter = action.payload.mkFooter;
+            state.contactMail = action.payload.contactMail;
         },
     },
 });

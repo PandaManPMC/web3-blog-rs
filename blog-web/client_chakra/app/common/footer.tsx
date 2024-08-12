@@ -17,26 +17,9 @@ import React, { ReactNode } from 'react'
 import {FaGithub, FaTwitter} from 'react-icons/fa'
 import { BiMailSend } from 'react-icons/bi'
 import "../globals.css";
-const Logo = (props: any) => {
-    return (
-        <>
-            <Flex justify="space-between" align="center" p={4}>
-                <Box>
-                    <Avatar size='lg' name='Logo' src='https://avatars.githubusercontent.com/u/95899886?s=48&v=4' />{' '}
-                </Box>
-                <Box>
-                    <Text fontSize="lg">PandaManCoin</Text>
-                </Box>
-                <Box>
-                </Box>
-                <Box>
-                </Box>
-                <Box>
-                </Box>
-            </Flex>
-        </>
-    )
-}
+import {useSelector} from "react-redux";
+import {RootState} from "@/storage/store";
+
 
 const SocialButton = ({
                           children,
@@ -80,6 +63,30 @@ const ListHeader = ({children}: { children: ReactNode }) => {
 }
 
 export default function LargeWithNewsletter() {
+    const author = useSelector((state: RootState) => state.author);
+
+    const Logo = (props: any) => {
+
+        return (
+            <>
+                <Flex justify="space-between" align="center" p={4}>
+                    <Box>
+                        <Avatar size='lg' name='Logo' src={author.profile} />{' '}
+                    </Box>
+                    <Box>
+                        <Text fontSize="lg">{author.penName}</Text>
+                    </Box>
+                    <Box>
+                    </Box>
+                    <Box>
+                    </Box>
+                    <Box>
+                    </Box>
+                </Flex>
+            </>
+        )
+    }
+
     return (
         <>
             <Box
@@ -112,7 +119,7 @@ export default function LargeWithNewsletter() {
                                 Blog
                             </Box>
                             <Box as="a" href={'#'}>
-                                pandamancoin@gmail.com
+                                {author.contactMail}
                             </Box>
                         </Stack>
                         <Stack align={'flex-start'}>

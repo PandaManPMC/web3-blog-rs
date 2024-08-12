@@ -58,3 +58,50 @@ export const useGetWrap = ()=> {
         return data;
     }
 }
+
+async function postData(url = '', {data = {}, headers = {}, options = {}} = {}) {
+    const baseURI = process.env.NEXT_PUBLIC_API_URL;
+    try {
+        const response = await fetch(baseURI + url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...headers,
+            },
+            body: JSON.stringify(data),
+            ...options,
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        return responseData;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
+export const usePostWrap = ()=> {
+    const errToast = useErrToast();
+    return async (uri : string, {dataIn = {}, headers = {}, options = {}} = {}) => {
+        let data, error;
+        try {
+            data = await postData(uri, {data: dataIn, headers: headers, options: options});
+        } catch (err) {
+            error = err;
+        }
+        if (error) {
+            console.log(error);
+            errToast(`http error`, JSON.stringify(error));
+            throw error;
+        }
+        if (2000 != data.code) {
+            errToast(`http ${data.code}`, data.tip);
+            return data;
+        }
+        return data;
+    }
+}
