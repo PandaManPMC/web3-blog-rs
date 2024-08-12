@@ -1,6 +1,6 @@
 use axum::{Json, Router};
 use axum::extract::Query;
-use axum::routing::{get};
+use axum::routing::{get, post};
 use i_dao::sql;
 use log::debug;
 use base::model::blog_classes::BlogClassesModel;
@@ -11,6 +11,15 @@ use base::model::blog_label::BlogLabelModel;
 use base::model::blog_view::BlogViewModel;
 use crate::bean::article::{BlogClassesOut, BlogLabelOut};
 use crate::ctrl::PREIFIX;
+use tokio::sync::Mutex;
+use std::sync::Arc;
+use axum::http::HeaderMap;
+
+lazy_static::lazy_static! {
+    static ref LOCK: Arc<Mutex<bool>> = Arc::new(Mutex::new({
+        true
+    }));
+}
 
 pub fn init_router(mut router: Router) -> Router {
     router = router.route(&format!("{}{}", PREIFIX, "/article/read"), get(read));
@@ -18,6 +27,9 @@ pub fn init_router(mut router: Router) -> Router {
     router = router.route(&format!("{}{}", PREIFIX, "/article/classes"), get(get_classes_list));
     router = router.route(&format!("{}{}", PREIFIX, "/article/comments"), get(get_article_comments));
     router = router.route(&format!("{}{}", PREIFIX, "/article/labels"), get(get_label_list));
+    router = router.route(&format!("{}{}", PREIFIX, "/article/views"), get(get_view_list));
+    router = router.route(&format!("{}{}", PREIFIX, "/article/createView"), post(create_view));
+
     return router;
 }
 
@@ -227,4 +239,98 @@ async fn get_article_comments(
     let lst = result.unwrap();
     let rsp = common::net::rsp::Rsp::ok(lst);
     Json(rsp)
+}
+
+/// article_list 获取博客列表
+async fn get_view_list(
+    query: Query<bean::article::GetViewListIn>,
+) -> Json<common::net::rsp::Rsp<Vec<bean::article::BlogViewOut>>> {
+
+    debug!("{:?}", query);
+    let mut params:HashMap<String, sql::Params> = HashMap::new();
+    params.insert(String::from("id_blog_article"), sql::Params::UInteger64(query.id_blog));
+    params.insert(String::from("visible"), sql::Params::UInteger64(1));
+
+    let result = base::service::blog_view_sve::query_list(&params, &utils::limit_max()).await;
+    if result.is_err() {
+        tracing::warn!("{:?}", result);
+        return Json(common::net::rsp::Rsp::<Vec<bean::article::BlogViewOut>>::err_de())
+    }
+
+    let lst = result.clone().unwrap();
+
+    let mut list: Vec<bean::article::BlogViewOut> = vec![];
+
+    let (pem_name,profile) = service::get_author_info().await;
+
+    for view in lst {
+        let target = bean::article::BlogViewOut{
+            created_at: view.created_at,
+            view_content: view.view_content,
+            coin_symbol: view.coin_symbol,
+            tip_amount: view.tip_amount,
+            address: view.address,
+            tip_amount_usd: view.tip_amount_usd,
+            ticket: view.ticket,
+        };
+        list.push(target);
+    }
+
+    let rsp = common::net::rsp::Rsp::ok(list);
+    Json(rsp)
+}
+
+/// create_view 创建评论
+async fn create_view (
+    headers: HeaderMap,
+    Json(payload): Json<bean::article::CreateViewIn>,
+) -> Json<common::net::rsp::Rsp<bean::article::BlogViewOut>> {
+
+    let real_ip = common::net::get_client_real_ip(&headers);
+    tracing::info!("create_view 访问者 ip={:?}", real_ip);
+    debug!("{:?}", payload);
+
+    let _ = LOCK.lock().await;
+
+    let result = base::service::blog_article_sve::find_by_id(payload.id_blog).await;
+    if result.is_err() {
+        tracing::warn!("{:?}", result);
+        return Json(common::net::rsp::Rsp::<bean::article::BlogViewOut>::err_de())
+    }
+
+    let res = result.unwrap();
+    if res.is_none() {
+        return Json(common::net::rsp::Rsp::fail("文章不存在".to_string()))
+    }
+    let article = res.unwrap();
+    if 1 != article.state_article || 2 != article.state_publish || 2 != article.state_private {
+        return Json(common::net::rsp::Rsp::fail("文章不存在".to_string()))
+    }
+
+    let mut view = base::model::blog_view::BlogViewModel::new(
+        payload.id_blog,
+        payload.view_content,
+        payload.coin_symbol,
+        "0.1".to_string(),
+    1,
+        "0x11111".to_string(),
+        "0.1".to_string(),
+        real_ip,
+        payload.ticket);
+
+    let result = service::blog::add_view(payload.id_blog, article.view_count+1 , &mut view).await;
+    if result.is_err() {
+        tracing::warn!("{:?}", result);
+        return Json(common::net::rsp::Rsp::<bean::article::BlogViewOut>::err_de())
+    }
+
+    return Json(common::net::rsp::Rsp::<bean::article::BlogViewOut>::ok(bean::article::BlogViewOut{
+        created_at: view.created_at,
+        view_content: view.view_content,
+        coin_symbol: view.coin_symbol,
+        tip_amount: view.tip_amount,
+        address: view.address,
+        tip_amount_usd: view.tip_amount_usd,
+        ticket: view.ticket,
+    }));
 }

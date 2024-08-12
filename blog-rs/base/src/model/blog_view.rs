@@ -8,13 +8,13 @@ use std::fmt;
 use serde::de::Unexpected;
 
 pub const TABLE_NAME:&str = "blog_view";
-pub const FIELDS:[&str;11] = ["id","created_at","updated_at","id_blog_article","view_content","coin_symbol","tip_amount","visible","address","tip_amount_usd","x_ip"];
+pub const FIELDS:[&str;12] = ["id","created_at","updated_at","id_blog_article","view_content","coin_symbol","tip_amount","visible","address","tip_amount_usd","x_ip","ticket"];
 pub const ALIAS:&str = "blogView";
 
 ///	BlogViewModel 评论
 ///	table - blog_view
 ///	author: AT
-///	since: 2024-06-07 17:02:09
+///	since: 2024-08-12 11:21:49
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogViewModel {
@@ -51,16 +51,19 @@ pub struct BlogViewModel {
 	/// XIP 【max:45】 
 	#[serde(rename = "xip")]
 	pub x_ip: String,
+	/// 票据 【max:64】 
+	#[serde(rename = "ticket")]
+	pub ticket: String,
 }
 
 impl BlogViewModel {
 
-    pub fn new(id_blog_article: u64, view_content: String, coin_symbol: String, tip_amount: String, visible: u8, address: String, tip_amount_usd: String, x_ip: String) -> BlogViewModel {
-        BlogViewModel{id:0, created_at: 0, updated_at: 0, id_blog_article, view_content, coin_symbol, tip_amount, visible, address, tip_amount_usd, x_ip}
+    pub fn new(id_blog_article: u64, view_content: String, coin_symbol: String, tip_amount: String, visible: u8, address: String, tip_amount_usd: String, x_ip: String, ticket: String) -> BlogViewModel {
+        BlogViewModel{id:0, created_at: 0, updated_at: 0, id_blog_article, view_content, coin_symbol, tip_amount, visible, address, tip_amount_usd, x_ip, ticket}
     }
 
-    pub fn new_full(id: u64, created_at: u64, updated_at: u64, id_blog_article: u64, view_content: String, coin_symbol: String, tip_amount: String, visible: u8, address: String, tip_amount_usd: String, x_ip: String) -> BlogViewModel {
-        BlogViewModel{id, created_at, updated_at, id_blog_article, view_content, coin_symbol, tip_amount, visible, address, tip_amount_usd, x_ip}
+    pub fn new_full(id: u64, created_at: u64, updated_at: u64, id_blog_article: u64, view_content: String, coin_symbol: String, tip_amount: String, visible: u8, address: String, tip_amount_usd: String, x_ip: String, ticket: String) -> BlogViewModel {
+        BlogViewModel{id, created_at, updated_at, id_blog_article, view_content, coin_symbol, tip_amount, visible, address, tip_amount_usd, x_ip, ticket}
     }
 
     fn set_pk(&mut self, pk: u64) {
@@ -94,12 +97,12 @@ pub fn get_field_sql(alias: &str) -> String {
 
 /// pot 罐子 -> 把 mysql-row 按指定偏移 offset 装入结构体
 pub fn pot(row: Row, offset: usize) -> BlogViewModel {
-	return BlogViewModel::new_full(row.get(offset+0).unwrap(),row.get(offset+1).unwrap(),row.get(offset+2).unwrap(),row.get(offset+3).unwrap(),row.get(offset+4).unwrap(),row.get(offset+5).unwrap(),row.get(offset+6).unwrap(),row.get(offset+7).unwrap(),row.get(offset+8).unwrap(),row.get(offset+9).unwrap(),row.get(offset+10).unwrap());
+	return BlogViewModel::new_full(row.get(offset+0).unwrap(),row.get(offset+1).unwrap(),row.get(offset+2).unwrap(),row.get(offset+3).unwrap(),row.get(offset+4).unwrap(),row.get(offset+5).unwrap(),row.get(offset+6).unwrap(),row.get(offset+7).unwrap(),row.get(offset+8).unwrap(),row.get(offset+9).unwrap(),row.get(offset+10).unwrap(),row.get(offset+11).unwrap());
 }
 
 ///	BlogViewJSONOut 评论
 ///	author: AT
-///	since: 2024-06-07 17:02:09
+///	since: 2024-08-12 11:21:49
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogViewJSONOut {
@@ -136,11 +139,14 @@ pub struct BlogViewJSONOut {
 	/// XIP 【max:45】 
 	#[serde(rename = "xip")]
 	pub x_ip: String,
+	/// 票据 【max:64】 
+	#[serde(rename = "ticket")]
+	pub ticket: String,
 }
 
 ///	BlogViewJSONIn 评论
 ///	author: AT
-///	since: 2024-06-07 17:02:09
+///	since: 2024-08-12 11:21:49
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct BlogViewJSONIn {
@@ -171,6 +177,9 @@ pub struct BlogViewJSONIn {
 	/// XIP 【max:45】
 	#[serde(rename = "xip", deserialize_with = "check_length_x_ip")]
 	pub x_ip: String,
+	/// 票据 【max:64】
+	#[serde(rename = "ticket", deserialize_with = "check_length_ticket")]
+	pub ticket: String,
 }
 
 plier::create_serde_string_length_checker!(check_length_view_content, 0, 200);
@@ -179,6 +188,7 @@ plier::create_serde_string_length_checker!(check_length_tip_amount, 0, 79);
 plier::create_serde_string_length_checker!(check_length_address, 0, 155);
 plier::create_serde_string_length_checker!(check_length_tip_amount_usd, 0, 79);
 plier::create_serde_string_length_checker!(check_length_x_ip, 0, 45);
+plier::create_serde_string_length_checker!(check_length_ticket, 0, 64);
 
 impl BaseModel for BlogViewModel {
 
@@ -237,6 +247,7 @@ impl BaseModel for BlogViewModel {
 			"address" => self.address.to_string(),
 			"tip_amount_usd" => self.tip_amount_usd.to_string(),
 			"x_ip" => self.x_ip.to_string(),
+			"ticket" => self.ticket.to_string(),
         }, columns, keys);
     }
 
@@ -261,6 +272,7 @@ impl BaseModel for BlogViewModel {
 			"address" => self.address.to_string(),
 			"tip_amount_usd" => self.tip_amount_usd.to_string(),
 			"x_ip" => self.x_ip.to_string(),
+			"ticket" => self.ticket.to_string(),
             "id" => self.id,
         }, columns, String::from(format!("{}=:{}",  FIELDS[0], FIELDS[0])))
     }

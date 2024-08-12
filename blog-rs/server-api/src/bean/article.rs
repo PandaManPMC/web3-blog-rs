@@ -157,3 +157,54 @@ pub struct BlogClassesOut {
     #[serde(rename = "sequence")]
     pub sequence: u32,
 }
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
+pub struct GetViewListIn {
+    /// 文章编号 【max:20】
+    #[serde(rename = "idBlog")]
+    pub id_blog: u64
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
+pub struct BlogViewOut {
+    /// 创建时间 【max:20】
+    #[serde(rename = "createdAt")]
+    pub created_at: u64,
+    /// 评论内容 【max:200】
+    #[serde(rename = "viewContent")]
+    pub view_content: String,
+    /// 代币符号 【max:20】
+    #[serde(rename = "coinSymbol")]
+    pub coin_symbol: String,
+    /// 小费金额 【max:79】
+    #[serde(rename = "tipAmount")]
+    pub tip_amount: String,
+    /// search地址 【max:155】
+    #[serde(rename = "address")]
+    pub address: String,
+    /// 小费金额USD 【max:79】
+    #[serde(rename = "tipAmountUsd")]
+    pub tip_amount_usd: String,
+    /// 票据 【max:64】
+    #[serde(rename = "ticket")]
+    pub ticket: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
+pub struct CreateViewIn {
+    /// 文章编号 【max:20】
+    #[serde(rename = "idBlog")]
+    pub id_blog: u64,
+
+    /// 评论内容 【max:200】
+    #[serde(rename = "viewContent")]
+    pub view_content: String,
+
+    /// 代币符号 【max:20】
+    #[serde(rename = "coinSymbol")]
+    pub coin_symbol: String,
+
+    /// 票据 【max:64】
+    #[serde(rename = "ticket")]
+    pub ticket: String,
+}

@@ -7,6 +7,7 @@ use r2d2_mysql::mysql::Transaction;
 use base::dao::blog_article_dao;
 use base::model::blog_article::BlogArticleModel;
 use base::model::blog_author::BlogAuthorModel;
+use base::model::blog_view::BlogViewModel;
 use base::service;
 use crate::service::{CLASSES_LIST, LABEL_LIST};
 use crate::{dao, utils};
@@ -98,6 +99,17 @@ pub async fn query_list(params: &HashMap<String, sql::Params>, condition: &[sql:
 pub async fn update_watch_count(id: u64, watch_count: u32) -> mysql::Result<(), String> {
     let mut call = | tx:&mut Transaction |  -> mysql::Result<(), String>  {
         return dao::blog_dao::update_watch_count(tx, id, watch_count);
+    };
+    return i_mysql::start_tx(&service::get_data_source_key().await, &mut call).await;
+}
+
+pub async fn add_view(id: u64, view_count: u32, view: &mut BlogViewModel) -> mysql::Result<(), String> {
+    let mut call = | tx:&mut Transaction |  -> mysql::Result<(), String>  {
+        let res = i_dao::tok::dao::add(tx, view);
+        if res.is_err() {
+            return res;
+        }
+        return dao::blog_dao::update_view_count(tx, id, view_count);
     };
     return i_mysql::start_tx(&service::get_data_source_key().await, &mut call).await;
 }

@@ -1,7 +1,7 @@
 ///	blogViewDao
 ///	标准 DAO - 评论 - blog_view
 ///	author: AT
-///	since: 2024-08-08 15:59:53
+///	since: 2024-08-12 11:21:49
 ///	desc: base AT 2.1,incompatible < 2.1  https://at.pandamancoin.com
 
 use log::{debug, warn};
@@ -159,6 +159,32 @@ pub fn find_by_address(tx: &mut Transaction, address: String) -> Result<Option<B
     );
     if result.is_err() {
         warn!("b_d::blog_view_dao::address 失败！ res={:?}", result);
+        return match result {
+            Err(e) => {
+                Err(e.to_string().into())
+            },
+            Ok(_) => {
+                unimplemented!()
+            },
+        };
+    }
+
+    let mut lst = result.unwrap();
+    if 0 == lst.len() {
+        return Ok(None);
+    }
+
+    let one:Option<BlogViewModel> = lst.pop();
+    return Ok(one);
+}
+
+pub fn find_by_ticket(tx: &mut Transaction, ticket: String) -> Result<Option<BlogViewModel>, String> {
+    let query_sql = format!("SELECT {} FROM {} WHERE ticket = ? ORDER BY id DESC LIMIT 0,1", blog_view::get_field_sql(""), blog_view::TABLE_NAME);
+    let result = tx.exec_map(
+        query_sql, (ticket,),|row: Row| blog_view::pot(row, 0)
+    );
+    if result.is_err() {
+        warn!("b_d::blog_view_dao::ticket 失败！ res={:?}", result);
         return match result {
             Err(e) => {
                 Err(e.to_string().into())

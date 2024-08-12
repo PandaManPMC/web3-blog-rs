@@ -62,17 +62,40 @@ pub fn query_list(tx: &mut Transaction, condition_params: &HashMap<String, sql::
 pub fn update_watch_count(tx: &mut Transaction, id: u64, watch_count: u32) -> Result<() , String> {
     let now = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_secs();
 
-    let stmt = "UPDATE blog_article SET watch_count=? WHERE id = ?";
+    let stmt = "UPDATE blog_article SET updated_at=?,watch_count=? WHERE id = ?";
     debug!("blog_dao::update_watch_count sql={}", stmt);
     let stmt = tx.prep(stmt)
         .unwrap();
 
     let mut params: Vec<Value> = vec![];
+    params.push(now.into());
     params.push(watch_count.into());
     params.push(id.into());
     let result = tx.exec_drop(stmt.clone(), params);
     if result.is_err() {
         warn!("blog_dao::update_watch_count 失败！ res={:?} sql={:?}", result, stmt);
+        return Err(result.err().unwrap().to_string());
+    }
+
+    return Ok(());
+}
+
+/// update_view_count 更新评论数量
+pub fn update_view_count(tx: &mut Transaction, id: u64, view_count: u32) -> Result<() , String> {
+    let now = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_secs();
+
+    let stmt = "UPDATE blog_article SET updated_at=?,view_count=? WHERE id = ?";
+    debug!("blog_dao::update_view_count sql={}", stmt);
+    let stmt = tx.prep(stmt)
+        .unwrap();
+
+    let mut params: Vec<Value> = vec![];
+    params.push(now.into());
+    params.push(view_count.into());
+    params.push(id.into());
+    let result = tx.exec_drop(stmt.clone(), params);
+    if result.is_err() {
+        warn!("blog_dao::update_view_count 失败！ res={:?} sql={:?}", result, stmt);
         return Err(result.err().unwrap().to_string());
     }
 
