@@ -1,44 +1,47 @@
-use ethers::prelude::*;
-use ethers::providers::{Provider, Http};
-use ethers::contract::Contract;
-use ethers::types::Address;
-use std::sync::Arc;
-use ethers::abi::Abi;
-use std::fs;
-use tokio::sync::RwLock;
+use alloy::{
+    contract::{ContractInstance, Interface},
+    dyn_abi::DynSolValue,
+    network::{Ethereum, TransactionBuilder},
+    primitives::Address,
+    providers::{Provider, ProviderBuilder},
+    transports::http::{Client, Http},
+};
+use alloy::transports::http::reqwest;
 
-struct ProviderWarp {
-    provider: Arc<Provider<Http>>,
-    contract_address: String,
-    abi_file: String,
-    contract: ContractInstance <Arc<Provider<Http>>, Provider<Http>>,
-}
-
-static PROVIDER_HTTP: tokio::sync::OnceCell<Arc<tokio::sync::RwLock<ProviderWarp>>> = tokio::sync::OnceCell::const_new();
-
-pub async fn initialize_provider_http(url: String, abi_path: String, contract_address_: String)  -> Result<(), Box<dyn std::error::Error>>{
-    let provider = Provider::<Http>::try_from(url.clone())?;
-    let provider = Arc::new(provider);
-
-    let contract_address: Address = contract_address_.clone().parse()?;
-    let abi_json = fs::read(abi_path.clone())?;
-    let abi: Abi = serde_json::from_slice(&abi_json)?;
-
-    let contract    = Contract::new(contract_address, abi, provider.clone());
-
-    let _ = PROVIDER_HTTP.set(Arc::new(RwLock::new(ProviderWarp{
-        provider: provider.clone(),
-        contract_address: contract_address_,
-        abi_file: abi_path,
-        contract: contract.clone(),
-    })));
-
-    Ok(())
-}
 pub async fn get_address(ticket: String) -> Result<String, Box<dyn std::error::Error>> {
-    let c = PROVIDER_HTTP.get().unwrap().read().await;
-    let addr: Address = c.contract.method::<_, Address>("getAddress", ticket)?.call().await?;
-    let a = format!("{:?}", addr);
+    let url = "https://polygon-mainnet.infura.io/v3/d6c49b20a9bf44fabeda87029c7cf51e";
+    let contract_address = "0x63A0B0a446800DFf71C184Ef5D4A526F49a67246";
+    let abi_p = "E:/b/gitpmc/web3-blog-rs/blog-rs/common/src/tool/web3_blog_abi.json";
+
+    let provider = ProviderBuilder::new().with_recommended_fillers().on_http(reqwest::Url::parse(url).unwrap());
+
+    // Get the contract ABI.
+    let path = std::env::current_dir()?.join(abi_p);
+    let artifact = std::fs::read(path).expect("Failed to read artifact");
+    let json: serde_json::Value = serde_json::from_slice(&artifact)?;
+
+    // Get `abi` from the artifact.
+    let abi_value = json.get("abi").expect("Failed to get ABI from artifact");
+    let abi = serde_json::from_str(&abi_value.to_string())?;
+
+    let c_a: Address = Address::parse_checksummed(contract_address, None).unwrap();
+    let contract: ContractInstance<Http<Client>, _, Ethereum> =
+        ContractInstance::new(c_a, provider.clone(), Interface::new(abi));
+
+    // Retrieve the number, which should be 43.
+    let address_val = contract.function("getAddress", &[DynSolValue::from(String::from(ticket))])?.call().await?;
+    let addr = address_val.first();
+    if addr.is_none() {
+        return Ok("".to_string());
+    }
+
+    let add = addr.unwrap().as_address();
+    if add.is_none() {
+        return Ok("".to_string());
+    }
+
+    let ad = add.unwrap().0;
+    let a = format!("{ad}");
     if "0x0000000000000000000000000000000000000000" == a {
         return Ok("".to_string());
     }

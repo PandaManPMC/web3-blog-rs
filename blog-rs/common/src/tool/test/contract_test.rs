@@ -1,13 +1,16 @@
-use ethers::prelude::*;
-use ethers::providers::{Provider, Http};
-use ethers::contract::Contract;
-use ethers::types::Address;
-use std::convert::TryFrom;
-use std::sync::Arc;
+use alloy::{
+    contract::{ContractInstance, Interface},
+    dyn_abi::DynSolValue,
+    network::{Ethereum, TransactionBuilder},
+    primitives::Address,
+    providers::{Provider, ProviderBuilder},
+    transports::http::{Client, Http},
+};
+use alloy::transports::http::reqwest;
+
 
 #[cfg(test)]
 mod contract_test {
-    use ethers::abi::Abi;
     use crate::tool;
     use super::*;
 
@@ -15,32 +18,10 @@ mod contract_test {
     async fn get_address() {
         let p = plier::files::get_current_dir_str();
         println!("{:?}", p);
-    }
-
-
-    #[tokio::test]
-    async fn test_initialize_provider_http(){
-        let url = "https://polygon-mainnet.infura.io/v3/d6c49b20a9bf44fabeda87029c7cf51e";
-        let contract_address = "0x63A0B0a446800DFf71C184Ef5D4A526F49a67246";
-        let abi_path = "E:/b/gitpmc/web3-blog-rs/blog-rs/common/src/tool/web3_blog_abi.json";
-
-        let r1 = tool::contract::initialize_provider_http(url.to_string(), abi_path.to_string(), contract_address.to_string()).await;
-
-        if r1.is_err() {
-            println!("{:?}", r1.err());
-            return;
-        }
-        println!("ok");
         // let ticket = "f466180c238d4541b1f59fea9b7ceed2".to_string();
-        let ticket = "f466180c238d4541b1f59fea9b7ceed20".to_string();
-
-        let addr = tool::contract::get_address(ticket).await;
-        if addr.is_err() {
-            println!("{:?}", addr.err());
-            return;
-        }
-        let a = addr.unwrap();
-        println!("{:?}", a);
+        let ticket = "f466180c238d4541b1f59fea9b7ceed2_fd".to_string();
+        let r=tool::contract::get_address(ticket).await;
+        println!("{:?}", r);
     }
 
     #[tokio::test]
@@ -49,28 +30,33 @@ mod contract_test {
         println!("{:?}", r);
     }
 
-
-
     async fn t1() -> Result<(), Box<dyn std::error::Error>> {
-        // 1. 创建一个 HTTP 提供者，用于与以太坊节点通信
-        let provider = Provider::<Http>::try_from("https://polygon-mainnet.infura.io/v3/d6c49b20a9bf44fabeda87029c7cf51e")?;
-        let provider = Arc::new(provider);
 
-        // 2. 定义 ERC-20 合约地址
-        let contract_address: Address = "0x63A0B0a446800DFf71C184Ef5D4A526F49a67246".parse()?;
-
-        // 3. 加载合约的 ABI
-        let abi: Abi = serde_json::from_slice(include_bytes!("E:/b/gitpmc/web3-blog-rs/blog-rs/common/src/tool/web3_blog_abi.json"))?;
-
-        // 4. 创建合约实例
-        let contract = Contract::new(contract_address, abi, provider.clone());
-
+        let url = "https://polygon-mainnet.infura.io/v3/d6c49b20a9bf44fabeda87029c7cf51e";
+        let contract_address = "0x63A0B0a446800DFf71C184Ef5D4A526F49a67246";
         let ticket = "f466180c238d4541b1f59fea9b7ceed2".to_string();
+        let abi_p = "E:/b/gitpmc/web3-blog-rs/blog-rs/common/src/tool/web3_blog_abi.json";
 
-        let addr: Address = contract.method::<_, Address>("getAddress", ticket)?.call().await?;
+        let provider = ProviderBuilder::new().with_recommended_fillers().on_http(reqwest::Url::parse(url).unwrap());
 
-        // 7. 打印余额
-        println!("Balance: {}", addr);
+        // Get the contract ABI.
+        let path = std::env::current_dir()?.join(abi_p);
+        let artifact = std::fs::read(path).expect("Failed to read artifact");
+        let json: serde_json::Value = serde_json::from_slice(&artifact)?;
+
+        // Get `abi` from the artifact.
+        let abi_value = json.get("abi").expect("Failed to get ABI from artifact");
+        let abi = serde_json::from_str(&abi_value.to_string())?;
+
+        let c_a: Address = Address::parse_checksummed(contract_address, None).unwrap();
+        let contract: ContractInstance<Http<Client>, _, Ethereum> =
+            ContractInstance::new(c_a, provider.clone(), Interface::new(abi));
+
+        // Retrieve the number, which should be 43.
+        let address_val = contract.function("getAddress", &[DynSolValue::from(String::from(ticket))])?.call().await?;
+        let addr = address_val.first().unwrap().as_address().unwrap().0;
+
+        println!("Retrieved addr: {addr}");
 
         Ok(())
     }
