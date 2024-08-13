@@ -95,7 +95,7 @@ async fn init_rds(){
                            configs::get_str("redis", "port"),
                            configs::get_str("redis", "db"));
 
-        let size: usize = 2;
+        let size: usize = configs::get_int("redis", "size") as usize;
 
         let res_rds = rds::init_rds(url, size).await;
         info!("res_rds={:?}", res_rds);

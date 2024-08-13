@@ -20,6 +20,7 @@ pwd = "test*user77122"
 host = "41.216.181.27"
 port = "56379"
 db = "0"
+size = 5
 
 [aes]
 key="an example very very secret key."

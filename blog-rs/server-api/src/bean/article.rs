@@ -1,4 +1,9 @@
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize, de};
+use serde::de::Unexpected;
+use serde::Deserializer;
+use serde::de::{Visitor};
+use std::fmt;
+use serde::de::MapAccess;
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct ReadIn {
@@ -193,9 +198,11 @@ pub struct BlogViewOut {
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct GetViewTicketIn {
     /// search地址 【max:155】
-    #[serde(rename = "address")]
+    #[serde(rename = "address" , deserialize_with = "check_length_address")]
     pub address: String,
 }
+
+plier::create_serde_string_length_checker!(check_length_address, 1, 155);
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct GetViewTicketOut {

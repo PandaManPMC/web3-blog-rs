@@ -13,11 +13,17 @@ pub async fn initialize_global_object(r: rds::RDS) {
 
 pub async fn set_string(key: String, val :String) -> Result<(), RedisError> {
     let rw = RDS.get().unwrap().write().await;
-    rw.set_expire(&format!("str:{}", key), val, 300000).await
+    rw.set_expire(&format!("str:{}", key), val, 6000).await
 }
 
 pub async fn get_string(key: String) -> Result<String, RedisError> {
     let rd = RDS.get().unwrap().read().await;
     let res = rd.get_string(&format!("str:{}", key)).await;
+    return res;
+}
+
+pub async fn del_string(key: String) -> Result<(), RedisError> {
+    let rd = RDS.get().unwrap().read().await;
+    let res = rd.del(&format!("str:{}", key)).await;
     return res;
 }

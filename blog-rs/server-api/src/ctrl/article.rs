@@ -342,12 +342,19 @@ async fn create_view (
         address,
         "0.1".to_string(),
         real_ip,
-        payload.ticket);
+        payload.ticket.clone());
 
     let result = service::blog::add_view(payload.id_blog, article.view_count+1 , &mut view).await;
     if result.is_err() {
         tracing::warn!("{:?}", result);
         return Json(common::net::rsp::Rsp::<bean::article::BlogViewOut>::err_de())
+    }
+
+    {
+        let r = common::cache::common_rds::del_string(payload.ticket).await;
+        if r.is_err() {
+            tracing::warn!("{:?}", r);
+        }
     }
 
     return Json(common::net::rsp::Rsp::<bean::article::BlogViewOut>::ok(bean::article::BlogViewOut{
