@@ -16,9 +16,13 @@ import {AppDispatch, RootState, setArticleTOCState} from "@/storage/store";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import rehypeRaw from 'rehype-raw';
-import { useSDK } from "@metamask/sdk-react";
+import {useInfoToast} from "@/tool/ui";
+import { ethers, BrowserProvider, Contract } from 'ethers';
+import {newContract} from "@/common/contract";
+import {eth_chainId} from "@/tool/web30";
 
 const ArticlePage = () => {
+    const infoToast = useInfoToast();
     const dispatch = useDispatch<AppDispatch>();
     const author = useSelector((state: RootState) => state.author);
 
@@ -60,7 +64,17 @@ const ArticlePage = () => {
     const searchParams = useSearchParams();
     const id = searchParams.get('id');
 
+    const [isMetaMaskInstalled, setIsMetaMaskInstalled] = useState(false);
+
     useEffect(() => {
+        if (typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask) {
+            setIsMetaMaskInstalled(true);
+            const browserProvider = new BrowserProvider(window.ethereum);
+            setProvider(browserProvider);
+        } else {
+            setIsMetaMaskInstalled(false);
+        }
+
         getArticle(id);
         getViews(id);
     }, []);
@@ -114,6 +128,7 @@ const ArticlePage = () => {
     }
 
     const [comment, setComment] = useState("");
+    const [ticket, setTicket] = useState("");
     const [isSubmitLoading, setSubmitLoading] = useState(false);
     const maxLength = 200;
     const handleCommentChange = (event: any) => {
@@ -123,17 +138,100 @@ const ArticlePage = () => {
         }
     };
 
+    const [mmAccount, setMmAccount] = useState("");
+
+    const connectMetaMask = async () => {
+        if (!isMetaMaskInstalled || !window.ethereum) {
+            return;
+        }
+        try {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                console.log(accounts);
+                // @ts-ignore
+                setMmAccount(accounts[0]);
+                // @ts-ignore
+            return accounts[0];
+        } catch (error) {
+            console.error('Failed to connect MetaMask', error);
+        }
+        return 0;
+    };
+
+    const maticChainId = '0x89'; // Polygon 主网的链 ID
+
+    const switchToMaticNetwork = async () => {
+        if (!isMetaMaskInstalled || !window.ethereum) {
+            return;
+        }
+        try {
+            await window.ethereum.request({method: 'wallet_switchEthereumChain', params: [{ chainId: maticChainId }],});
+            return true;
+        } catch (switchError: any) {
+            // This error code indicates that the chain has not been added to MetaMask.
+            if (switchError.code === 4902) {
+                try {
+                    await window.ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [
+                            {
+                                chainId: maticChainId,
+                                chainName: 'Polygon Mainnet',
+                                rpcUrls: ['https://rpc-mainnet.matic.network/'],
+                                nativeCurrency: {
+                                    name: 'MATIC',
+                                    symbol: 'MATIC',
+                                    decimals: 18,
+                                },
+                                blockExplorerUrls: ['https://polygonscan.com/'],
+                            },
+                        ],
+                    });
+                    return true;
+                } catch (addError) {
+                    console.error('Failed to add and switch to the Matic network', addError);
+                }
+            } else {
+                console.error('Failed to switch to the Matic network', switchError);
+            }
+        }
+    };
+
+
     const submitView =  async () => {
         console.log(comment);
-        console.log(account);
-        if ("" == account){
+        if (0 == comment.length) {
             return;
         }
 
-        await createView();
+        if (!isMetaMaskInstalled) {
+            infoToast("未安装 MetaMask 无法进行评论！");
+            return;
+        }
+        let addr = await connectMetaMask();
+        let chainId = await eth_chainId();
+        if (chainId != maticChainId) {
+            if (!await switchToMaticNetwork()) {
+                setSubmitLoading(false);
+                infoToast("请切换到 MATIC 网络");
+                return;
+            }
+        }
+
+        let tk = await getTicket(addr);
+        if (!tk || 0 >= tk.length){
+            setSubmitLoading(false);
+            return;
+        }
+        let hash = await payTicket(tk);
+        if ("" == hash) {
+            infoToast("支付票据失败");
+            setSubmitLoading(false);
+            return;
+        }
+        await createView(tk);
     }
 
-    const createView = async () => {
+    const createView = async (ticket: string) => {
         setSubmitLoading(true);
         let data;
         try {
@@ -141,17 +239,16 @@ const ArticlePage = () => {
                     idBlog: article.id,
                     viewContent: comment,
                     coinSymbol: "MATIC",
-                    ticket: "adasdeeasx232",
+                    ticket: ticket,
                 }});
-            console.log(data)
         } catch (err) {
+            return;
         } finally {
             setSubmitLoading(false);
         }
         if (2000 != data.code){
             return;
         }
-
         // @ts-ignore
         setViews([data.data, ...views]);
         article.viewCount += 1;
@@ -159,17 +256,57 @@ const ArticlePage = () => {
         setComment("");
     }
 
-
-    const { account } = useSDK(); // 从 @metamask/sdk-react 中获取连接状态和账户信息
-    const [isMetaMaskInstalled, setIsMetaMaskInstalled] = useState(false);
-
-    useEffect(() => {
-        if (typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask) {
-            setIsMetaMaskInstalled(true);
-        } else {
-            setIsMetaMaskInstalled(false);
+    const getTicket = async (addr: string) => {
+        setSubmitLoading(true);
+        console.log(addr);
+        let data;
+        try {
+            data = await getWrap('/article/getViewTicket', {params: {address: addr}});
+        } catch (err) {
+            setSubmitLoading(false);
+            return "";
         }
-    }, []);
+        if (2000 != data.code) {
+            setSubmitLoading(false);
+            return "";
+        }
+        setTicket(data.data.ticket);
+        return data.data.ticket;
+    }
+
+    const [provider, setProvider] = useState<BrowserProvider | null>(null);
+    const [contract, setContract] = useState<Contract | null>(null);
+
+    const payTicket = async (tk: string) => {
+        if (null == provider) {
+            return "";
+        }
+
+        let contractInstance = contract;
+        if (null == contractInstance) {
+            contractInstance = await newContract(provider, process.env.NEXT_PUBLIC_CONTRACT_MATIC + "")
+            setContract(contractInstance);
+        }
+
+        try {
+            const tx = await contractInstance.payTicket(tk, {
+                value: ethers.parseEther('0.01'),
+            });
+            await tx.wait();
+            console.log('Transaction successful:', tx);
+            return tx.hash;
+        } catch (error) {
+            // @ts-ignore
+            if (error.info.error.code == 4001){
+                // 主动取消
+            }else{
+                console.error('Error calling payable function', error);
+                infoToast("调起 MetaMask 失败!");
+            }
+        }
+
+        return "";
+    };
 
 
     return (
@@ -274,7 +411,10 @@ const ArticlePage = () => {
                         boxShadow="md"
                     >
                         <Box fontSize="xl" mb="4">
-                            {article.viewCount} 条评论
+                            已有 {article.viewCount} 条评论
+                        </Box>
+                        <Box fontSize="sl" mb="4">
+                            为防止灌水，发布评论需要连接 MetaMask 调用合约在 MATIC 网络支付 0.01 票据。
                         </Box>
                         <Box position="relative">
                             <Textarea
@@ -344,7 +484,11 @@ const ArticlePage = () => {
 
 export default function Article() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={
+            <Box display="flex" justifyContent="center" mt={4}>
+                <Button loadingText="加载中" colorScheme="gray" ></Button>
+            </Box>
+        }>
             <ArticlePage />
         </Suspense>
     );

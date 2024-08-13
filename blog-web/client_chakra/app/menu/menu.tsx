@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import TextList from "@/app/common/TextList";
 import TagList from "@/app/common/TagList";
 import ImageCard from "@/app/common/ImageCard ";
@@ -28,6 +28,20 @@ const Menu = () => {
     const isArticlePage = usePathname() == "/article/";
 
     const toc = useSelector((state: RootState) => state.ArticleTOCStateSliceReducer).TOC;
+    const tocContainerRef = useRef(null);
+    const [tocWidth, setTocWidth] = useState('auto');
+    const [isFixed, setIsFixed] = useState(false);
+
+    useEffect(() => {
+        if (tocContainerRef.current) {
+            // 记录固定前的宽度
+            if (!isFixed) {
+                // @ts-ignore
+                const width = tocContainerRef.current.offsetWidth;
+                setTocWidth(`${width}px`);
+            }
+        }
+    }, [isFixed]);
 
     const handleTocClick = (slug: any) => (event: any) => {
         dispatch(setArticleTOCState({TOC: [], SelectId: slug}));
@@ -54,7 +68,6 @@ const Menu = () => {
         dispatch(setSelectedQueryState(selectedQuery));
     };
 
-    const [isFixed, setIsFixed] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -78,7 +91,7 @@ const Menu = () => {
 
 
     return (
-        <div>
+        <div style={{width: '100%'}}>
             <ImageCard
                 // @ts-ignore
                 imageSrc={author.profile}
@@ -113,7 +126,8 @@ const Menu = () => {
                 <div
                     id="toc-container"
                     className={`markdown-body ${isFixed ? 'fixed-toc' : ''}`}
-                    style={{backgroundColor: 'transparent'}}
+                    style={{backgroundColor: 'transparent', width: isFixed ? tocWidth : 'auto'}}
+                    ref={tocContainerRef}
                 >
                     <h2 style={{textAlign: 'center'}}>目录</h2>
                     <ul>

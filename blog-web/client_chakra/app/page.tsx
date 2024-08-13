@@ -12,7 +12,7 @@ let pageIndex = 1;
 const pageSize = 3;
 
 const HomePage = () => {
-    const envName = process.env.ENV_NAME;
+    const envName = process.env.NEXT_PUBLIC_ENV_NAME;
     console.log(envName);
     const getWrap = useGetWrap();
     const [articlesLst, setArticlesLst] = useState([]);
@@ -102,7 +102,7 @@ const HomePage = () => {
             <Box p={4}>
                 {articlesLst.map((article, index) => (
                     // @ts-ignore
-                    <Link key={index} href={{pathname: '/article', query: {id: article.id}}} passHref target="_blank" rel="noopener noreferrer">
+                    <Link key={index} href={{pathname: '/article', query: {id: article.id}}} passHref target="_blank">
                         <ArticleCard key={index} data={article} onClick={()=> {}}/>
                     </Link>
                 ))}

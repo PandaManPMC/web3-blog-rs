@@ -337,10 +337,10 @@ async fn create_view (
         payload.id_blog,
         payload.view_content,
         payload.coin_symbol,
-        "0.1".to_string(),
+        "0.01".to_string(),
     1,
         address,
-        "0.1".to_string(),
+        "0.01".to_string(),
         real_ip,
         payload.ticket.clone());
 

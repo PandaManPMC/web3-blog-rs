@@ -55,7 +55,7 @@ export default function RootLayout({
     return (
       <html lang="zh">
       <head>
-          <title>Next Template</title>
+          <title>{process.env.NEXT_PUBLIC_WEBSITE_NAME}</title>
           <meta name="viewport" content="initial-scale=1, width=device-width"/>
       </head>
       <body className={inter.className}>
@@ -66,11 +66,11 @@ export default function RootLayout({
                       debug={true}
                       sdkOptions={{
                           dappMetadata: {
-                              name: process.env.WEBSITE_NAME,
+                              name: process.env.NEXT_PUBLIC_WEBSITE_NAME,
                               // @ts-ignore
-                              url: process.env.WEBSITE_URL,
+                              url: process.env.NEXT_PUBLIC_WEBSITE_URL,
                           },
-                          infuraAPIKey: process.env.INFURA_API_KEY,
+                          infuraAPIKey: process.env.NEXT_PUBLIC_INFURA_API_KEY,
                       }}
                   >
                   <InitData></InitData>

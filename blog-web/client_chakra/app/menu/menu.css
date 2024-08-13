@@ -1,18 +1,25 @@
 .markdown-body {
-    /*width: 200px; !* 容器宽度 *!*/
     width: 100%;
     padding: 10px;
     transition: all 0.3s ease; /* 平滑过渡效果 */
 }
 
 .fixed-toc {
+    width: 100%;
     position: fixed;
     top: 50px; /* 固定在顶部的位置 */
-    /*right: 10px; !* 固定在左侧的位置 *!*/
     height: 80vh; /* 高度为视口高度的 80%，可调整 */
     overflow-y: auto; /* 内容可以垂直滚动 */
     background-color: rgba(255, 255, 255, 0.9); /* 背景色略带透明 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 可选：添加阴影 */
+}
+
+.fixed-toc h2 {
+    width: 100%; /* 确保 h2 占满父容器的宽度 */
+    text-align: center;
+    margin: 0; /* 清除默认的 margin */
+    padding: 10px; /* 添加一些内边距 */
+    box-sizing: border-box; /* 包含内边距和边框在宽度计算内 */
 }
 
 ul {
