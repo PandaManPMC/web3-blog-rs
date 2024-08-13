@@ -83,7 +83,7 @@ async fn init_contract(){
         let url = configs::get_str("contract", "url");
         let contract_address = configs::get_str("contract", "contract_address");
 
-        // common::tool::contract_ethers::initialize_provider_http(url, abi_path, contract_address).await.expect("init_contract fail");
+        common::tool::contract::initialize_provider_http(url, abi_path, contract_address).await.expect("init_contract fail");
     }
 }
 

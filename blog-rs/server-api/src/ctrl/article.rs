@@ -318,15 +318,17 @@ async fn create_view (
         return Json(common::net::rsp::Rsp::<bean::article::BlogViewOut>::fail("票据不存在".to_string()));
     }
 
+    // 调用合约核实
     let get_addr = common::tool::contract::get_address(payload.ticket.clone()).await;
     if get_addr.is_err() {
         tracing::warn!("{:?}", get_addr);
         return Json(common::net::rsp::Rsp::<bean::article::BlogViewOut>::err_de())
     }
-
-    if "" == get_addr.unwrap(){
+    let get_add = get_addr.unwrap();
+    if "" == get_add {
         return Json(common::net::rsp::Rsp::fail("票据尚未支付，无法提交评论".to_string()))
     }
+    tracing::info!("合约核实 {} - {} 已支付", payload.ticket, get_add);
 
     let result = base::service::blog_article_sve::find_by_id(payload.id_blog).await;
     if result.is_err() {
