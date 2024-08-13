@@ -53,11 +53,30 @@ async fn main() {
         info!("server = {:?}", format!("0.0.0.0:{}", configs::get_int("basics", "port")));
 
         init_author().await;
+        init_contract().await;
 
         let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{:?}", configs::get_int("basics", "port"))).await.unwrap();
         axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>()).await.unwrap();
     }
 
+}
+
+
+async fn init_contract(){
+    unsafe {
+        let mut abi_path = configs::get_str("contract", "abi_path");
+
+        if cfg!(target_os = "linux") {
+            abi_path = format!("./{}", abi_path);
+        } else{
+            abi_path = format!("server-manage/src/{}", abi_path);
+        }
+
+        let url = configs::get_str("contract", "url");
+        let contract_address = configs::get_str("contract", "contract_address");
+
+        common::tool::contract::initialize_provider_http(url, abi_path, contract_address).await.expect("init_contract fail");
+    }
 }
 
 async fn init_rds(){

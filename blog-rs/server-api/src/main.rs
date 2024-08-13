@@ -50,6 +50,7 @@ async fn main() {
         init_rds().await;
         init_data().await;
         init_schedule().await;
+        init_contract().await;
 
         let mut app = Router::new();
         app = init_router(app);
@@ -67,6 +68,23 @@ async fn init_data(){
     service::blog::cache_classes().await;
     service::blog::cache_label().await;
     service::advertise::cache_advertise().await;
+}
+
+async fn init_contract(){
+    unsafe {
+        let mut abi_path = configs::get_str("contract", "abi_path");
+
+        if cfg!(target_os = "linux") {
+            abi_path = format!("./{}", abi_path);
+        } else{
+            abi_path = format!("server-manage/src/{}", abi_path);
+        }
+
+        let url = configs::get_str("contract", "url");
+        let contract_address = configs::get_str("contract", "contract_address");
+
+        common::tool::contract::initialize_provider_http(url, abi_path, contract_address).await.expect("init_contract fail");
+    }
 }
 
 async fn init_author() {

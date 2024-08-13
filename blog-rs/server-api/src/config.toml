@@ -2,7 +2,11 @@
 env = "dev"
 port = 51081
 file_http="http://192.168.30.12:80/uploads"
-CONTRACT_MATIC="0x63A0B0a446800DFf71C184Ef5D4A526F49a67246"
+
+[contract]
+url = "https://polygon-mainnet.infura.io/v3/d6c49b20a9bf44fabeda87029c7cf51e"
+contract_address = "0x63A0B0a446800DFf71C184Ef5D4A526F49a67246"
+abi_path = "web3_blog_abi.json"
 
 [mysql_db1]
 host = "41.216.181.27"

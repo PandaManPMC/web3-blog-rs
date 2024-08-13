@@ -318,6 +318,16 @@ async fn create_view (
         return Json(common::net::rsp::Rsp::<bean::article::BlogViewOut>::fail("票据不存在".to_string()));
     }
 
+    let get_addr = common::tool::contract::get_address(payload.ticket.clone()).await;
+    if get_addr.is_err() {
+        tracing::warn!("{:?}", get_addr);
+        return Json(common::net::rsp::Rsp::<bean::article::BlogViewOut>::err_de())
+    }
+
+    if "" == get_addr.unwrap(){
+        return Json(common::net::rsp::Rsp::fail("票据尚未支付，无法提交评论".to_string()))
+    }
+
     let result = base::service::blog_article_sve::find_by_id(payload.id_blog).await;
     if result.is_err() {
         tracing::warn!("{:?}", result);
