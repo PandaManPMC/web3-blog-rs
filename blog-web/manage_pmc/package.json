@@ -5,6 +5,7 @@
 	"scripts": {
 		"dev": "vite",
 		"local": "vite --mode .env.local",
+		"pmc_local": "vite --mode .env.pmc.local",
 		"build:dev": "tsc && vite build --mode development",
 		"build:prod": "tsc && vite build --mode production",
 		"lint:eslint": "eslint --fix --ext .js,.ts,.tsx ./src",
