@@ -1,7 +1,8 @@
 use num_bigfloat::{BigFloat, PI};
 use num_bigfloat::ONE;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     println!("Hello, world!");
 
 
@@ -14,5 +15,16 @@ fn main() {
 
 
     println!("Hello, world! 2");
+
+    let amount = "0.01".to_string();
+    let u = "1.2".to_string();
+    let a = BigFloat::parse(amount.as_str()).unwrap();
+    let b = BigFloat::parse(u.as_str()).unwrap();
+
+    let p = a.mul(&b);
+    println!("{:?}",format!("{:.10}", p.to_f64()));
+
+    let r = common::tool::contract::get_address("abc".to_string()).await;
+    println!("{:?}", r)
 
 }

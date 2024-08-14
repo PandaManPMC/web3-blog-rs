@@ -3,12 +3,6 @@ name = "server-manage"
 version = "0.1.0"
 edition = "2021"
 
-[target.x86_64-unknown-linux-gnu]
-linker = "x86_64-w64-mingw32-gcc"  # For Windows with MSYS2
-# linker = "x86_64-linux-musl-gcc"  # For macOS with musl-cross
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 base = { path = "../base" }
 common = { path = "../common" }

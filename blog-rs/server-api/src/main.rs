@@ -25,7 +25,7 @@ mod utils;
 mod dao;
 mod app;
 
-#[tokio::main(flavor = "multi_thread", worker_threads = 4)]
+#[tokio::main]
 async fn main() {
     let p = plier::files::get_current_dir_str();
     println!("{:?}", p);
