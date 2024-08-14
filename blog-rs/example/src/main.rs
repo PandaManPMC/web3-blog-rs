@@ -24,7 +24,7 @@ async fn main() {
     let p = a.mul(&b);
     println!("{:?}",format!("{:.10}", p.to_f64()));
 
-    let r = common::tool::contract::get_address("abc".to_string()).await;
-    println!("{:?}", r)
+    // let r = common::tool::contract::get_address("abc".to_string()).await;
+    // println!("{:?}", r)
 
 }
