@@ -68,6 +68,8 @@ async fn init_data(){
     service::blog::cache_classes().await;
     service::blog::cache_label().await;
     service::advertise::cache_advertise().await;
+    let r = service::currency::sync_coin_price().await;
+    r.unwrap();
 }
 
 async fn init_contract(){
@@ -203,6 +205,18 @@ async fn init_schedule() {
         Job::new_async("0 1/3 * * * *", |uuid, mut l| {
             Box::pin(async move {
                 service::advertise::cache_advertise().await;
+            })
+        }).unwrap()
+    ).await.unwrap();
+
+    // 货币价格
+    sched.add(
+        Job::new_async("0 1/55 * * * *", |uuid, mut l| {
+            Box::pin(async move {
+                let r = service::currency::sync_coin_price().await;
+                if r.is_err() {
+                    warn!("{:?}", r)
+                }
             })
         }).unwrap()
     ).await.unwrap();

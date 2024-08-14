@@ -1,6 +1,7 @@
 
 pub mod blog;
 pub mod advertise;
+pub mod currency;
 
 use std::collections::HashMap;
 

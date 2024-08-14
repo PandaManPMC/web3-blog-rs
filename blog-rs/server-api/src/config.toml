@@ -8,6 +8,10 @@ url = "https://polygon-mainnet.infura.io/v3/d6c49b20a9bf44fabeda87029c7cf51e"
 contract_address = "0x63A0B0a446800DFf71C184Ef5D4A526F49a67246"
 abi_path = "web3_blog_abi.json"
 
+[coinmarketcap]
+key="c031d0fd-5dfb-41e5-805d-d5dfaabe2f5f"
+url="https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest"
+
 [mysql_db1]
 host = "41.216.181.27"
 port = 53306

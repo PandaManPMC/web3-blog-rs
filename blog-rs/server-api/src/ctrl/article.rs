@@ -286,7 +286,7 @@ async fn get_view_ticket(
     query: Query<bean::article::GetViewTicketIn>,
 ) -> Json<common::net::rsp::Rsp<bean::article::GetViewTicketOut>> {
     let uid = plier::uid::uid_v4();
-    let result = common::cache::common_rds::set_string(uid.clone(), query.address.clone()).await;
+    let result = common::cache::common_rds::set_string_expire(uid.clone(), query.address.clone(), 60000).await;
     if result.is_err() {
         tracing::warn!("{:?}", result);
         return Json(common::net::rsp::Rsp::<bean::article::GetViewTicketOut>::err_de())
@@ -345,14 +345,23 @@ async fn create_view (
         return Json(common::net::rsp::Rsp::fail("文章不存在".to_string()))
     }
 
+    let amount = "0.01";
+    let mut amount_usd = "0.01".to_string();
+    let usd = service::currency::get_price_by_matic(amount.to_string()).await;
+    if usd.is_err() {
+        tracing::warn!("{:?}", usd);
+    }else{
+        amount_usd = usd.unwrap().to_string();
+    }
+
     let mut view = base::model::blog_view::BlogViewModel::new(
         payload.id_blog,
         payload.view_content,
         payload.coin_symbol,
-        "0.01".to_string(),
+        amount.to_string(),
     1,
         address,
-        "0.01".to_string(),
+        amount_usd,
         real_ip,
         payload.ticket.clone());
 
