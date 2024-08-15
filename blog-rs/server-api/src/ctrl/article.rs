@@ -197,6 +197,7 @@ async fn get_classes_list() -> Json<common::net::rsp::Rsp<Vec<BlogClassesOut>>> 
             sequence: value.sequence,
         })
     }
+    lst.sort_by_key(|p| std::cmp::Reverse(p.sequence));
     Json(common::net::rsp::Rsp::ok(lst))
 }
 
@@ -211,6 +212,7 @@ async fn get_label_list() -> Json<common::net::rsp::Rsp<Vec<BlogLabelOut>>> {
             sequence: value.sequence,
         })
     }
+    labels.sort_by_key(|p| std::cmp::Reverse(p.sequence));
     Json(common::net::rsp::Rsp::ok(labels))
 }
 
