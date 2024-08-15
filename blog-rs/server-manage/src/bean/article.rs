@@ -78,7 +78,7 @@ pub struct ChangeArticleLabelIn {
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct CreateClassesIN {
-    /// search类型名称 【max:20】
+    /// search类型名称 【max:30】
     #[serde(rename = "classesName", deserialize_with="check_length_classes_name")]
     pub classes_name: String,
     /// 顺序 【max:10】
@@ -86,7 +86,7 @@ pub struct CreateClassesIN {
     pub sequence: u32,
 }
 
-plier::create_serde_string_length_checker!(check_length_classes_name, 0, 20);
+plier::create_serde_string_length_checker!(check_length_classes_name, 0, 30);
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub struct CreateLabelIn {
