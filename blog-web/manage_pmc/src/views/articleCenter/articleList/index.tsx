@@ -199,7 +199,7 @@ const ArticleList = () => {
 			let labelList: { label: any; value: any }[] = [];
 			// @ts-ignore
 			data.map((item: any) => {
-				labelList.push({ label: item.labelName, value: item.id });
+				labelList.push({ label: 2 == item.state ? item.labelName + "(已删除)" : item.labelName, value: item.id });
 			});
 			// @ts-ignore
 			setArticleLabelList(labelList);

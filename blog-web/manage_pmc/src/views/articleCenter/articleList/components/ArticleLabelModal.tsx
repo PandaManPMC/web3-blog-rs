@@ -28,7 +28,7 @@ const ArticleLabelModal = (props: any) => {
 
 		setArticleLabelList(lst);
 		console.log(lst);
-	}, [props.setRowData]);
+	}, [props.setRowData, props.setId]);
 	const showModal = (params: any) => {
 		if (params.isModalVisible) {
 			setIsModalVisible(true);
@@ -43,6 +43,8 @@ const ArticleLabelModal = (props: any) => {
 		// @ts-ignore
 		// if (code === 2000) {
 		setIsModalVisible(false);
+		setArticleLabelId([]);
+		setArticleLabelList([]);
 		// message.success(tip);
 		// setArticleLabelList([]);
 		// props.onPublish(true);
