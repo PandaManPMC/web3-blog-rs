@@ -54,7 +54,10 @@ async fn publish(
     match base::service::blog_article_sve::find_by_title_article(payload.title_article.clone()).await {
         Ok(a) => {
             if a.is_some() {
-                return Json(common::net::rsp::Rsp::<u64>::fail("文章已存在".to_string()))
+                let b = a.unwrap();
+                if b.id_blog_classes == payload.id_blog_classes {
+                    return Json(common::net::rsp::Rsp::<u64>::fail("文章已存在".to_string()))
+                }
             }
         }
         Err(e) => {
