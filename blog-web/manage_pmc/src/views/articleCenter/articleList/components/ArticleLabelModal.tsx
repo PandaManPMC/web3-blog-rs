@@ -17,6 +17,9 @@ const ArticleLabelModal = (props: any) => {
 			setArticleLabelId([...props.setRowData]);
 		}
 		let lst = props.labelList;
+		for (let i = 0; i < lst.length; i++) {
+			lst[i].checked = false;
+		}
 		for (let j = 0; j < props.setRowData.length; j++) {
 			for (let i = 0; i < lst.length; i++) {
 				if (lst[i].value == props.setRowData[j]) {
@@ -61,6 +64,7 @@ const ArticleLabelModal = (props: any) => {
 	};
 	const handleChange = async (value: any) => {
 		console.log(value);
+		console.log(articleLabelId);
 		console.log(articleLabelList);
 		let orCheckArr = [];
 		for (let i = 0; i < articleLabelList.length; i++) {

@@ -182,10 +182,11 @@ const ArticleList = () => {
 		// @ts-ignore
 		if (code === 2000) {
 			// @ts-ignore
-			articleLabelRef.current!.showModal({ isModalVisible: true });
-			// @ts-ignore
 			setRowLabel(data);
 			setRowId(row.id);
+
+			// @ts-ignore
+			articleLabelRef.current!.showModal({ isModalVisible: true });
 		}
 	};
 	const getLabels = async () => {
@@ -327,7 +328,9 @@ const ArticleList = () => {
 				onPublish={getList}
 				setRowData={rowLabel}
 				setId={rowId}
-				onCancel={() => setRowLabel([])}
+				onCancel={() => {
+					setRowLabel([]);
+				}}
 				labelList={articleLabelList}
 			></ArticleLabelModal>
 		</div>
