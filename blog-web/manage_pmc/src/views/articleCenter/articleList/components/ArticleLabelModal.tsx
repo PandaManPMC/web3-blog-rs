@@ -54,6 +54,8 @@ const ArticleLabelModal = (props: any) => {
 	const handleCancel = () => {
 		props.onCancel();
 		setIsModalVisible(false);
+		setArticleLabelId([]);
+		setArticleLabelList([]);
 	};
 	const handleChange = async (value: any) => {
 		console.log(value);
@@ -129,7 +131,7 @@ const ArticleLabelModal = (props: any) => {
 				title={"文章标签"}
 				visible={isModalVisible}
 				onOk={handleOk}
-				// onCancel={handleCancel}
+				onCancel={handleCancel}
 				keyboard={false}
 				maskClosable={false}
 				footer={[
