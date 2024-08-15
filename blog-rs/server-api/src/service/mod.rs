@@ -45,6 +45,10 @@ pub async fn set_blog_author(author_new: BlogAuthorModel) {
     let mut author = BLOG_AUTHOR.get().expect("CONFIG should be initialized").write().await;
     author.pen_name = author_new.pen_name;
     author.updated_at = author_new.updated_at;
+    author.mk_footer = author_new.mk_footer;
+    author.profile = author_new.profile;
+    author.contact_mail = author_new.contact_mail;
+    author.introduce = author_new.introduce;
 }
 
 pub async fn get_data_source_key() -> String {
