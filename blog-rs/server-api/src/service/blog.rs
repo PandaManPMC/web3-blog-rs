@@ -88,6 +88,18 @@ pub async fn find_label_by_id(id: u64) -> Result<String, String> {
     }
 }
 
+/// 获取笔记本名称
+/// id -> label_name
+pub async fn find_classes_name_by_id(id: u64) -> Result<String, String> {
+    // 1. 查询缓存, 不存在重新获取缓存
+    let cache = CLASSES_LIST.read().await;
+    if let Some(value) = cache.get(&id) {
+        Ok(value.classes_name.to_string())
+    } else {
+        return Err("not find".to_string());
+    }
+}
+
 
 pub async fn query_list(params: &HashMap<String, sql::Params>, condition: &[sql::Condition]) -> mysql::Result<Vec<BlogArticleModel>, String> {
     let mut call = | tx:&mut Transaction |  -> mysql::Result<Vec<BlogArticleModel>, String>  {

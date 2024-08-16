@@ -1,6 +1,19 @@
 "use client";
 
-import {Box, Image, Flex, Text, Button, Container, Heading, Textarea, IconButton, Avatar, Badge} from '@chakra-ui/react';
+import {
+    Box,
+    Image,
+    Flex,
+    Text,
+    Button,
+    Container,
+    Heading,
+    Textarea,
+    IconButton,
+    Avatar,
+    Badge,
+    HStack, Tag
+} from '@chakra-ui/react';
 import {useGetWrap, usePostWrap} from "@/tool/http";
 import { useSearchParams  } from 'next/navigation';
 import {convertTimestampToYYYYMMDD} from "@/tool/util";
@@ -55,6 +68,9 @@ const ArticlePage = () => {
         content: "",
         mkFooter: "",
         viewCount: 0,
+        idBlogClasses: 0,
+        classesName: "",
+        labels: []
 
     });
     const [articleLoading, setArticleLoading] = useState(true);
@@ -321,6 +337,14 @@ const ArticlePage = () => {
                         <Heading as="h1" size="xl" mb={4}>
                             {article.titleArticle}
                         </Heading>
+                        <HStack spacing={2} mt={4} wrap="wrap">
+                            <Text borderRadius="full" backgroundColor={"gray.50"}>《{article.classesName}》</Text>
+                            {article.labels.map((tag: string, index: number) => (
+                                <Tag key={index} borderRadius="full" variant="solid" colorScheme="teal" size="sm">
+                                    {tag}
+                                </Tag>
+                            ))}
+                        </HStack>
                         <Flex alignItems="center" marginBottom={1}>
                             <Box>
                                 <Image

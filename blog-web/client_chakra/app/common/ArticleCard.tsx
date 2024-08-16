@@ -1,12 +1,28 @@
 "use client"
 
 import React from 'react';
-import { Box, Heading, Text, Tag, HStack, VStack, Avatar, Flex, Icon } from '@chakra-ui/react';
+import {Box, Heading, Text, Tag, HStack, VStack, Avatar, Flex, Icon, background} from '@chakra-ui/react';
 import { FiBookmark } from 'react-icons/fi';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import {convertTimestampToYYYYMMDD} from "@/tool/util";
+import {useSelector} from "react-redux";
+import {RootState} from "@/storage/store";
 const ArticleCard = ({data, onClick}: {data: any, onClick: any}) => {
+
+    const cla = useSelector((state: RootState) => state.ClassesLstStateSliceReducer);
+    let classesLstLoading = cla.isLoading;
+    let classesLst = cla.data;
+    function getClassesName (idBlogClasses: number){
+        for (let i=0;i< classesLst.length;i++) {
+            // @ts-ignore
+            if (classesLst[i].id == idBlogClasses) {
+                // @ts-ignore
+                return classesLst[i].classesName;
+            }
+        }
+        return "";
+    }
 
     return (
         <Box
@@ -36,6 +52,9 @@ const ArticleCard = ({data, onClick}: {data: any, onClick: any}) => {
             </Box>
 
             <HStack spacing={2} mt={4} wrap="wrap">
+                { !classesLstLoading ? (
+                    <Text borderRadius="full" backgroundColor={"gray.50"}>《{getClassesName(data.idBlogClasses)}》</Text>
+                ): null }
                 {data.labels.map((tag: string, index: number) => (
                     <Tag key={index} borderRadius="full" variant="solid" colorScheme="teal" size="sm">
                         {tag}

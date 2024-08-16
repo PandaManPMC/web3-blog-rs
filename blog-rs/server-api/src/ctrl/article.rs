@@ -82,6 +82,15 @@ async fn read(
 
     let author = service::BLOG_AUTHOR.get().expect("BLOG_AUTHOR should be initialized").read().await;
 
+    let mut classes_name = "".to_string();
+    {
+
+        let r = service::blog::find_classes_name_by_id(article.id_blog_classes).await;
+        if r.is_ok() {
+            classes_name = r.unwrap();
+        }
+    }
+
     let res = bean::article::ReadOut{
         id: article.id,
         id_blog_classes: article.id_blog_classes,
@@ -96,7 +105,8 @@ async fn read(
         profile: author.profile.clone(),
         introduce: author.introduce.clone(),
         mk_footer: author.mk_footer.clone(),
-        labels: labels,
+        labels,
+        classes_name
     };
 
     return Json(common::net::rsp::Rsp::ok(res));

@@ -60,6 +60,10 @@ pub struct ReadOut {
     /// 标签
     #[serde(rename = "labels")]
     pub labels: Vec<String>,
+
+    /// search类型名称 【max:20】
+    #[serde(rename = "classesName")]
+    pub classes_name: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
@@ -135,6 +139,7 @@ pub struct BlogArticleOut {
     /// 标签
     #[serde(rename = "labels")]
     pub labels: Vec<String>,
+
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
