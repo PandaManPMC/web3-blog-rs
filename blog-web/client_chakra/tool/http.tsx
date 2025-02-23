@@ -1,6 +1,6 @@
 import {useErrToast} from "@/tool/ui";
 
-export const get = async (uri: string, { headers = {}, params = {}, timeout = 60000 } = {})=> {
+export const get = async (uri: string, { headers = {}, params = {}, timeout = 60000 } = {}): Promise<any> => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
     const baseURI = process.env.NEXT_PUBLIC_API_URL;
@@ -26,12 +26,7 @@ export const get = async (uri: string, { headers = {}, params = {}, timeout = 60
 
         return await res.json();
     } catch (error) {
-        // @ts-ignore
-        if (error.name === 'AbortError') {
-            console.error('Fetch request timed out');
-        } else {
-            console.error('Error fetching data:', error);
-        }
+        console.error('Error fetching data:', error);
         throw error;
     }
 }

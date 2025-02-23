@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 
 /** SSR 不能使用原始 fetch ，该使用 node-fetch **/
 
-export const nf_get = async (uri: string, { headers = {}, params = {}, timeout = 60000 } = {}) => {
+export const nf_get = async (uri: string, { headers = {}, params = {}, timeout = 60000 } = {}): Promise<any> => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
     const baseURI = process.env.NEXT_PUBLIC_API_URL;
