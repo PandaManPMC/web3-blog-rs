@@ -24,7 +24,8 @@ const nextConfig = {
         return [
             {
                 source: '/a771x/:path*',
-                destination: 'http://localhost:51081/a771x/:path*', // 将 请求代理到本地服务器
+                // destination: 'http://localhost:51081/a771x/:path*', // 将 请求代理到本地服务器
+                destination: 'http://testweb3blog.wearelucky2025.top/a771x/:path*', // 将 请求代理到本地服务器
             },
         ];
     },

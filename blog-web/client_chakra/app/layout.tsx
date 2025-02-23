@@ -56,6 +56,7 @@ export default function RootLayout({
       <html lang="zh">
       <head>
           <title>{process.env.NEXT_PUBLIC_WEBSITE_NAME}</title>
+          <meta charSet="UTF-8"/>
           <meta name="viewport" content="initial-scale=1, width=device-width"/>
       </head>
       <body className={inter.className}>

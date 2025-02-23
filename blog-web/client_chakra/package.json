@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "local": "set NODE_ENV=local&& next dev",
+    "test": "set NODE_ENV=test&& next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
