@@ -12,7 +12,6 @@ export const get = async (uri: string, { headers = {}, params = {}, timeout = 60
         const res = await fetch(url, {
             method: 'get',
             headers: {
-                'Content-Type': 'application/json',
                 ...headers,
             },
             signal: controller.signal,
@@ -65,7 +64,7 @@ async function postData(url = '', {data = {}, headers = {}, options = {}} = {}) 
         const response = await fetch(baseURI + url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json; charset=utf-8',
                 ...headers,
             },
             body: JSON.stringify(data),

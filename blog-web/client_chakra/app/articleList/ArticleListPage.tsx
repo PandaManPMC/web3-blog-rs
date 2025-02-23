@@ -14,7 +14,7 @@ let pageIndex = 1;
 const pageSize = 5;
 
 const ArticleListPage = ({firstData} : {firstData: BlogArticleOut[]}) => {
-    console.log(firstData)
+    // console.log(firstData)
     const getWrap = useGetWrap();
     const [articlesLst, setArticlesLst] = useState<BlogArticleOut[]>([]);
     const [articlesLstLoading, setArticlesLstLoading] = useState(true);

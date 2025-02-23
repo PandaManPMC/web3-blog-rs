@@ -1,13 +1,13 @@
 import React from 'react';
 import { Box, Button } from '@chakra-ui/react';
-import {get} from "@/tool/http";
 import ArticleListPage from "@/app/articleList/ArticleListPage";
+import {nf_get} from "@/tool/httpNode";
 
 const getServerData = async (): Promise<any> => {
     let data;
     try {
         let param = {pageIndex: 1, pageSize: 5};
-        data = await get('/article/list', {headers: {}, params: param, timeout: 30000});
+        data = await nf_get('/article/list', {headers: {}, params: param, timeout: 30000});
     } catch (err) {
         return;
     }
