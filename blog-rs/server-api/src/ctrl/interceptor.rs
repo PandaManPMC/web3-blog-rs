@@ -4,6 +4,7 @@ use axum::{body::{Body, Bytes}, extract::{FromRequest, Request},
            routing::post, Router, extract::ConnectInfo, Json,BoxError};
 use axum::http::header;
 use std::net::SocketAddr;
+use axum::http::header::CONTENT_TYPE;
 use http_body_util::BodyExt;
 use hyper::body::Buf;
 use log::{info, trace};
@@ -26,7 +27,14 @@ pub async fn app(mut request: Request, next: Next) -> Result<Response, Json<Rsp<
 
     let mut req = buffer_request_body(request).await.unwrap();
 
-    let res = next.run(req).await;
+    let mut res = next.run(req).await;
+
+    // 在这里设置响应头
+    res.headers_mut().insert(
+        CONTENT_TYPE,
+        HeaderValue::from_static("application/json; charset=utf-8"),
+    );
+
     tracing::info!("request uid={} time={} ", uuid, plier::time::unix_second() - now);
     Ok(res)
 }

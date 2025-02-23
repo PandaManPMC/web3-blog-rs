@@ -30,4 +30,5 @@ tower = "0.4.13"
 reqwest = "0.12.4"
 tokio-cron-scheduler = "0.10.2"
 num-bigfloat = "1.7.1"
+tower-http = "0.6.2"
 

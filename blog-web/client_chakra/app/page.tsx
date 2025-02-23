@@ -3,7 +3,7 @@ import { Box, Button } from '@chakra-ui/react';
 import {get} from "@/tool/http";
 import ArticleListPage from "@/app/articleList/ArticleListPage";
 
-export async function getServerData() {
+const getServerData = async (): Promise<any> => {
     let data;
     try {
         let param = {pageIndex: 1, pageSize: 5};

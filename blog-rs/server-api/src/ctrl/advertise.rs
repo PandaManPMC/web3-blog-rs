@@ -22,5 +22,6 @@ async fn get_list() -> Json<common::net::rsp::Rsp<Vec<AdvertiseInfoOut>>> {
             sequence: value.sequence,
         })
     }
+
     Json(common::net::rsp::Rsp::ok(lst))
 }
