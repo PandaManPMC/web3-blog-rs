@@ -8,8 +8,9 @@ rust 第一个开源博客系统。
 
 
 示例：
-http://testweb3blog.wearelucky2025.top/
-http://testblog.wearelucky2025.top
+https://testblog.pandamancoin.com
+https://testblogmanage.pandamancoin.com
+
 
 线上（PMC）chakra-client：
 https://blog.pandamancoin.com
