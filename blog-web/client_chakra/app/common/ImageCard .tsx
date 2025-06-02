@@ -17,7 +17,7 @@ const ImageCard = ({ imageSrc, title, description }: { imageSrc: string, title: 
             <Text fontSize="xl" fontWeight="bold" mb={2}>
                 {title}
             </Text>
-            <Text noOfLines={3}>
+            <Text noOfLines={5}>
                 {description}
             </Text>
         </Box>
