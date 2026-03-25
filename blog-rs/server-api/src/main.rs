@@ -70,8 +70,8 @@ async fn init_data(){
     service::blog::cache_classes().await;
     service::blog::cache_label().await;
     service::advertise::cache_advertise().await;
-    let r = service::currency::sync_coin_price().await;
-    r.unwrap();
+    // let r = service::currency::sync_coin_price().await;
+    // r.unwrap();
 }
 
 async fn init_contract(){
@@ -160,6 +160,8 @@ async unsafe fn init_mysql() {
         .db_name(Some(configs::get_str("mysql_db1", "dbname")))
         .tcp_port(configs::get_int("mysql_db1", "port") as u16)
         .tcp_connect_timeout(Some(Duration::from_secs(configs::get_int("mysql_db1", "connect_timeout").try_into().unwrap())));
+
+    println!("db username=, {}", configs::get_str("mysql_db1", "username"));
 
     i_mysql::init(base::service::get_data_source_key().await, opts, configs::get_int("mysql_db1", "max_size") as u32, configs::get_int("mysql_db1", "max_idle") as u32).await;
 
