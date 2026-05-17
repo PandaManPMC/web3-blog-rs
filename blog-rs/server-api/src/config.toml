@@ -13,21 +13,21 @@ key="c031d0fd-5dfb-41e5-805d-d5dfaabe2f5f"
 url="https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest"
 
 [mysql_db1]
-host = "41.216.181.27"
-port = 53306
-dbname = "test_web3_rs_blog"
-username = "test_blog_u"
-password = "kgd4MQD5_776dsa"
+host = "2.56.116.253"
+port = 13306
+dbname = "blog"
+username = "root"
+password = "test_walqw!@#8812"
 max_size = 20
 max_idle = 3
 connect_timeout = 50
 
 [redis] # "redis://username:pwd@host:port/db"
-username = "test_user"
-pwd = "test*user77122"
-host = "41.216.181.27"
-port = "56379"
-db = "0"
+username = "default"
+pwd = "redis_626_240817_P"
+host = "2.56.116.253"
+port = "16379"
+db = "1"
 size = 5
 
 [aes]
