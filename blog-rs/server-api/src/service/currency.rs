@@ -108,7 +108,15 @@ pub async fn sync_coin_price() -> Result<(), String>{
             let body = response.text().await.unwrap();
             debug!("Response body: {}", body.clone());
 
-            let parsed: ApiResponse = serde_json::from_str(body.as_str()).unwrap();
+            let parsed: ApiResponse =
+                match serde_json::from_str(body.as_str()) {
+                    Ok(v) => v,
+                    Err(e) => {
+                        tracing::error!("json parse error: {}", e);
+                        tracing::error!("body={}", body);
+                        return Err(e.to_string());
+                    }
+                };
             debug!("{:?}", parsed);
 
             let price = parsed.data.MATIC[0].quote.USD.price;

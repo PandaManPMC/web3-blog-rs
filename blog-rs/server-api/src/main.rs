@@ -214,16 +214,16 @@ async fn init_schedule() {
     ).await.unwrap();
 
     // 货币价格
-    sched.add(
-        Job::new_async("0 1/55 * * * *", |uuid, mut l| {
-            Box::pin(async move {
-                let r = service::currency::sync_coin_price().await;
-                if r.is_err() {
-                    warn!("{:?}", r)
-                }
-            })
-        }).unwrap()
-    ).await.unwrap();
+    // sched.add(
+    //     Job::new_async("0 1/55 * * * *", |uuid, mut l| {
+    //         Box::pin(async move {
+    //             let r = service::currency::sync_coin_price().await;
+    //             if r.is_err() {
+    //                 warn!("{:?}", r)
+    //             }
+    //         })
+    //     }).unwrap()
+    // ).await.unwrap();
 
     sched.start().await.unwrap();
 }
